@@ -1,0 +1,102 @@
+export type TrustLevel = 'traditional' | 'research_backed_partial'
+
+export type FrequencyType = 'solfeggio' | 'tuning' | 'binaural'
+
+/** A single entry from `data/frequencies.json`. */
+export type Frequency = {
+  id: string
+  type: FrequencyType
+  /** Present for solfeggio / tuning entries — the exact root pitch in Hz. */
+  hz?: number
+  /** Present for binaural entries — the [min, max] beat range in Hz. */
+  range?: [number, number]
+  label: string
+  trust: TrustLevel
+  info: string
+  /** Base hue (0-360) used to tint the UI when this frequency is selected. */
+  hue: number
+}
+
+export type JourneyPurpose = 'sleep' | 'focus' | 'spiritual' | 'anxiety'
+
+export type JourneyDay = {
+  day: number
+  frequencyId: string
+  durationMin: number
+  note: string
+}
+
+export type Journey = {
+  id: string
+  title: string
+  days: number
+  purpose: JourneyPurpose
+  description: string
+  schedule: JourneyDay[]
+}
+
+/**
+ * The fixed set from the spec, plus `custom`. Journey days prescribe exact
+ * lengths (20, 25, 45, 90 minutes) that the fixed presets cannot express, and
+ * silently rounding a prescribed duration would misrepresent the schedule.
+ */
+export type TimerMode = '15' | '30' | '60' | '120' | 'untilMorning' | 'unlimited' | 'custom'
+
+/** How the brainwave layer is rendered: true stereo binaural, or speaker-safe isochronic. */
+export type BeatMode = 'binaural' | 'isochronic'
+
+export type BuiltInAmbienceId = 'none' | 'rain' | 'ocean' | 'white' | 'pink' | 'brown' | 'wind'
+
+/**
+ * Built-in ambiences are synthesised, so they cost no bandwidth and never end.
+ * A plain string is also accepted: any file listed in
+ * `public/audio/ambience/manifest.json` is offered alongside them.
+ */
+export type AmbienceId = BuiltInAmbienceId | (string & {})
+
+export type MixerLevels = {
+  melody: number
+  beat: number
+  ambience: number
+  master: number
+}
+
+/** Everything needed to reproduce a listening session exactly. */
+export type SessionConfig = {
+  /** Root frequency id — a solfeggio/tuning entry drives the melody's fundamental. */
+  rootId: string
+  /** Brainwave band id, or null when the beat layer is off. */
+  beatId: string | null
+  /** Chosen beat rate in Hz, clamped into the band's range. */
+  beatHz: number
+  beatMode: BeatMode
+  ambience: AmbienceId
+  levels: MixerLevels
+  timerMode: TimerMode
+  /** Length in minutes when `timerMode` is `custom`. */
+  customMinutes?: number
+  /** Musical density of the generative melody, 0 (sparse) - 1 (flowing). */
+  density: number
+}
+
+/** Persisted preset. `layers` matches the schema in the build spec (§5.3). */
+export type Preset = {
+  id: string
+  name: string
+  layers: { frequencyId: string; volume: number }[]
+  ambienceTrack?: string
+  timerMode: TimerMode
+  createdAt: string
+  /** Full config so a preset reloads bit-for-bit, not just approximately. */
+  config: SessionConfig
+}
+
+export type MoodScore = 1 | 2 | 3 | 4 | 5
+
+export type JourneyProgress = {
+  journeyId: string
+  currentDay: number
+  completedDays: number[]
+  startedAt: string
+  dailyMood?: Record<number, MoodScore>
+}

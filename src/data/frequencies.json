@@ -1,0 +1,17 @@
+[
+  { "id": "sol-174", "type": "solfeggio", "hz": 174, "label": "יסוד ובטיחות", "trust": "traditional", "info": "מקושר מסורתית להפחתת כאב ותחושת ביטחון. אין מחקר קליני ישיר.", "hue": 8 },
+  { "id": "sol-285", "type": "solfeggio", "hz": 285, "label": "ריפוי רקמות", "trust": "traditional", "info": "מסורתית משויך לריפוי גופני. ללא ביסוס מדעי מוכח.", "hue": 26 },
+  { "id": "sol-396", "type": "solfeggio", "hz": 396, "label": "שחרור פחד ואשמה", "trust": "traditional", "info": "תדר צ'אקרת היסוד במסורת. חוויתי בעיקרו.", "hue": 355 },
+  { "id": "sol-417", "type": "solfeggio", "hz": 417, "label": "שינוי ותמורה", "trust": "traditional", "info": "מקושר מסורתית לשחרור דפוסים ישנים.", "hue": 32 },
+  { "id": "sol-432", "type": "tuning", "hz": 432, "label": "כוונון חלופי", "trust": "traditional", "info": "כוונון מוזיקלי חלופי ל-440Hz הסטנדרטי. ההשפעה הנטענת עליו אנקדוטלית.", "hue": 172 },
+  { "id": "sol-528", "type": "solfeggio", "hz": 528, "label": "שינוי וטרנספורמציה", "trust": "traditional", "info": "התדר הפופולרי ביותר במסורת הסולפג'יו. אין הוכחה מדעית לטענות פיזיולוגיות עליו (כולל טענות 'תיקון DNA' שאינן נתמכות מחקרית).", "hue": 132 },
+  { "id": "sol-639", "type": "solfeggio", "hz": 639, "label": "חיבור ויחסים", "trust": "traditional", "info": "מקושר מסורתית להרמוניה בין-אישית.", "hue": 330 },
+  { "id": "sol-741", "type": "solfeggio", "hz": 741, "label": "ביטוי ופתרון בעיות", "trust": "traditional", "info": "משויך מסורתית לצלילות מחשבתית.", "hue": 196 },
+  { "id": "sol-852", "type": "solfeggio", "hz": 852, "label": "חזרה לסדר רוחני", "trust": "traditional", "info": "משויך מסורתית להתעוררות אינטואיטיבית.", "hue": 250 },
+  { "id": "sol-963", "type": "solfeggio", "hz": 963, "label": "חיבור וחזון", "trust": "traditional", "info": "התדר הגבוה ביותר בסולם המסורתי, משויך לתובנה.", "hue": 278 },
+  { "id": "bb-delta", "type": "binaural", "range": [0.5, 4], "label": "דלתא — שינה עמוקה", "trust": "research_backed_partial", "info": "ביינאורל ביטס הראו אפקט קטן-עד-בינוני על איכות שינה במחקרים מסוימים, עם רמת ודאות נמוכה-בינונית.", "hue": 258 },
+  { "id": "bb-theta", "type": "binaural", "range": [4, 8], "label": "תטא — הרפיה עמוקה ומדיטציה", "trust": "research_backed_partial", "info": "נחקר בהקשר מדיטציה והרפיה, תוצאות משתנות בין מחקרים.", "hue": 232 },
+  { "id": "bb-alpha", "type": "binaural", "range": [8, 13], "label": "אלפא — רוגע ערני", "trust": "research_backed_partial", "info": "משויך למצב ערנות רגועה, ראיות חלקיות.", "hue": 190 },
+  { "id": "bb-beta", "type": "binaural", "range": [13, 30], "label": "בטא — ריכוז ופוקוס", "trust": "research_backed_partial", "info": "נחקר בהקשר ריכוז וערנות קוגניטיבית, ראיות מוגבלות.", "hue": 44 },
+  { "id": "bb-gamma", "type": "binaural", "range": [30, 50], "label": "גמא — עוררות קוגניטיבית", "trust": "research_backed_partial", "info": "מחקרים מסוימים בדקו קשר לתפקוד קוגניטיבי; ממצאים לא עקביים.", "hue": 12 }
+]

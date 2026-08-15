@@ -1,0 +1,108 @@
+import { describe, expect, it } from 'vitest'
+import {
+  BAND_MUSICAL_ROOT,
+  BEAT_FREQUENCIES,
+  FREQUENCIES,
+  JOURNEYS,
+  ROOT_FREQUENCIES,
+  TRUST_NOTICE,
+  defaultBeatHz,
+  getFrequency,
+} from './catalog'
+import { configForDay } from './journeyConfig'
+import { resolveTimerMinutes } from '../audio/SessionPlayer'
+
+describe('frequency catalog', () => {
+  it('carries the nine solfeggio tones, five bands and the 432 tuning', () => {
+    expect(FREQUENCIES.filter((f) => f.type === 'solfeggio')).toHaveLength(9)
+    expect(FREQUENCIES.filter((f) => f.type === 'binaural')).toHaveLength(5)
+    expect(FREQUENCIES.filter((f) => f.type === 'tuning')).toHaveLength(1)
+    expect(ROOT_FREQUENCIES).toHaveLength(10)
+  })
+
+  it('gives every entry an id, a label and a transparency notice', () => {
+    const ids = new Set<string>()
+    for (const f of FREQUENCIES) {
+      expect(f.id).toBeTruthy()
+      expect(ids.has(f.id), `duplicate id ${f.id}`).toBe(false)
+      ids.add(f.id)
+      expect(f.label.length).toBeGreaterThan(0)
+      expect(f.info.length).toBeGreaterThan(0)
+      expect(TRUST_NOTICE[f.trust]).toBeTruthy()
+    }
+  })
+
+  it('marks solfeggio and tuning entries as tradition-based, not research-backed', () => {
+    for (const f of FREQUENCIES) {
+      if (f.type === 'binaural') expect(f.trust).toBe('research_backed_partial')
+      else expect(f.trust).toBe('traditional')
+    }
+  })
+
+  it('defaults each band to the middle of its range', () => {
+    for (const f of BEAT_FREQUENCIES) {
+      const hz = defaultBeatHz(f)
+      expect(hz).toBeGreaterThanOrEqual(f.range[0])
+      expect(hz).toBeLessThanOrEqual(f.range[1])
+    }
+  })
+})
+
+describe('journeys', () => {
+  it('has four journeys whose schedules match their declared length', () => {
+    expect(JOURNEYS).toHaveLength(4)
+    for (const j of JOURNEYS) {
+      expect(j.schedule).toHaveLength(j.days)
+      expect(j.schedule.map((d) => d.day)).toEqual(
+        Array.from({ length: j.days }, (_, i) => i + 1),
+      )
+    }
+  })
+
+  it('references only frequencies that exist', () => {
+    for (const j of JOURNEYS) {
+      for (const day of j.schedule) {
+        expect(getFrequency(day.frequencyId), `${j.id} day ${day.day}`).toBeDefined()
+        expect(day.durationMin).toBeGreaterThan(0)
+        expect(day.note.length).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('pairs every brainwave band with a musical root', () => {
+    for (const band of BEAT_FREQUENCIES) {
+      const rootId = BAND_MUSICAL_ROOT[band.id]
+      expect(rootId, `no musical root for ${band.id}`).toBeDefined()
+      expect(getFrequency(rootId)?.hz).toBeTypeOf('number')
+    }
+  })
+})
+
+describe('configForDay', () => {
+  it('plays a solfeggio day as the melodic root with the beat layer off', () => {
+    const day = { day: 1, frequencyId: 'sol-396', durationMin: 30, note: '' }
+    const config = configForDay(day)
+    expect(config.rootId).toBe('sol-396')
+    expect(config.beatId).toBeNull()
+  })
+
+  it('turns a band day into a beat plus a pitched root', () => {
+    const day = { day: 4, frequencyId: 'bb-delta', durationMin: 60, note: '' }
+    const config = configForDay(day)
+    expect(config.beatId).toBe('bb-delta')
+    expect(getFrequency(config.rootId)?.hz).toBeTypeOf('number')
+    // The beat rate must fall inside the band it came from.
+    const range = getFrequency('bb-delta')!.range!
+    expect(config.beatHz).toBeGreaterThanOrEqual(range[0])
+    expect(config.beatHz).toBeLessThanOrEqual(range[1])
+  })
+
+  it('honours the prescribed duration exactly, without rounding to a preset', () => {
+    for (const j of JOURNEYS) {
+      for (const day of j.schedule) {
+        const config = configForDay(day)
+        expect(resolveTimerMinutes(config)).toBe(day.durationMin)
+      }
+    }
+  })
+})

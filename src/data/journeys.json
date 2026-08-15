@@ -1,0 +1,67 @@
+[
+  {
+    "id": "journey-sleep-7",
+    "title": "התאוששות שינה",
+    "days": 7,
+    "purpose": "sleep",
+    "description": "שבוע שמוריד את מערכת העצבים הילוך אחר הילוך — מהרפיית מתח היום ועד גלי דלתא עמוקים.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-396", "durationMin": 30, "note": "שחרור מתח היום" },
+      { "day": 2, "frequencyId": "bb-theta", "durationMin": 40, "note": "מעבר לתטא לקראת שינה" },
+      { "day": 3, "frequencyId": "sol-528", "durationMin": 45, "note": "הרפיה עמוקה" },
+      { "day": 4, "frequencyId": "bb-delta", "durationMin": 60, "note": "שינה עמוקה" },
+      { "day": 5, "frequencyId": "sol-639", "durationMin": 45, "note": "רוגע רגשי" },
+      { "day": 6, "frequencyId": "bb-delta", "durationMin": 90, "note": "שינה מלאה" },
+      { "day": 7, "frequencyId": "sol-963", "durationMin": 30, "note": "סיכום וחיבור" }
+    ]
+  },
+  {
+    "id": "journey-focus-5",
+    "title": "מוכנות למשימה",
+    "days": 5,
+    "purpose": "focus",
+    "description": "חמישה ימים שבונים ערנות עבודה — מאלפא רגוע ועד גמא ביום המשימה עצמו.",
+    "schedule": [
+      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 25, "note": "ערנות רגועה" },
+      { "day": 2, "frequencyId": "bb-beta", "durationMin": 30, "note": "ריכוז פעיל" },
+      { "day": 3, "frequencyId": "sol-741", "durationMin": 30, "note": "בהירות מחשבתית" },
+      { "day": 4, "frequencyId": "bb-gamma", "durationMin": 20, "note": "עוררות קוגניטיבית" },
+      { "day": 5, "frequencyId": "bb-beta", "durationMin": 35, "note": "יום המשימה" }
+    ]
+  },
+  {
+    "id": "journey-chakra-7",
+    "title": "מסע צ'אקרות",
+    "days": 7,
+    "purpose": "spiritual",
+    "description": "עלייה מסודרת בסולם הסולפג'יו המסורתי — מצ'אקרת היסוד ועד צ'אקרת הכתר.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-396", "durationMin": 20, "note": "צ'אקרת היסוד" },
+      { "day": 2, "frequencyId": "sol-417", "durationMin": 20, "note": "צ'אקרת הטבור" },
+      { "day": 3, "frequencyId": "sol-528", "durationMin": 20, "note": "צ'אקרת מקלעת השמש" },
+      { "day": 4, "frequencyId": "sol-639", "durationMin": 20, "note": "צ'אקרת הלב" },
+      { "day": 5, "frequencyId": "sol-741", "durationMin": 20, "note": "צ'אקרת הגרון" },
+      { "day": 6, "frequencyId": "sol-852", "durationMin": 20, "note": "צ'אקרת המצח" },
+      { "day": 7, "frequencyId": "sol-963", "durationMin": 20, "note": "צ'אקרת הכתר" }
+    ]
+  },
+  {
+    "id": "journey-anxiety-10",
+    "title": "הפחתת חרדה",
+    "days": 10,
+    "purpose": "anxiety",
+    "description": "עשרה ימים הדרגתיים לבניית יציבות — היכרות, שחרור, העמקה וסיכום.",
+    "schedule": [
+      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 20, "note": "היכרות עם הכלי" },
+      { "day": 2, "frequencyId": "sol-396", "durationMin": 25, "note": "שחרור פחד" },
+      { "day": 3, "frequencyId": "bb-theta", "durationMin": 25, "note": "הרפיה עמוקה" },
+      { "day": 4, "frequencyId": "sol-528", "durationMin": 30, "note": "איזון רגשי" },
+      { "day": 5, "frequencyId": "bb-alpha", "durationMin": 25, "note": "רוגע יומיומי" },
+      { "day": 6, "frequencyId": "sol-639", "durationMin": 30, "note": "חיבור לתמיכה" },
+      { "day": 7, "frequencyId": "bb-theta", "durationMin": 30, "note": "העמקת ההרפיה" },
+      { "day": 8, "frequencyId": "sol-741", "durationMin": 25, "note": "בהירות" },
+      { "day": 9, "frequencyId": "bb-alpha", "durationMin": 30, "note": "יציבות" },
+      { "day": 10, "frequencyId": "sol-963", "durationMin": 30, "note": "סיכום המסע" }
+    ]
+  }
+]

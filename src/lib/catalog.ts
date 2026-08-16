@@ -71,6 +71,7 @@ export const PURPOSE_LABEL: Record<JourneyPurpose, string> = {
   psychedelic: 'פסיכדלי',
   work: 'עבודה',
   intimacy: 'זוגיות',
+  club: 'טכנו וטראנס',
 }
 
 /**
@@ -104,6 +105,7 @@ export const PURPOSE_BAND: Record<JourneyPurpose, string> = {
   psychedelic: 'bb-theta',
   work: 'bb-beta',
   intimacy: 'bb-alpha',
+  club: 'bb-beta',
 }
 
 /** Middle of a band's range — the default beat rate when a band is picked. */

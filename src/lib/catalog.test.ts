@@ -138,6 +138,37 @@ describe('journeys', () => {
     }
   })
 
+  it('runs a club engine on every club day, and nowhere else', () => {
+    const club = JOURNEYS.filter((j) => j.purpose === 'club')
+    expect(club.length).toBeGreaterThan(0)
+    for (const j of JOURNEYS) {
+      for (const day of j.schedule) {
+        const where = `${j.id} day ${day.day}`
+        if (j.purpose === 'club') {
+          // The club styles are a different engine, not a louder ambient one.
+          // A club day without one would play drifting pads under a title that
+          // promises techno.
+          expect(['techno', 'trance'], `${where} style`).toContain(day.style)
+        } else {
+          // And the reverse: a kick must not appear under a sleep journey
+          // because a style was pasted into the wrong entry.
+          expect(day.style, `${where} should stay ambient`).toBeUndefined()
+        }
+      }
+    }
+  })
+
+  it('keeps every club day inside a tempo that is still the genre', () => {
+    for (const j of JOURNEYS.filter((x) => x.purpose === 'club')) {
+      for (const day of j.schedule) {
+        // pace maps to BPM as base +/- 8, so this keeps techno in 122-134 and
+        // trance in 132-144. Below this the grid stops reading as a floor.
+        expect(day.pace, `${j.id} day ${day.day}`).toBeGreaterThanOrEqual(0.3)
+        expect(day.pace, `${j.id} day ${day.day}`).toBeLessThanOrEqual(1)
+      }
+    }
+  })
+
   it('labels and colours every purpose in use', () => {
     for (const j of JOURNEYS) {
       expect(PURPOSE_LABEL[j.purpose], `no label for purpose ${j.purpose}`).toBeTruthy()
@@ -216,7 +247,15 @@ describe('configForDay', () => {
 
 describe('journey day isolation', () => {
   it('does not let one day\'s character leak into the next', () => {
-    const psychedelic = { day: 1, frequencyId: 'sol-639', durationMin: 30, note: '', depth: 1, pace: 0.9 }
+    const psychedelic = {
+      day: 1,
+      frequencyId: 'sol-639',
+      durationMin: 30,
+      note: '',
+      depth: 1,
+      pace: 0.9,
+      style: 'techno' as const,
+    }
     const plain = { day: 1, frequencyId: 'sol-528', durationMin: 20, note: '' }
 
     // Play a deep, fast day, then start a day that specifies neither.
@@ -225,6 +264,9 @@ describe('journey day isolation', () => {
 
     expect(next.depth, 'depth leaked from the previous day').toBe(DEFAULT_CONFIG.depth)
     expect(next.pace, 'pace leaked from the previous day').toBe(DEFAULT_CONFIG.pace)
+    // A kick surviving into a meditation day would be the loudest possible
+    // version of this bug.
+    expect(next.style, 'style leaked from the previous day').toBe('ambient')
   })
 })
 

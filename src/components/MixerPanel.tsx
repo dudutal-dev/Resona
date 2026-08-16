@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react'
 import { BUILTIN_AMBIENCE, type AmbienceOption } from '../audio/Ambience'
+import { clubBpm } from '../audio/ClubGroove'
 import { player } from '../audio/SessionPlayer'
 import { getFrequency } from '../lib/catalog'
+import type { MelodyStyle } from '../lib/types'
 import { useSession } from '../store/sessionStore'
 import { ListeningMode } from './ListeningMode'
 import { Slider } from './ui'
+
+const STYLES: { id: MelodyStyle; label: string }[] = [
+  { id: 'ambient', label: 'אמביינט' },
+  { id: 'techno', label: 'טכנו' },
+  { id: 'trance', label: 'טראנס' },
+]
 
 const WaveIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -40,7 +48,8 @@ const CloudIcon = () => (
 
 /** Per-layer volume plus the controls that shape each layer (§4.5). */
 export function MixerPanel() {
-  const { config, setLevel, setAmbience, setBeatHz, setDensity, setPace, setDepth } = useSession()
+  const { config, setLevel, setAmbience, setBeatHz, setDensity, setPace, setDepth, setStyle } =
+    useSession()
   const [ambienceOptions, setAmbienceOptions] = useState<AmbienceOption[]>(BUILTIN_AMBIENCE)
 
   useEffect(() => {
@@ -55,6 +64,9 @@ export function MixerPanel() {
 
   const beat = config.beatId ? getFrequency(config.beatId) : null
   const range = beat?.range ?? [0.5, 50]
+  const style = config.style ?? 'ambient'
+  const club = style !== 'ambient'
+  const root = getFrequency(config.rootId)
 
   return (
     <div className="space-y-5">
@@ -67,6 +79,32 @@ export function MixerPanel() {
           onChange={(v) => setLevel('melody', v)}
         />
         <div className="mt-3 space-y-3 border-t pt-3" style={{ borderColor: 'var(--border)' }}>
+          {/* The club engine is reachable from journeys and is stored with the
+              session, so it needs a control here — otherwise a techno day would
+              quietly follow the listener into every session after it. */}
+          <div>
+            <span className="txt-2 text-xs font-semibold">אופי המלודיה</span>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {STYLES.map((s) => {
+                const active = style === s.id
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => setStyle(s.id)}
+                    aria-pressed={active}
+                    className="rounded-2xl px-2 py-2 text-xs font-semibold transition-all active:scale-95"
+                    style={{
+                      background: active ? 'var(--accent-soft)' : 'var(--card)',
+                      border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,
+                      color: active ? 'var(--accent)' : 'var(--txt-2)',
+                    }}
+                  >
+                    {s.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
           <Slider
             label="צפיפות נגינה"
             value={config.density}
@@ -78,13 +116,15 @@ export function MixerPanel() {
             value={config.pace}
             onChange={setPace}
             display={
-              config.pace < 0.25
-                ? 'נייח'
-                : config.pace < 0.45
-                  ? 'זורם'
-                  : config.pace < 0.7
-                    ? 'פועם'
-                    : 'קצבי'
+              club
+                ? `${Math.round(clubBpm(style as 'techno' | 'trance', config.pace))} BPM`
+                : config.pace < 0.25
+                  ? 'נייח'
+                  : config.pace < 0.45
+                    ? 'זורם'
+                    : config.pace < 0.7
+                      ? 'פועם'
+                      : 'קצבי'
             }
           />
           <Slider
@@ -108,11 +148,28 @@ export function MixerPanel() {
               בפסנתר. עדיין יחסים שלמים מדויקים של תדר היסוד.
             </p>
           )}
-          {config.pace >= 0.45 && (
+          {club ? (
             <p className="txt-3 text-[11px] leading-relaxed">
-              מעל "פועם" נכנסת פעימת בס על תדר היסוד, התווים מתקצרים והנגיעה נעשית נקישה במקום
-              התנפחות.
+              {style === 'techno'
+                ? 'טכנו: קיק על כל פעימה, בס מתחתיו, האט בין הפעימות וארפג׳ שמתחלף כל ארבע תיבות.'
+                : 'טראנס: שש עשרה תיבות נהיגה, ברייקדאון שבו הקיק נעלם, בילד עם פילטר עולה ודרופ. הבס יושב בין הפעימות.'}{' '}
+              הקיק עצמו הוא{' '}
+              {root?.hz ? (
+                <>
+                  <span className="ltr">{root.hz} Hz</span> מקופל אוקטבות מטה
+                </>
+              ) : (
+                'תדר היסוד מקופל אוקטבות מטה'
+              )}
+              , כך שגם הצליל החזק ביותר במיקס הוא התדר שבחרת.
             </p>
+          ) : (
+            config.pace >= 0.45 && (
+              <p className="txt-3 text-[11px] leading-relaxed">
+                מעל "פועם" נכנסת פעימת בס על תדר היסוד, התווים מתקצרים והנגיעה נעשית נקישה במקום
+                התנפחות.
+              </p>
+            )
           )}
         </div>
       </div>

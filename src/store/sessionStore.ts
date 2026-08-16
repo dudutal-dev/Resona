@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { AmbienceId, BeatMode, SessionConfig, TimerMode } from '../lib/types'
+import type { AmbienceId, BeatMode, MelodyStyle, SessionConfig, TimerMode } from '../lib/types'
 import { defaultBeatHz, getFrequency } from '../lib/catalog'
 import { STORAGE_KEYS, readJSON, writeJSON } from '../lib/storage'
 import { player } from '../audio/SessionPlayer'
@@ -15,6 +15,7 @@ export const DEFAULT_CONFIG: SessionConfig = {
   density: 0.5,
   pace: 0.25,
   depth: 0,
+  style: 'ambient',
 }
 
 type SessionState = {
@@ -37,6 +38,7 @@ type SessionState = {
   setDensity: (value: number) => void
   setPace: (value: number) => void
   setDepth: (value: number) => void
+  setStyle: (style: MelodyStyle) => void
   loadConfig: (config: SessionConfig, journey?: { journeyId: string; day: number } | null) => void
 
   toggle: () => Promise<void>
@@ -97,6 +99,7 @@ export const useSession = create<SessionState>((set, get) => {
     setDensity: (value) => commit({ ...get().config, density: value }),
     setPace: (value) => commit({ ...get().config, pace: value }),
     setDepth: (value) => commit({ ...get().config, depth: value }),
+    setStyle: (style) => commit({ ...get().config, style }),
 
     loadConfig: (config, journey = null) => {
       set({ activeJourney: journey })

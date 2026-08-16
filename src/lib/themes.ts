@@ -14,6 +14,7 @@ export type JourneyTheme =
   | 'inner'
   | 'intimacy'
   | 'psychedelic'
+  | 'club'
 
 /** Total by construction, so a new purpose cannot land without a shelf. */
 export const THEME_OF: Record<JourneyPurpose, JourneyTheme> = {
@@ -35,6 +36,8 @@ export const THEME_OF: Record<JourneyPurpose, JourneyTheme> = {
   intimacy: 'intimacy',
 
   psychedelic: 'psychedelic',
+
+  club: 'club',
 }
 
 export const THEME_ORDER: JourneyTheme[] = [
@@ -44,6 +47,7 @@ export const THEME_ORDER: JourneyTheme[] = [
   'motion',
   'inner',
   'intimacy',
+  'club',
   'psychedelic',
 ]
 
@@ -54,6 +58,7 @@ export const THEME_LABEL: Record<JourneyTheme, string> = {
   motion: 'תנועה וקצב',
   inner: 'פנימי',
   intimacy: 'זוגיות',
+  club: 'טכנו וטראנס',
   psychedelic: 'פסיכדלי',
 }
 
@@ -64,6 +69,7 @@ export const THEME_BLURB: Record<JourneyTheme, string> = {
   motion: 'פעימה קבועה — להליכה, למתיחות, לעמידה',
   inner: 'מדיטציה, התבוננות ויצירה',
   intimacy: 'ערב לשניים, מגע וקרבה',
+  club: 'קיק על התדר עצמו, בס וארפג׳ים — סטים לתנועה',
   psychedelic: 'הדים ארוכים ומרווחים לא מוכרים',
 }
 
@@ -74,6 +80,7 @@ export const THEME_HUE: Record<JourneyTheme, number> = {
   motion: 96,
   inner: 292,
   intimacy: 345,
+  club: 186,
   psychedelic: 310,
 }
 

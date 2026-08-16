@@ -6,13 +6,48 @@
     "purpose": "sleep",
     "description": "שבוע שמוריד את מערכת העצבים הילוך אחר הילוך — מהרפיית מתח היום ועד גלי דלתא עמוקים.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-396", "durationMin": 30, "note": "שחרור מתח היום" },
-      { "day": 2, "frequencyId": "bb-theta", "durationMin": 40, "note": "מעבר לתטא לקראת שינה" },
-      { "day": 3, "frequencyId": "sol-528", "durationMin": 45, "note": "הרפיה עמוקה" },
-      { "day": 4, "frequencyId": "bb-delta", "durationMin": 60, "note": "שינה עמוקה" },
-      { "day": 5, "frequencyId": "sol-639", "durationMin": 45, "note": "רוגע רגשי" },
-      { "day": 6, "frequencyId": "bb-delta", "durationMin": 90, "note": "שינה מלאה" },
-      { "day": 7, "frequencyId": "sol-963", "durationMin": 30, "note": "סיכום וחיבור" }
+      {
+        "day": 1,
+        "frequencyId": "sol-396",
+        "durationMin": 30,
+        "note": "שחרור מתח היום"
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-theta",
+        "durationMin": 40,
+        "note": "מעבר לתטא לקראת שינה"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 45,
+        "note": "הרפיה עמוקה"
+      },
+      {
+        "day": 4,
+        "frequencyId": "bb-delta",
+        "durationMin": 60,
+        "note": "שינה עמוקה"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-639",
+        "durationMin": 45,
+        "note": "רוגע רגשי"
+      },
+      {
+        "day": 6,
+        "frequencyId": "bb-delta",
+        "durationMin": 90,
+        "note": "שינה מלאה"
+      },
+      {
+        "day": 7,
+        "frequencyId": "sol-963",
+        "durationMin": 30,
+        "note": "סיכום וחיבור"
+      }
     ]
   },
   {
@@ -22,11 +57,36 @@
     "purpose": "focus",
     "description": "חמישה ימים שבונים ערנות עבודה — מאלפא רגוע ועד גמא ביום המשימה עצמו.",
     "schedule": [
-      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 25, "note": "ערנות רגועה" },
-      { "day": 2, "frequencyId": "bb-beta", "durationMin": 30, "note": "ריכוז פעיל" },
-      { "day": 3, "frequencyId": "sol-741", "durationMin": 30, "note": "בהירות מחשבתית" },
-      { "day": 4, "frequencyId": "bb-gamma", "durationMin": 20, "note": "עוררות קוגניטיבית" },
-      { "day": 5, "frequencyId": "bb-beta", "durationMin": 35, "note": "יום המשימה" }
+      {
+        "day": 1,
+        "frequencyId": "bb-alpha",
+        "durationMin": 25,
+        "note": "ערנות רגועה"
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-beta",
+        "durationMin": 30,
+        "note": "ריכוז פעיל"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-741",
+        "durationMin": 30,
+        "note": "בהירות מחשבתית"
+      },
+      {
+        "day": 4,
+        "frequencyId": "bb-gamma",
+        "durationMin": 20,
+        "note": "עוררות קוגניטיבית"
+      },
+      {
+        "day": 5,
+        "frequencyId": "bb-beta",
+        "durationMin": 35,
+        "note": "יום המשימה"
+      }
     ]
   },
   {
@@ -36,13 +96,48 @@
     "purpose": "spiritual",
     "description": "עלייה מסודרת בסולם הסולפג'יו המסורתי — מצ'אקרת היסוד ועד צ'אקרת הכתר.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-396", "durationMin": 20, "note": "צ'אקרת היסוד" },
-      { "day": 2, "frequencyId": "sol-417", "durationMin": 20, "note": "צ'אקרת הטבור" },
-      { "day": 3, "frequencyId": "sol-528", "durationMin": 20, "note": "צ'אקרת מקלעת השמש" },
-      { "day": 4, "frequencyId": "sol-639", "durationMin": 20, "note": "צ'אקרת הלב" },
-      { "day": 5, "frequencyId": "sol-741", "durationMin": 20, "note": "צ'אקרת הגרון" },
-      { "day": 6, "frequencyId": "sol-852", "durationMin": 20, "note": "צ'אקרת המצח" },
-      { "day": 7, "frequencyId": "sol-963", "durationMin": 20, "note": "צ'אקרת הכתר" }
+      {
+        "day": 1,
+        "frequencyId": "sol-396",
+        "durationMin": 20,
+        "note": "צ'אקרת היסוד"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-417",
+        "durationMin": 20,
+        "note": "צ'אקרת הטבור"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 20,
+        "note": "צ'אקרת מקלעת השמש"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-639",
+        "durationMin": 20,
+        "note": "צ'אקרת הלב"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-741",
+        "durationMin": 20,
+        "note": "צ'אקרת הגרון"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-852",
+        "durationMin": 20,
+        "note": "צ'אקרת המצח"
+      },
+      {
+        "day": 7,
+        "frequencyId": "sol-963",
+        "durationMin": 20,
+        "note": "צ'אקרת הכתר"
+      }
     ]
   },
   {
@@ -52,16 +147,66 @@
     "purpose": "anxiety",
     "description": "עשרה ימים הדרגתיים לבניית יציבות — היכרות, שחרור, העמקה וסיכום.",
     "schedule": [
-      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 20, "note": "היכרות עם הכלי" },
-      { "day": 2, "frequencyId": "sol-396", "durationMin": 25, "note": "שחרור פחד" },
-      { "day": 3, "frequencyId": "bb-theta", "durationMin": 25, "note": "הרפיה עמוקה" },
-      { "day": 4, "frequencyId": "sol-528", "durationMin": 30, "note": "איזון רגשי" },
-      { "day": 5, "frequencyId": "bb-alpha", "durationMin": 25, "note": "רוגע יומיומי" },
-      { "day": 6, "frequencyId": "sol-639", "durationMin": 30, "note": "חיבור לתמיכה" },
-      { "day": 7, "frequencyId": "bb-theta", "durationMin": 30, "note": "העמקת ההרפיה" },
-      { "day": 8, "frequencyId": "sol-741", "durationMin": 25, "note": "בהירות" },
-      { "day": 9, "frequencyId": "bb-alpha", "durationMin": 30, "note": "יציבות" },
-      { "day": 10, "frequencyId": "sol-963", "durationMin": 30, "note": "סיכום המסע" }
+      {
+        "day": 1,
+        "frequencyId": "bb-alpha",
+        "durationMin": 20,
+        "note": "היכרות עם הכלי"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-396",
+        "durationMin": 25,
+        "note": "שחרור פחד"
+      },
+      {
+        "day": 3,
+        "frequencyId": "bb-theta",
+        "durationMin": 25,
+        "note": "הרפיה עמוקה"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-528",
+        "durationMin": 30,
+        "note": "איזון רגשי"
+      },
+      {
+        "day": 5,
+        "frequencyId": "bb-alpha",
+        "durationMin": 25,
+        "note": "רוגע יומיומי"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-639",
+        "durationMin": 30,
+        "note": "חיבור לתמיכה"
+      },
+      {
+        "day": 7,
+        "frequencyId": "bb-theta",
+        "durationMin": 30,
+        "note": "העמקת ההרפיה"
+      },
+      {
+        "day": 8,
+        "frequencyId": "sol-741",
+        "durationMin": 25,
+        "note": "בהירות"
+      },
+      {
+        "day": 9,
+        "frequencyId": "bb-alpha",
+        "durationMin": 30,
+        "note": "יציבות"
+      },
+      {
+        "day": 10,
+        "frequencyId": "sol-963",
+        "durationMin": 30,
+        "note": "סיכום המסע"
+      }
     ]
   },
   {
@@ -71,9 +216,24 @@
     "purpose": "intro",
     "description": "המסע הקצר ביותר. שלוש האזנות שמראות את ההבדל בין גל מוחי לתדר יסוד, כדי שתדע לאן להמשיך.",
     "schedule": [
-      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 15, "note": "טעימה ראשונה — ערנות רגועה" },
-      { "day": 2, "frequencyId": "sol-528", "durationMin": 20, "note": "כך נשמעת מלודיה שנבנית מתדר יסוד" },
-      { "day": 3, "frequencyId": "bb-theta", "durationMin": 25, "note": "העמקה — ובחירה לאן ממשיכים" }
+      {
+        "day": 1,
+        "frequencyId": "bb-alpha",
+        "durationMin": 15,
+        "note": "טעימה ראשונה — ערנות רגועה"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 20,
+        "note": "כך נשמעת מלודיה שנבנית מתדר יסוד"
+      },
+      {
+        "day": 3,
+        "frequencyId": "bb-theta",
+        "durationMin": 25,
+        "note": "העמקה — ובחירה לאן ממשיכים"
+      }
     ]
   },
   {
@@ -83,11 +243,36 @@
     "purpose": "energy",
     "description": "חמש האזנות בוקר קצרות שמעלות הילוך בהדרגה — מהתעוררות רכה ועד ערנות מלאה.",
     "schedule": [
-      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 15, "note": "התעוררות רכה" },
-      { "day": 2, "frequencyId": "sol-741", "durationMin": 20, "note": "צלילות לפני היציאה" },
-      { "day": 3, "frequencyId": "bb-beta", "durationMin": 20, "note": "העלאת הילוך" },
-      { "day": 4, "frequencyId": "sol-852", "durationMin": 20, "note": "מיקוד וכוונה ליום" },
-      { "day": 5, "frequencyId": "bb-gamma", "durationMin": 15, "note": "פתיחה ערנית" }
+      {
+        "day": 1,
+        "frequencyId": "bb-alpha",
+        "durationMin": 15,
+        "note": "התעוררות רכה"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-741",
+        "durationMin": 20,
+        "note": "צלילות לפני היציאה"
+      },
+      {
+        "day": 3,
+        "frequencyId": "bb-beta",
+        "durationMin": 20,
+        "note": "העלאת הילוך"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-852",
+        "durationMin": 20,
+        "note": "מיקוד וכוונה ליום"
+      },
+      {
+        "day": 5,
+        "frequencyId": "bb-gamma",
+        "durationMin": 15,
+        "note": "פתיחה ערנית"
+      }
     ]
   },
   {
@@ -97,13 +282,48 @@
     "purpose": "creativity",
     "description": "שבוע שנע בין הרפיה לחדות — תטא לרעיונות גולמיים, אלפא לעבודה רגועה, ובהירות לניסוח.",
     "schedule": [
-      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 25, "note": "הרפיית הביקורת הפנימית" },
-      { "day": 2, "frequencyId": "sol-417", "durationMin": 30, "note": "פתיחות לשינוי" },
-      { "day": 3, "frequencyId": "bb-theta", "durationMin": 30, "note": "מצב חלימה ערה" },
-      { "day": 4, "frequencyId": "sol-528", "durationMin": 30, "note": "אמצע המסע — זרימה" },
-      { "day": 5, "frequencyId": "bb-alpha", "durationMin": 25, "note": "עבודה רגועה" },
-      { "day": 6, "frequencyId": "sol-741", "durationMin": 30, "note": "ניסוח ובהירות" },
-      { "day": 7, "frequencyId": "bb-gamma", "durationMin": 20, "note": "חיבור הקצוות" }
+      {
+        "day": 1,
+        "frequencyId": "bb-alpha",
+        "durationMin": 25,
+        "note": "הרפיית הביקורת הפנימית"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-417",
+        "durationMin": 30,
+        "note": "פתיחות לשינוי"
+      },
+      {
+        "day": 3,
+        "frequencyId": "bb-theta",
+        "durationMin": 30,
+        "note": "מצב חלימה ערה"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-528",
+        "durationMin": 30,
+        "note": "אמצע המסע — זרימה"
+      },
+      {
+        "day": 5,
+        "frequencyId": "bb-alpha",
+        "durationMin": 25,
+        "note": "עבודה רגועה"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-741",
+        "durationMin": 30,
+        "note": "ניסוח ובהירות"
+      },
+      {
+        "day": 7,
+        "frequencyId": "bb-gamma",
+        "durationMin": 20,
+        "note": "חיבור הקצוות"
+      }
     ]
   },
   {
@@ -113,13 +333,48 @@
     "purpose": "body",
     "description": "שבוע של האזנות ארוכות ושקטות להרפיית מתח פיזי מצטבר. מסע הרפיה — לא טיפול.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-174", "durationMin": 25, "note": "נחיתה בגוף" },
-      { "day": 2, "frequencyId": "sol-285", "durationMin": 25, "note": "תשומת לב לתחושה" },
-      { "day": 3, "frequencyId": "bb-theta", "durationMin": 30, "note": "שחרור עמוק" },
-      { "day": 4, "frequencyId": "sol-396", "durationMin": 30, "note": "הרפיית מתח מצטבר" },
-      { "day": 5, "frequencyId": "bb-delta", "durationMin": 45, "note": "מנוחה עמוקה" },
-      { "day": 6, "frequencyId": "sol-174", "durationMin": 30, "note": "יסוד ויציבות" },
-      { "day": 7, "frequencyId": "bb-theta", "durationMin": 30, "note": "סיכום — גוף רגוע" }
+      {
+        "day": 1,
+        "frequencyId": "sol-174",
+        "durationMin": 25,
+        "note": "נחיתה בגוף"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-285",
+        "durationMin": 25,
+        "note": "תשומת לב לתחושה"
+      },
+      {
+        "day": 3,
+        "frequencyId": "bb-theta",
+        "durationMin": 30,
+        "note": "שחרור עמוק"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-396",
+        "durationMin": 30,
+        "note": "הרפיית מתח מצטבר"
+      },
+      {
+        "day": 5,
+        "frequencyId": "bb-delta",
+        "durationMin": 45,
+        "note": "מנוחה עמוקה"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-174",
+        "durationMin": 30,
+        "note": "יסוד ויציבות"
+      },
+      {
+        "day": 7,
+        "frequencyId": "bb-theta",
+        "durationMin": 30,
+        "note": "סיכום — גוף רגוע"
+      }
     ]
   },
   {
@@ -129,20 +384,90 @@
     "purpose": "spiritual",
     "description": "המסע הארוך ביותר. מתחיל בעשר דקות ומאריך בהדרגה עד ארבעים, כדי לבנות ישיבה יציבה במקום לקפוץ אליה.",
     "schedule": [
-      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 10, "note": "ישיבה קצרה" },
-      { "day": 2, "frequencyId": "bb-alpha", "durationMin": 15, "note": "התארכות ראשונה" },
-      { "day": 3, "frequencyId": "sol-432", "durationMin": 20, "note": "כוונון" },
-      { "day": 4, "frequencyId": "bb-theta", "durationMin": 20, "note": "כניסה לתטא" },
-      { "day": 5, "frequencyId": "bb-theta", "durationMin": 25, "note": "שהייה" },
-      { "day": 6, "frequencyId": "sol-528", "durationMin": 25, "note": "מרכז רגשי" },
-      { "day": 7, "frequencyId": "bb-theta", "durationMin": 30, "note": "אמצע הדרך" },
-      { "day": 8, "frequencyId": "sol-639", "durationMin": 30, "note": "פתיחות" },
-      { "day": 9, "frequencyId": "bb-theta", "durationMin": 30, "note": "יציבות בתטא" },
-      { "day": 10, "frequencyId": "sol-852", "durationMin": 30, "note": "אינטואיציה" },
-      { "day": 11, "frequencyId": "bb-theta", "durationMin": 35, "note": "עומק" },
-      { "day": 12, "frequencyId": "sol-963", "durationMin": 35, "note": "מרחב" },
-      { "day": 13, "frequencyId": "bb-delta", "durationMin": 40, "note": "שקט" },
-      { "day": 14, "frequencyId": "sol-963", "durationMin": 30, "note": "סיכום המסע" }
+      {
+        "day": 1,
+        "frequencyId": "bb-alpha",
+        "durationMin": 10,
+        "note": "ישיבה קצרה"
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-alpha",
+        "durationMin": 15,
+        "note": "התארכות ראשונה"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-432",
+        "durationMin": 20,
+        "note": "כוונון"
+      },
+      {
+        "day": 4,
+        "frequencyId": "bb-theta",
+        "durationMin": 20,
+        "note": "כניסה לתטא"
+      },
+      {
+        "day": 5,
+        "frequencyId": "bb-theta",
+        "durationMin": 25,
+        "note": "שהייה"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-528",
+        "durationMin": 25,
+        "note": "מרכז רגשי"
+      },
+      {
+        "day": 7,
+        "frequencyId": "bb-theta",
+        "durationMin": 30,
+        "note": "אמצע הדרך"
+      },
+      {
+        "day": 8,
+        "frequencyId": "sol-639",
+        "durationMin": 30,
+        "note": "פתיחות"
+      },
+      {
+        "day": 9,
+        "frequencyId": "bb-theta",
+        "durationMin": 30,
+        "note": "יציבות בתטא"
+      },
+      {
+        "day": 10,
+        "frequencyId": "sol-852",
+        "durationMin": 30,
+        "note": "אינטואיציה"
+      },
+      {
+        "day": 11,
+        "frequencyId": "bb-theta",
+        "durationMin": 35,
+        "note": "עומק"
+      },
+      {
+        "day": 12,
+        "frequencyId": "sol-963",
+        "durationMin": 35,
+        "note": "מרחב"
+      },
+      {
+        "day": 13,
+        "frequencyId": "bb-delta",
+        "durationMin": 40,
+        "note": "שקט"
+      },
+      {
+        "day": 14,
+        "frequencyId": "sol-963",
+        "durationMin": 30,
+        "note": "סיכום המסע"
+      }
     ]
   },
   {
@@ -153,15 +478,69 @@
     "purpose": "rhythm",
     "description": "יום לכל תדר בסולם הסולפג׳יו, מ-174 ועד 963 — כל יום מדרגה אחת למעלה, ובקצב פועם ולא נייח.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-174", "durationMin": 20, "note": "המדרגה הראשונה — נמוך ויציב", "pace": 0.5 },
-      { "day": 2, "frequencyId": "sol-285", "durationMin": 20, "note": "צעד למעלה", "pace": 0.52 },
-      { "day": 3, "frequencyId": "sol-396", "durationMin": 20, "note": "הקצב מתייצב", "pace": 0.56 },
-      { "day": 4, "frequencyId": "sol-417", "durationMin": 25, "note": "תנועה", "pace": 0.6 },
-      { "day": 5, "frequencyId": "sol-528", "durationMin": 25, "note": "אמצע הסולם", "pace": 0.64 },
-      { "day": 6, "frequencyId": "sol-639", "durationMin": 25, "note": "פתיחה", "pace": 0.68 },
-      { "day": 7, "frequencyId": "sol-741", "durationMin": 25, "note": "בהירות בקצב", "pace": 0.72 },
-      { "day": 8, "frequencyId": "sol-852", "durationMin": 25, "note": "כמעט למעלה", "pace": 0.76 },
-      { "day": 9, "frequencyId": "sol-963", "durationMin": 30, "note": "המדרגה העליונה", "pace": 0.8 }
+      {
+        "day": 1,
+        "frequencyId": "sol-174",
+        "durationMin": 20,
+        "note": "המדרגה הראשונה — נמוך ויציב",
+        "pace": 0.5
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-285",
+        "durationMin": 20,
+        "note": "צעד למעלה",
+        "pace": 0.52
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-396",
+        "durationMin": 20,
+        "note": "הקצב מתייצב",
+        "pace": 0.56
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-417",
+        "durationMin": 25,
+        "note": "תנועה",
+        "pace": 0.6
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-528",
+        "durationMin": 25,
+        "note": "אמצע הסולם",
+        "pace": 0.64
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-639",
+        "durationMin": 25,
+        "note": "פתיחה",
+        "pace": 0.68
+      },
+      {
+        "day": 7,
+        "frequencyId": "sol-741",
+        "durationMin": 25,
+        "note": "בהירות בקצב",
+        "pace": 0.72
+      },
+      {
+        "day": 8,
+        "frequencyId": "sol-852",
+        "durationMin": 25,
+        "note": "כמעט למעלה",
+        "pace": 0.76
+      },
+      {
+        "day": 9,
+        "frequencyId": "sol-963",
+        "durationMin": 30,
+        "note": "המדרגה העליונה",
+        "pace": 0.8
+      }
     ]
   },
   {
@@ -172,11 +551,41 @@
     "purpose": "rhythm",
     "description": "חמש האזנות קצרות וקצביות לתחילת יום — עולות בסולם ומעלות קצב יחד איתו.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-396", "durationMin": 15, "note": "התנעה", "pace": 0.55 },
-      { "day": 2, "frequencyId": "sol-417", "durationMin": 15, "note": "תנועה קדימה", "pace": 0.65 },
-      { "day": 3, "frequencyId": "sol-528", "durationMin": 20, "note": "קצב מלא", "pace": 0.75 },
-      { "day": 4, "frequencyId": "sol-741", "durationMin": 20, "note": "חדות", "pace": 0.85 },
-      { "day": 5, "frequencyId": "sol-852", "durationMin": 20, "note": "שיא הבוקר", "pace": 0.92 }
+      {
+        "day": 1,
+        "frequencyId": "sol-396",
+        "durationMin": 15,
+        "note": "התנעה",
+        "pace": 0.55
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-417",
+        "durationMin": 15,
+        "note": "תנועה קדימה",
+        "pace": 0.65
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 20,
+        "note": "קצב מלא",
+        "pace": 0.75
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-741",
+        "durationMin": 20,
+        "note": "חדות",
+        "pace": 0.85
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-852",
+        "durationMin": 20,
+        "note": "שיא הבוקר",
+        "pace": 0.92
+      }
     ]
   },
   {
@@ -187,13 +596,55 @@
     "purpose": "rhythm",
     "description": "מסע להליכה, מתיחות או עבודה בעמידה. פעימה קבועה לאורך כל הדרך, עם עלייה מתמדת בסולם.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-417", "durationMin": 20, "note": "יציאה לדרך", "pace": 0.6 },
-      { "day": 2, "frequencyId": "sol-528", "durationMin": 25, "note": "מציאת הקצב", "pace": 0.66 },
-      { "day": 3, "frequencyId": "sol-639", "durationMin": 25, "note": "אמצע המסע", "pace": 0.7 },
-      { "day": 4, "frequencyId": "bb-beta", "durationMin": 25, "note": "ערנות בתנועה", "pace": 0.74 },
-      { "day": 5, "frequencyId": "sol-741", "durationMin": 30, "note": "קצב מתמשך", "pace": 0.78 },
-      { "day": 6, "frequencyId": "bb-gamma", "durationMin": 20, "note": "פרץ קצר", "pace": 0.88 },
-      { "day": 7, "frequencyId": "sol-852", "durationMin": 30, "note": "סיום גבוה", "pace": 0.8 }
+      {
+        "day": 1,
+        "frequencyId": "sol-417",
+        "durationMin": 20,
+        "note": "יציאה לדרך",
+        "pace": 0.6
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 25,
+        "note": "מציאת הקצב",
+        "pace": 0.66
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-639",
+        "durationMin": 25,
+        "note": "אמצע המסע",
+        "pace": 0.7
+      },
+      {
+        "day": 4,
+        "frequencyId": "bb-beta",
+        "durationMin": 25,
+        "note": "ערנות בתנועה",
+        "pace": 0.74
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-741",
+        "durationMin": 30,
+        "note": "קצב מתמשך",
+        "pace": 0.78
+      },
+      {
+        "day": 6,
+        "frequencyId": "bb-gamma",
+        "durationMin": 20,
+        "note": "פרץ קצר",
+        "pace": 0.88
+      },
+      {
+        "day": 7,
+        "frequencyId": "sol-852",
+        "durationMin": 30,
+        "note": "סיום גבוה",
+        "pace": 0.8
+      }
     ]
   },
   {
@@ -203,9 +654,27 @@
     "purpose": "psychedelic",
     "description": "שלוש האזנות שמכניסות בהדרגה לטקסטורה הפסיכדלית — הדים ארוכים, תנועה בין האוזניים, ומרווחים שלא שומעים בפסנתר.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-417", "durationMin": 25, "note": "הקצוות מתחילים להתרכך", "depth": 0.45 },
-      { "day": 2, "frequencyId": "bb-theta", "durationMin": 35, "note": "הסולם משתנה", "depth": 0.7 },
-      { "day": 3, "frequencyId": "sol-639", "durationMin": 40, "note": "התמוססות מלאה", "depth": 0.92 }
+      {
+        "day": 1,
+        "frequencyId": "sol-417",
+        "durationMin": 25,
+        "note": "הקצוות מתחילים להתרכך",
+        "depth": 0.45
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-theta",
+        "durationMin": 35,
+        "note": "הסולם משתנה",
+        "depth": 0.7
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-639",
+        "durationMin": 40,
+        "note": "התמוססות מלאה",
+        "depth": 0.92
+      }
     ]
   },
   {
@@ -215,13 +684,62 @@
     "purpose": "psychedelic",
     "description": "שבוע שבו הצליל מסתובב ומתקפל על עצמו. עומק גבוה לכל האורך, עם תנועה קלה שמונעת מהתמונה לקפוא.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-396", "durationMin": 30, "note": "הדפוס הראשון", "depth": 0.6, "pace": 0.3 },
-      { "day": 2, "frequencyId": "sol-528", "durationMin": 30, "note": "הסיבוב מתחיל", "depth": 0.7, "pace": 0.34 },
-      { "day": 3, "frequencyId": "bb-theta", "durationMin": 40, "note": "אמצע הדפוס", "depth": 0.8, "pace": 0.3 },
-      { "day": 4, "frequencyId": "sol-639", "durationMin": 35, "note": "השתקפויות", "depth": 0.85, "pace": 0.4 },
-      { "day": 5, "frequencyId": "sol-741", "durationMin": 35, "note": "צבע חדש", "depth": 0.9, "pace": 0.36 },
-      { "day": 6, "frequencyId": "bb-gamma", "durationMin": 25, "note": "הבזק", "depth": 0.95, "pace": 0.5 },
-      { "day": 7, "frequencyId": "sol-963", "durationMin": 40, "note": "הדפוס נסגר", "depth": 1, "pace": 0.28 }
+      {
+        "day": 1,
+        "frequencyId": "sol-396",
+        "durationMin": 30,
+        "note": "הדפוס הראשון",
+        "depth": 0.6,
+        "pace": 0.3
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 30,
+        "note": "הסיבוב מתחיל",
+        "depth": 0.7,
+        "pace": 0.34
+      },
+      {
+        "day": 3,
+        "frequencyId": "bb-theta",
+        "durationMin": 40,
+        "note": "אמצע הדפוס",
+        "depth": 0.8,
+        "pace": 0.3
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-639",
+        "durationMin": 35,
+        "note": "השתקפויות",
+        "depth": 0.85,
+        "pace": 0.4
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-741",
+        "durationMin": 35,
+        "note": "צבע חדש",
+        "depth": 0.9,
+        "pace": 0.36
+      },
+      {
+        "day": 6,
+        "frequencyId": "bb-gamma",
+        "durationMin": 25,
+        "note": "הבזק",
+        "depth": 0.95,
+        "pace": 0.5
+      },
+      {
+        "day": 7,
+        "frequencyId": "sol-963",
+        "durationMin": 40,
+        "note": "הדפוס נסגר",
+        "depth": 1,
+        "pace": 0.28
+      }
     ]
   },
   {
@@ -231,11 +749,46 @@
     "purpose": "psychedelic",
     "description": "האזנות ארוכות ואיטיות במיוחד, בעומק מלא וכמעט בלי תנועה — הכי קרוב שיש כאן לחלל ריק.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-174", "durationMin": 40, "note": "הקרקע נעלמת", "depth": 0.75, "pace": 0.08 },
-      { "day": 2, "frequencyId": "bb-delta", "durationMin": 60, "note": "שקיעה איטית", "depth": 0.85, "pace": 0.05 },
-      { "day": 3, "frequencyId": "sol-285", "durationMin": 45, "note": "מרחב", "depth": 0.9, "pace": 0.08 },
-      { "day": 4, "frequencyId": "bb-theta", "durationMin": 60, "note": "בלי כיוון", "depth": 0.96, "pace": 0.05 },
-      { "day": 5, "frequencyId": "sol-963", "durationMin": 45, "note": "חזרה מלמעלה", "depth": 1, "pace": 0.12 }
+      {
+        "day": 1,
+        "frequencyId": "sol-174",
+        "durationMin": 40,
+        "note": "הקרקע נעלמת",
+        "depth": 0.75,
+        "pace": 0.08
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-delta",
+        "durationMin": 60,
+        "note": "שקיעה איטית",
+        "depth": 0.85,
+        "pace": 0.05
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-285",
+        "durationMin": 45,
+        "note": "מרחב",
+        "depth": 0.9,
+        "pace": 0.08
+      },
+      {
+        "day": 4,
+        "frequencyId": "bb-theta",
+        "durationMin": 60,
+        "note": "בלי כיוון",
+        "depth": 0.96,
+        "pace": 0.05
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-963",
+        "durationMin": 45,
+        "note": "חזרה מלמעלה",
+        "depth": 1,
+        "pace": 0.12
+      }
     ]
   },
   {
@@ -246,12 +799,54 @@
     "arc": "ascending",
     "description": "הפינה שבה שני החוגים למעלה בבת אחת — עומק מלא יחד עם פעימה מהירה. הכי רחוק מהאמביינט שהאפליקציה מגיעה.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-417", "durationMin": 25, "note": "הסיבוב מתחיל", "depth": 0.65, "pace": 0.6 },
-      { "day": 2, "frequencyId": "sol-528", "durationMin": 30, "note": "תופס מהירות", "depth": 0.75, "pace": 0.68 },
-      { "day": 3, "frequencyId": "bb-beta", "durationMin": 30, "note": "ערנות בתוך הסחרור", "depth": 0.82, "pace": 0.72 },
-      { "day": 4, "frequencyId": "sol-741", "durationMin": 30, "note": "חדות בתוך התנועה", "depth": 0.88, "pace": 0.78 },
-      { "day": 5, "frequencyId": "bb-gamma", "durationMin": 25, "note": "המהיר ביותר", "depth": 0.95, "pace": 0.85 },
-      { "day": 6, "frequencyId": "sol-963", "durationMin": 35, "note": "הסחרור מתרחב", "depth": 1, "pace": 0.7 }
+      {
+        "day": 1,
+        "frequencyId": "sol-417",
+        "durationMin": 25,
+        "note": "הסיבוב מתחיל",
+        "depth": 0.65,
+        "pace": 0.6
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 30,
+        "note": "תופס מהירות",
+        "depth": 0.75,
+        "pace": 0.68
+      },
+      {
+        "day": 3,
+        "frequencyId": "bb-beta",
+        "durationMin": 30,
+        "note": "ערנות בתוך הסחרור",
+        "depth": 0.82,
+        "pace": 0.72
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-741",
+        "durationMin": 30,
+        "note": "חדות בתוך התנועה",
+        "depth": 0.88,
+        "pace": 0.78
+      },
+      {
+        "day": 5,
+        "frequencyId": "bb-gamma",
+        "durationMin": 25,
+        "note": "המהיר ביותר",
+        "depth": 0.95,
+        "pace": 0.85
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-963",
+        "durationMin": 35,
+        "note": "הסחרור מתרחב",
+        "depth": 1,
+        "pace": 0.7
+      }
     ]
   },
   {
@@ -262,13 +857,62 @@
     "arc": "descending",
     "description": "הקשת ההפוכה של \"עלייה בסולם\" — יורד מ-963 עד 174, יום אחר יום, כשההאזנות מתארכות והעומק גדל ככל שיורדים.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-963", "durationMin": 30, "note": "מלמעלה", "depth": 0.6, "pace": 0.18 },
-      { "day": 2, "frequencyId": "sol-852", "durationMin": 35, "note": "מדרגה למטה", "depth": 0.7, "pace": 0.16 },
-      { "day": 3, "frequencyId": "sol-741", "durationMin": 35, "note": "ממשיכים לרדת", "depth": 0.78, "pace": 0.14 },
-      { "day": 4, "frequencyId": "sol-639", "durationMin": 40, "note": "אמצע הירידה", "depth": 0.85, "pace": 0.12 },
-      { "day": 5, "frequencyId": "sol-528", "durationMin": 40, "note": "מתחת לאמצע", "depth": 0.9, "pace": 0.1 },
-      { "day": 6, "frequencyId": "sol-396", "durationMin": 45, "note": "כבד יותר", "depth": 0.95, "pace": 0.08 },
-      { "day": 7, "frequencyId": "sol-174", "durationMin": 50, "note": "התחתית", "depth": 1, "pace": 0.06 }
+      {
+        "day": 1,
+        "frequencyId": "sol-963",
+        "durationMin": 30,
+        "note": "מלמעלה",
+        "depth": 0.6,
+        "pace": 0.18
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-852",
+        "durationMin": 35,
+        "note": "מדרגה למטה",
+        "depth": 0.7,
+        "pace": 0.16
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-741",
+        "durationMin": 35,
+        "note": "ממשיכים לרדת",
+        "depth": 0.78,
+        "pace": 0.14
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-639",
+        "durationMin": 40,
+        "note": "אמצע הירידה",
+        "depth": 0.85,
+        "pace": 0.12
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-528",
+        "durationMin": 40,
+        "note": "מתחת לאמצע",
+        "depth": 0.9,
+        "pace": 0.1
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-396",
+        "durationMin": 45,
+        "note": "כבד יותר",
+        "depth": 0.95,
+        "pace": 0.08
+      },
+      {
+        "day": 7,
+        "frequencyId": "sol-174",
+        "durationMin": 50,
+        "note": "התחתית",
+        "depth": 1,
+        "pace": 0.06
+      }
     ]
   },
   {
@@ -279,11 +923,46 @@
     "arc": "ascending",
     "description": "הקצה הבהיר של הפסיכדליה — תדרים גבוהים וגלי גמא, ער ונוצץ במקום כבד ועמוק.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-639", "durationMin": 25, "note": "האור הראשון", "depth": 0.7, "pace": 0.3 },
-      { "day": 2, "frequencyId": "bb-gamma", "durationMin": 20, "note": "הבהוב", "depth": 0.8, "pace": 0.45 },
-      { "day": 3, "frequencyId": "sol-852", "durationMin": 30, "note": "התרחבות", "depth": 0.88, "pace": 0.35 },
-      { "day": 4, "frequencyId": "bb-gamma", "durationMin": 25, "note": "שיא הבהירות", "depth": 0.94, "pace": 0.5 },
-      { "day": 5, "frequencyId": "sol-963", "durationMin": 30, "note": "זוהר מלא", "depth": 1, "pace": 0.4 }
+      {
+        "day": 1,
+        "frequencyId": "sol-639",
+        "durationMin": 25,
+        "note": "האור הראשון",
+        "depth": 0.7,
+        "pace": 0.3
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-gamma",
+        "durationMin": 20,
+        "note": "הבהוב",
+        "depth": 0.8,
+        "pace": 0.45
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-852",
+        "durationMin": 30,
+        "note": "התרחבות",
+        "depth": 0.88,
+        "pace": 0.35
+      },
+      {
+        "day": 4,
+        "frequencyId": "bb-gamma",
+        "durationMin": 25,
+        "note": "שיא הבהירות",
+        "depth": 0.94,
+        "pace": 0.5
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-963",
+        "durationMin": 30,
+        "note": "זוהר מלא",
+        "depth": 1,
+        "pace": 0.4
+      }
     ]
   },
   {
@@ -294,11 +973,51 @@
     "arc": "ascending",
     "description": "חמישה בלוקים ארוכים להאזנה תוך כדי עבודה. צפיפות נמוכה ובלי עומק — מוזיקה שאפשר לחשוב מעליה, לא כזו שמושכת את האוזן.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-528", "durationMin": 60, "note": "בלוק ראשון — כניסה לעבודה", "density": 0.3, "pace": 0.12, "depth": 0 },
-      { "day": 2, "frequencyId": "sol-639", "durationMin": 90, "note": "שעה וחצי רצופה", "density": 0.28, "pace": 0.12, "depth": 0 },
-      { "day": 3, "frequencyId": "bb-beta", "durationMin": 90, "note": "ריכוז מתמשך", "density": 0.25, "pace": 0.15, "depth": 0 },
-      { "day": 4, "frequencyId": "sol-741", "durationMin": 120, "note": "הבלוק הארוך ביותר", "density": 0.22, "pace": 0.1, "depth": 0 },
-      { "day": 5, "frequencyId": "sol-852", "durationMin": 90, "note": "סגירת השבוע", "density": 0.3, "pace": 0.14, "depth": 0 }
+      {
+        "day": 1,
+        "frequencyId": "sol-528",
+        "durationMin": 60,
+        "note": "בלוק ראשון — כניסה לעבודה",
+        "density": 0.3,
+        "pace": 0.12,
+        "depth": 0
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-639",
+        "durationMin": 90,
+        "note": "שעה וחצי רצופה",
+        "density": 0.28,
+        "pace": 0.12,
+        "depth": 0
+      },
+      {
+        "day": 3,
+        "frequencyId": "bb-beta",
+        "durationMin": 90,
+        "note": "ריכוז מתמשך",
+        "density": 0.25,
+        "pace": 0.15,
+        "depth": 0
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-741",
+        "durationMin": 120,
+        "note": "הבלוק הארוך ביותר",
+        "density": 0.22,
+        "pace": 0.1,
+        "depth": 0
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-852",
+        "durationMin": 90,
+        "note": "סגירת השבוע",
+        "density": 0.3,
+        "pace": 0.14,
+        "depth": 0
+      }
     ]
   },
   {
@@ -308,10 +1027,42 @@
     "purpose": "work",
     "description": "ארבעה חלקים של יום עבודה אחד — התארגנות, הבלוק העמוק, התאוששות הצהריים וסגירה. מיועד לחזור עליו יום אחר יום ולא לסיים אותו.",
     "schedule": [
-      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 30, "note": "בוקר — התארגנות לפני שמתחילים", "density": 0.35, "pace": 0.25, "depth": 0 },
-      { "day": 2, "frequencyId": "bb-beta", "durationMin": 120, "note": "הבלוק העמוק של היום", "density": 0.22, "pace": 0.12, "depth": 0 },
-      { "day": 3, "frequencyId": "sol-528", "durationMin": 45, "note": "צהריים — התאוששות קצרה", "density": 0.3, "pace": 0.08, "depth": 0 },
-      { "day": 4, "frequencyId": "sol-396", "durationMin": 40, "note": "סגירת יום — מורידים הילוך", "density": 0.28, "pace": 0.06, "depth": 0 }
+      {
+        "day": 1,
+        "frequencyId": "bb-alpha",
+        "durationMin": 30,
+        "note": "בוקר — התארגנות לפני שמתחילים",
+        "density": 0.35,
+        "pace": 0.25,
+        "depth": 0
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-beta",
+        "durationMin": 120,
+        "note": "הבלוק העמוק של היום",
+        "density": 0.22,
+        "pace": 0.12,
+        "depth": 0
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 45,
+        "note": "צהריים — התאוששות קצרה",
+        "density": 0.3,
+        "pace": 0.08,
+        "depth": 0
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-396",
+        "durationMin": 40,
+        "note": "סגירת יום — מורידים הילוך",
+        "density": 0.28,
+        "pace": 0.06,
+        "depth": 0
+      }
     ]
   },
   {
@@ -321,11 +1072,46 @@
     "purpose": "energy",
     "description": "האזנות קצרות ואינטנסיביות להרמת אנרגיה באמצע יום — עשר עד עשרים דקות, קצב גבוה, גלי בטא וגמא.",
     "schedule": [
-      { "day": 1, "frequencyId": "bb-beta", "durationMin": 15, "note": "טעינה ראשונה", "pace": 0.6, "density": 0.6 },
-      { "day": 2, "frequencyId": "sol-852", "durationMin": 12, "note": "קצר וחד", "pace": 0.7, "density": 0.65 },
-      { "day": 3, "frequencyId": "bb-gamma", "durationMin": 10, "note": "הקצר והמהיר ביותר", "pace": 0.85, "density": 0.7 },
-      { "day": 4, "frequencyId": "sol-963", "durationMin": 15, "note": "גובה", "pace": 0.75, "density": 0.6 },
-      { "day": 5, "frequencyId": "bb-gamma", "durationMin": 12, "note": "טעינה מלאה", "pace": 0.9, "density": 0.75 }
+      {
+        "day": 1,
+        "frequencyId": "bb-beta",
+        "durationMin": 15,
+        "note": "טעינה ראשונה",
+        "pace": 0.6,
+        "density": 0.6
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-852",
+        "durationMin": 12,
+        "note": "קצר וחד",
+        "pace": 0.7,
+        "density": 0.65
+      },
+      {
+        "day": 3,
+        "frequencyId": "bb-gamma",
+        "durationMin": 10,
+        "note": "הקצר והמהיר ביותר",
+        "pace": 0.85,
+        "density": 0.7
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-963",
+        "durationMin": 15,
+        "note": "גובה",
+        "pace": 0.75,
+        "density": 0.6
+      },
+      {
+        "day": 5,
+        "frequencyId": "bb-gamma",
+        "durationMin": 12,
+        "note": "טעינה מלאה",
+        "pace": 0.9,
+        "density": 0.75
+      }
     ]
   },
   {
@@ -335,11 +1121,51 @@
     "purpose": "intimacy",
     "description": "חמישה ערבים סביב 639Hz — התדר שמיוחסת לו במסורת הרמוניה בין-אישית. חם ואיטי, מרווחים מוכרים בלבד, בלי שום דבר שמושך תשומת לב אליו.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-639", "durationMin": 30, "note": "להיות באותו חדר", "density": 0.4, "pace": 0.22, "depth": 0.3 },
-      { "day": 2, "frequencyId": "sol-528", "durationMin": 35, "note": "נשימה משותפת", "density": 0.45, "pace": 0.25, "depth": 0.35 },
-      { "day": 3, "frequencyId": "sol-639", "durationMin": 40, "note": "קצב משותף", "density": 0.45, "pace": 0.3, "depth": 0.4 },
-      { "day": 4, "frequencyId": "sol-417", "durationMin": 40, "note": "בלי מילים", "density": 0.5, "pace": 0.28, "depth": 0.42 },
-      { "day": 5, "frequencyId": "sol-639", "durationMin": 45, "note": "השקט שאחרי", "density": 0.42, "pace": 0.24, "depth": 0.45 }
+      {
+        "day": 1,
+        "frequencyId": "sol-639",
+        "durationMin": 30,
+        "note": "להיות באותו חדר",
+        "density": 0.4,
+        "pace": 0.22,
+        "depth": 0.3
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 35,
+        "note": "נשימה משותפת",
+        "density": 0.45,
+        "pace": 0.25,
+        "depth": 0.35
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-639",
+        "durationMin": 40,
+        "note": "קצב משותף",
+        "density": 0.45,
+        "pace": 0.3,
+        "depth": 0.4
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-417",
+        "durationMin": 40,
+        "note": "בלי מילים",
+        "density": 0.5,
+        "pace": 0.28,
+        "depth": 0.42
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-639",
+        "durationMin": 45,
+        "note": "השקט שאחרי",
+        "density": 0.42,
+        "pace": 0.24,
+        "depth": 0.45
+      }
     ]
   },
   {
@@ -349,10 +1175,46 @@
     "purpose": "intimacy",
     "description": "האזנות ארוכות ואיטיות מאוד למגע ולעיסוי — תדרים נמוכים, תווים רחוקים זה מזה, וגלי תטא מתחת.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-174", "durationMin": 40, "note": "ידיים חמות", "beatId": "bb-theta", "density": 0.35, "pace": 0.15, "depth": 0.3 },
-      { "day": 2, "frequencyId": "sol-285", "durationMin": 45, "note": "לאט", "beatId": "bb-theta", "density": 0.38, "pace": 0.14, "depth": 0.35 },
-      { "day": 3, "frequencyId": "sol-432", "durationMin": 50, "note": "כוונון לגוף", "beatId": "bb-theta", "density": 0.4, "pace": 0.18, "depth": 0.4 },
-      { "day": 4, "frequencyId": "sol-639", "durationMin": 50, "note": "סיום ארוך", "beatId": "bb-theta", "density": 0.42, "pace": 0.16, "depth": 0.45 }
+      {
+        "day": 1,
+        "frequencyId": "sol-174",
+        "durationMin": 40,
+        "note": "ידיים חמות",
+        "beatId": "bb-theta",
+        "density": 0.35,
+        "pace": 0.15,
+        "depth": 0.3
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-285",
+        "durationMin": 45,
+        "note": "לאט",
+        "beatId": "bb-theta",
+        "density": 0.38,
+        "pace": 0.14,
+        "depth": 0.35
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-432",
+        "durationMin": 50,
+        "note": "כוונון לגוף",
+        "beatId": "bb-theta",
+        "density": 0.4,
+        "pace": 0.18,
+        "depth": 0.4
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-639",
+        "durationMin": 50,
+        "note": "סיום ארוך",
+        "beatId": "bb-theta",
+        "density": 0.42,
+        "pace": 0.16,
+        "depth": 0.45
+      }
     ]
   },
   {
@@ -362,9 +1224,321 @@
     "purpose": "intimacy",
     "description": "שלושה ערבים ארוכים, שעה ומעלה. פעימת בס איטית סביב שלושים לדקה — קצב מנוחה, לא קצב ריקוד.",
     "schedule": [
-      { "day": 1, "frequencyId": "sol-639", "durationMin": 60, "note": "פעימה איטית", "density": 0.45, "pace": 0.5, "depth": 0.4 },
-      { "day": 2, "frequencyId": "sol-528", "durationMin": 60, "note": "מתחמם", "density": 0.5, "pace": 0.55, "depth": 0.45 },
-      { "day": 3, "frequencyId": "sol-639", "durationMin": 75, "note": "לילה ארוך", "density": 0.48, "pace": 0.45, "depth": 0.48 }
+      {
+        "day": 1,
+        "frequencyId": "sol-639",
+        "durationMin": 60,
+        "note": "פעימה איטית",
+        "density": 0.45,
+        "pace": 0.5,
+        "depth": 0.4
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 60,
+        "note": "מתחמם",
+        "density": 0.5,
+        "pace": 0.55,
+        "depth": 0.45
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-639",
+        "durationMin": 75,
+        "note": "לילה ארוך",
+        "density": 0.48,
+        "pace": 0.45,
+        "depth": 0.48
+      }
+    ]
+  },
+  {
+    "id": "journey-techno-5",
+    "title": "טכנו — חמישה ערבים",
+    "days": 5,
+    "purpose": "club",
+    "arc": "ascending",
+    "description": "סט טכנו שנבנה על התדר עצמו: הקיק הוא תדר היעד מקופל אוקטבות מטה, הבס יושב מתחתיו, והארפג׳ נבנה מאותו סולם. חמישה ערבים שעולים בעוצמה מ-396Hz ל-852Hz.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-396",
+        "durationMin": 40,
+        "note": "מינימלי — קיק, בס והאט",
+        "pace": 0.4,
+        "depth": 0.1,
+        "density": 0.5,
+        "style": "techno"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-417",
+        "durationMin": 45,
+        "note": "הגרוב נסגר",
+        "pace": 0.5,
+        "depth": 0.12,
+        "density": 0.6,
+        "style": "techno"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 50,
+        "note": "הארפג׳ נכנס",
+        "pace": 0.6,
+        "depth": 0.15,
+        "density": 0.68,
+        "style": "techno"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-741",
+        "durationMin": 55,
+        "note": "לחץ מלא",
+        "pace": 0.72,
+        "depth": 0.2,
+        "density": 0.75,
+        "style": "techno"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-852",
+        "durationMin": 60,
+        "note": "השיא של השבוע",
+        "pace": 0.82,
+        "depth": 0.25,
+        "density": 0.8,
+        "style": "techno",
+        "beatId": "bb-gamma"
+      }
+    ]
+  },
+  {
+    "id": "journey-trance-6",
+    "title": "טראנס לילי — שישה לילות",
+    "days": 6,
+    "purpose": "club",
+    "arc": "ascending",
+    "description": "טראנס מלא עם המבנה הקלאסי — שש עשרה תיבות נהיגה, ברייקדאון שבו הקיק נעלם והחדר נפתח, בילד עם פילטר עולה, ודרופ. הבס יושב בין הפעימות, וכל הצלילים נגזרים מתדר הלילה.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-432",
+        "durationMin": 60,
+        "note": "כניסה רכה",
+        "pace": 0.5,
+        "depth": 0.25,
+        "density": 0.6,
+        "style": "trance"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 60,
+        "note": "הארפג׳ מתבסס",
+        "pace": 0.55,
+        "depth": 0.28,
+        "density": 0.65,
+        "style": "trance"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-639",
+        "durationMin": 70,
+        "note": "ברייקדאון ארוך",
+        "pace": 0.6,
+        "depth": 0.32,
+        "density": 0.7,
+        "style": "trance"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-741",
+        "durationMin": 70,
+        "note": "הבילד מתארך",
+        "pace": 0.66,
+        "depth": 0.36,
+        "density": 0.74,
+        "style": "trance"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-852",
+        "durationMin": 75,
+        "note": "לילה גבוה",
+        "pace": 0.72,
+        "depth": 0.4,
+        "density": 0.78,
+        "style": "trance",
+        "beatId": "bb-gamma"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-963",
+        "durationMin": 75,
+        "note": "הסט המלא",
+        "pace": 0.75,
+        "depth": 0.45,
+        "density": 0.8,
+        "style": "trance",
+        "beatId": "bb-gamma"
+      }
+    ]
+  },
+  {
+    "id": "journey-techno-run-4",
+    "title": "טכנו לתנועה — ארבעה אימונים",
+    "days": 4,
+    "purpose": "club",
+    "arc": "ascending",
+    "description": "ארבעה אימונים בקצב גבוה וקבוע — לריצה, לאופניים או לחדר כושר. הפעימה לא משתנה באמצע, וגלי ביתא רצים מתחת לכל אימון.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-528",
+        "durationMin": 45,
+        "note": "חימום בקצב מלא",
+        "pace": 0.8,
+        "depth": 0.05,
+        "density": 0.68,
+        "style": "techno"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-741",
+        "durationMin": 45,
+        "note": "מקצב קבוע",
+        "pace": 0.86,
+        "depth": 0.05,
+        "density": 0.72,
+        "style": "techno"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-852",
+        "durationMin": 45,
+        "note": "דחיפה",
+        "pace": 0.92,
+        "depth": 0.08,
+        "density": 0.75,
+        "style": "techno",
+        "beatId": "bb-gamma"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-963",
+        "durationMin": 50,
+        "note": "האימון הארוך",
+        "pace": 0.95,
+        "depth": 0.1,
+        "density": 0.78,
+        "style": "techno",
+        "beatId": "bb-gamma"
+      }
+    ]
+  },
+  {
+    "id": "journey-trance-psy-5",
+    "title": "טראנס פסיכדלי — חמישה סטים",
+    "days": 5,
+    "purpose": "club",
+    "description": "טראנס שנבנה על הסדרה ההרמונית העליונה — המרווחים 7/4, 11/8 ו-13/8, שאין להם מקבילה בפסנתר. אותו מבנה של ברייקדאון ודרופ, אבל הארפג׳ נשמע לא מוכר. גלי תטא מתחת.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-639",
+        "durationMin": 60,
+        "note": "הסולם מתחלף",
+        "pace": 0.55,
+        "depth": 0.55,
+        "density": 0.62,
+        "style": "trance",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 65,
+        "note": "הדים ארוכים",
+        "pace": 0.58,
+        "depth": 0.62,
+        "density": 0.66,
+        "style": "trance",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-741",
+        "durationMin": 70,
+        "note": "ברייקדאון עמוק",
+        "pace": 0.62,
+        "depth": 0.7,
+        "density": 0.7,
+        "style": "trance",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-852",
+        "durationMin": 70,
+        "note": "הכול נפתח",
+        "pace": 0.68,
+        "depth": 0.78,
+        "density": 0.74,
+        "style": "trance",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-963",
+        "durationMin": 75,
+        "note": "הסט הארוך",
+        "pace": 0.7,
+        "depth": 0.85,
+        "density": 0.76,
+        "style": "trance",
+        "beatId": "bb-theta"
+      }
+    ]
+  },
+  {
+    "id": "journey-techno-min-3",
+    "title": "טכנו מינימלי לעבודה",
+    "days": 3,
+    "purpose": "club",
+    "description": "טכנו שקט ודליל להאזנה תוך כדי עבודה — פעימה יציבה בלי ארפג׳ים צפופים ובלי דרופים. תשעים דקות ברצף, קצב איטי לז׳אנר, וגלי ביתא מתחת.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-432",
+        "durationMin": 90,
+        "note": "פעימה יציבה ברקע",
+        "pace": 0.3,
+        "depth": 0.0,
+        "density": 0.25,
+        "style": "techno"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-741",
+        "durationMin": 90,
+        "note": "מעט יותר תנועה",
+        "pace": 0.35,
+        "depth": 0.0,
+        "density": 0.3,
+        "style": "techno"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 90,
+        "note": "בלוק עבודה ארוך",
+        "pace": 0.4,
+        "depth": 0.0,
+        "density": 0.35,
+        "style": "techno"
+      }
     ]
   }
 ]

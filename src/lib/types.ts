@@ -17,6 +17,12 @@ export type Frequency = {
   hue: number
 }
 
+/**
+ * Which engine composes the melody. Not a continuum — `ambient` refuses to
+ * repeat, the club styles are built on a grid, and they use different voices.
+ */
+export type MelodyStyle = 'ambient' | 'techno' | 'trance'
+
 export type JourneyPurpose =
   | 'sleep'
   | 'focus'
@@ -30,6 +36,7 @@ export type JourneyPurpose =
   | 'psychedelic'
   | 'work'
   | 'intimacy'
+  | 'club'
 
 export type JourneyDay = {
   day: number
@@ -50,6 +57,8 @@ export type JourneyDay = {
    * session usable as background for work rather than something you listen to.
    */
   density?: number
+  /** Melody engine for this day. Omit for the ambient one. */
+  style?: MelodyStyle
 }
 
 export type Journey = {
@@ -112,6 +121,8 @@ export type SessionConfig = {
   pace: number
   /** Psychedelic character, 0 (grounded) - 1 (swirling, upper-harmonic scale). */
   depth: number
+  /** Which melody engine composes the session. */
+  style: MelodyStyle
 }
 
 /** Persisted preset. `layers` matches the schema in the build spec (§5.3). */

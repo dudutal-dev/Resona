@@ -1,5 +1,7 @@
 import { Tone, engine } from './ToneEngine'
+import { ClubGroove } from './ClubGroove'
 import { SCALES, carrierFor, nextDegree, playableScale, scaleForRoot } from './scale'
+import type { MelodyStyle } from '../lib/types'
 
 /**
  * The generative ambient layer (§4.3).
@@ -42,6 +44,9 @@ export class GenerativeMelody {
   private pace = 0.25
   /** 0 = plain and grounded, 1 = swirling and unmoored. */
   private depth = 0
+  private style: MelodyStyle = 'ambient'
+  /** Built on first use — an ambient session never pays for it. */
+  private club: ClubGroove | null = null
   private leadEvent: number | null = null
   private padEvent: number | null = null
   private pulseEvent: number | null = null
@@ -136,14 +141,56 @@ export class GenerativeMelody {
     if (next === this.pace) return
     const changed = Math.abs(next - this.pace) > 0.001
     this.pace = next
+    this.club?.setPace(next)
 
     // A rhythmic pace wants a plucked attack; an ambient one wants a swell.
     this.lead.set({ envelope: { attack: 1.6 - this.pace * 1.5, release: 7 - this.pace * 5 } })
-    this.pulseGain.gain.rampTo(this.pace < 0.45 ? 0 : (this.pace - 0.45) * 0.9, 1.2)
+    this.pulseGain.gain.rampTo(this.pulseLevel, 1.2)
 
     // scheduleRepeat fixes its interval at registration, so a pace change has
     // to re-register the events rather than mutate them.
     if (changed && this.running) this.scheduleVoices()
+  }
+
+  /** Silent below the threshold, and always silent when a kick is playing. */
+  private get pulseLevel() {
+    if (this.style !== 'ambient') return 0
+    return this.pace < 0.45 ? 0 : (this.pace - 0.45) * 0.9
+  }
+
+  /**
+   * Switches between the ambient engine and the club engine.
+   *
+   * They are not variations of each other. Ambient refuses to repeat; techno
+   * and trance are built on a grid, and their voices — kick, offbeat bass,
+   * arpeggio, hats — have no ambient counterpart. So the club layer is its own
+   * object, and the voices that would fight it are stood down: the lead, whose
+   * free phrases blur against a sequenced figure, and the pulse, whose whole
+   * job the kick now does properly.
+   *
+   * The drone and the pad stay in both. The drone is the anchor the app is
+   * built on and never leaves, and a slow pad underneath a trance arpeggio is
+   * the genre, not an accident.
+   */
+  setStyle(style: MelodyStyle) {
+    if (style === this.style) return
+    this.style = style
+
+    if (style === 'ambient') {
+      this.club?.stop()
+    } else {
+      if (!this.club) this.club = new ClubGroove(this.out)
+      this.club.setStyle(style)
+      this.club.setPace(this.pace)
+      this.club.setDensity(this.density)
+      this.club.setDepth(this.depth)
+      this.club.setRoot(this.root, this.scale)
+      if (this.running) this.club.start()
+    }
+
+    this.pulseGain.gain.rampTo(this.pulseLevel, 1.2)
+    // The lead is scheduled, not gated, so the switch has to re-register.
+    if (this.running) this.scheduleVoices()
   }
 
   /**
@@ -170,6 +217,7 @@ export class GenerativeMelody {
     this.filterLfo.frequency.rampTo(0.021 - next * 0.012, 2)
     this.filterLfo.min = 620 - next * 300
     this.filterLfo.max = 2100 + next * 1400
+    this.club?.setDepth(next)
 
     if (crossedScaleThreshold) this.setRoot(this.root)
   }
@@ -189,10 +237,14 @@ export class GenerativeMelody {
     this.drone.frequency.rampTo(droneHz, 1.5)
     this.droneSub.frequency.rampTo(droneHz / 2, 1.5)
     void ramp
+
+    // The club layer composes from the same pitch set, not a parallel one.
+    this.club?.setRoot(rootHz, this.scale)
   }
 
   setDensity(value: number) {
     this.density = Math.max(0, Math.min(1, value))
+    this.club?.setDensity(this.density)
   }
 
   start() {
@@ -202,6 +254,7 @@ export class GenerativeMelody {
 
     this.drone.start()
     this.droneSub.start()
+    if (this.style !== 'ambient') this.club?.start()
 
     this.scheduleVoices()
   }
@@ -210,7 +263,7 @@ export class GenerativeMelody {
     this.clearVoices()
     const now = engine.transport.seconds
     this.phraseLeft = 0
-    this.scheduleLead(now + 0.5)
+    if (this.style === 'ambient') this.scheduleLead(now + 0.5)
     this.schedulePad(now + 2 + Math.random() * 6)
     this.schedulePulse()
   }
@@ -302,7 +355,7 @@ export class GenerativeMelody {
    */
   private schedulePulse() {
     this.pulseEvent = engine.transport.scheduleRepeat((time) => {
-      if (this.pace < 0.45) return
+      if (this.pulseLevel <= 0) return
       // Every other beat gets a lighter accent, which reads as a bar rather
       // than an undifferentiated tick.
       const strong = Math.random() > 0.25
@@ -329,6 +382,7 @@ export class GenerativeMelody {
     if (!this.running) return
     this.running = false
     this.clearVoices()
+    this.club?.stop()
     this.lead.releaseAll()
     this.pad.releaseAll()
     this.drone.stop()
@@ -337,6 +391,7 @@ export class GenerativeMelody {
 
   dispose() {
     this.stop()
+    this.club?.dispose()
     this.filterLfo.dispose()
     this.droneTremolo.dispose()
     this.lead.dispose()

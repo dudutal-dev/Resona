@@ -7,6 +7,7 @@ import { useJourneys } from '../store/journeyStore'
 import type { MoodScore } from '../lib/types'
 import { Card, Screen, TrustBadge } from './ui'
 import { MoodPicker } from './MoodPicker'
+import { ListeningMode } from './ListeningMode'
 import { InfoPanel } from './InfoPanel'
 
 export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
@@ -73,7 +74,11 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
           {isDone && <span className="chip">הושלם ✓</span>}
         </div>
 
-        <button onClick={handleStart} className="btn btn-primary mt-5 w-full">
+        <div className="mt-5 text-right">
+          <ListeningMode compact hasBeatLayer={!!freq?.range} />
+        </div>
+
+        <button onClick={handleStart} className="btn btn-primary mt-4 w-full">
           {isDone ? 'האזן שוב ליום זה' : 'התחל את היום'}
         </button>
         <button onClick={() => setInfoOpen(true)} className="btn btn-ghost mt-2 w-full text-xs txt-3">

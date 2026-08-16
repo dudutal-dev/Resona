@@ -3,6 +3,7 @@ import { BUILTIN_AMBIENCE, type AmbienceOption } from '../audio/Ambience'
 import { player } from '../audio/SessionPlayer'
 import { getFrequency } from '../lib/catalog'
 import { useSession } from '../store/sessionStore'
+import { ListeningMode } from './ListeningMode'
 import { Slider } from './ui'
 
 const WaveIcon = () => (
@@ -39,7 +40,7 @@ const CloudIcon = () => (
 
 /** Per-layer volume plus the controls that shape each layer (§4.5). */
 export function MixerPanel() {
-  const { config, setLevel, setAmbience, setBeatHz, setBeatMode, setDensity, setPace } = useSession()
+  const { config, setLevel, setAmbience, setBeatHz, setDensity, setPace } = useSession()
   const [ambienceOptions, setAmbienceOptions] = useState<AmbienceOption[]>(BUILTIN_AMBIENCE)
 
   useEffect(() => {
@@ -114,49 +115,16 @@ export function MixerPanel() {
               onChange={setBeatHz}
               display={`${config.beatHz} Hz`}
             />
-            <div className="flex gap-2" role="group" aria-label="אופן השמעת הפעימה">
-              {(
-                [
-                  { id: 'isochronic', label: 'איזוכרוני', hint: 'עובד גם ברמקולים' },
-                  { id: 'binaural', label: 'ביינאורל', hint: 'מחייב אוזניות' },
-                ] as const
-              ).map((mode) => {
-                const active = config.beatMode === mode.id
-                return (
-                  <button
-                    key={mode.id}
-                    onClick={() => setBeatMode(mode.id)}
-                    aria-pressed={active}
-                    className={`flex-1 rounded-2xl px-3 py-2.5 text-right transition-all ${active ? 'rim' : ''}`}
-                    style={{
-                      background: active ? 'var(--accent-soft)' : 'var(--card)',
-                      border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,
-                    }}
-                  >
-                    <span className="block text-sm font-semibold">{mode.label}</span>
-                    <span className="txt-3 block text-[11px]">{mode.hint}</span>
-                  </button>
-                )
-              })}
-            </div>
-            {config.beatMode === 'binaural' && (
-              <p
-                className="rounded-xl px-3 py-2 text-[11px] leading-relaxed"
-                style={{
-                  background: 'rgba(255,209,102,0.1)',
-                  border: '1px solid rgba(255,209,102,0.25)',
-                  color: '#ffd166',
-                }}
-              >
-                ביינאורל נוצר מהפרש בין האוזניים — ברמקולים שני הצלילים מתערבבים באוויר והאפקט לא
-                נוצר. חבר אוזניות, או עבור למצב איזוכרוני.
-              </p>
-            )}
           </div>
         ) : (
-          <p className="txt-3 mt-2 text-[11px]">שכבת הגל המוחי כבויה. בחר טווח במסך התדרים.</p>
+          <p className="txt-3 mt-2 text-[11px]">
+            שכבת הגל המוחי כבויה בהאזנה הזו. אפשר להוסיף טווח במסך התדרים.
+          </p>
         )}
       </div>
+
+      {/* How the listener is set up — always available, beat layer or not. */}
+      <ListeningMode hasBeatLayer={!!beat} />
 
       {/* Ambience layer */}
       <div className="glass rounded-3xl p-4">

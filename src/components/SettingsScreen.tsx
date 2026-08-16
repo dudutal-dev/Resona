@@ -3,6 +3,8 @@ import { useSettings } from '../store/settingsStore'
 import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
 import { navigate } from '../lib/router'
+import { useSession } from '../store/sessionStore'
+import { ListeningMode } from './ListeningMode'
 import { Card, Screen } from './ui'
 
 function Toggle({
@@ -45,6 +47,7 @@ function Toggle({
 
 export function SettingsScreen() {
   const { theme, reducedMotion, setTheme, setReducedMotion, resetAllData } = useSettings()
+  const beatId = useSession((s) => s.config.beatId)
   const clearPresets = usePresets((s) => s.clear)
   const clearJourneys = useJourneys((s) => s.clearAll)
   const [wiped, setWiped] = useState(false)
@@ -60,6 +63,11 @@ export function SettingsScreen() {
   return (
     <Screen title="הגדרות" onBack>
       <div className="space-y-3">
+        {/* The opening sheet asks this once; this is where it can be changed later. */}
+        <Card>
+          <ListeningMode compact hasBeatLayer={!!beatId} />
+        </Card>
+
         <Card>
           <Toggle
             label="מצב כהה"

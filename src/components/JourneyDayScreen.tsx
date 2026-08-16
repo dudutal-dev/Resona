@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { TRUST_NOTICE, getFrequency, getJourney } from '../lib/catalog'
-import { configForDay } from '../lib/journeyConfig'
+import { bandForDay, configForDay } from '../lib/journeyConfig'
 import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { useJourneys } from '../store/journeyStore'
@@ -26,13 +26,15 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
   }
 
   const freq = getFrequency(entry.frequencyId)
+  const band = bandForDay(entry, journey)
+  const bandIsSubject = !!freq?.range
   const p = progress[journey.id]
   const isDone = p?.completedDays.includes(day) ?? false
   const mood = p?.dailyMood?.[day]
 
   const handleStart = () => {
     start(journey.id)
-    loadConfig(configForDay(entry, config), { journeyId: journey.id, day })
+    loadConfig(configForDay(entry, journey, config), { journeyId: journey.id, day })
     navigate('/player')
   }
 
@@ -74,8 +76,21 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
           {isDone && <span className="chip">הושלם ✓</span>}
         </div>
 
+        {band && !bandIsSubject && (
+          <p className="txt-3 mt-3 text-[11px] leading-relaxed">
+            מתחת לתדר רץ גל מוחי תומך —{' '}
+            <span className="font-semibold" style={{ color: 'var(--accent)' }}>
+              {band.label.split('—')[0].trim()}
+            </span>{' '}
+            <span className="ltr">
+              ({band.range?.[0]}–{band.range?.[1]} Hz)
+            </span>
+            , בעוצמה נמוכה כדי שתדר היום יישאר במרכז.
+          </p>
+        )}
+
         <div className="mt-5 text-right">
-          <ListeningMode compact hasBeatLayer={!!freq?.range} />
+          <ListeningMode compact hasBeatLayer />
         </div>
 
         <button onClick={handleStart} className="btn btn-primary mt-4 w-full">

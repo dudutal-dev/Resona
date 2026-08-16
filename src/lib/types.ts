@@ -35,6 +35,11 @@ export type JourneyDay = {
   note: string
   /** Overrides the session pace for this day. Omit to keep the user's setting. */
   pace?: number
+  /**
+   * Brainwave band to run underneath a solfeggio day. Omit to take the band
+   * that matches the journey's purpose.
+   */
+  beatId?: string
 }
 
 export type Journey = {

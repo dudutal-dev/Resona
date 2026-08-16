@@ -64,6 +64,23 @@ export const BAND_MUSICAL_ROOT: Record<string, string> = {
   'bb-gamma': 'sol-852',
 }
 
+/**
+ * The brainwave band that supports a journey day when the day itself prescribes
+ * a solfeggio tone. Chosen per purpose so the added layer argues for the same
+ * state the journey is already aiming at, rather than being decoration.
+ */
+export const PURPOSE_BAND: Record<JourneyPurpose, string> = {
+  sleep: 'bb-delta',
+  anxiety: 'bb-alpha',
+  focus: 'bb-beta',
+  spiritual: 'bb-theta',
+  intro: 'bb-alpha',
+  energy: 'bb-beta',
+  creativity: 'bb-theta',
+  body: 'bb-theta',
+  rhythm: 'bb-beta',
+}
+
 /** Middle of a band's range — the default beat rate when a band is picked. */
 export function defaultBeatHz(f: Frequency): number {
   if (!f.range) return 6

@@ -1,5 +1,6 @@
 import { PURPOSE_LABEL, getFrequency, getJourney } from '../lib/catalog'
 import { navigate } from '../lib/router'
+import { bandForDay } from '../lib/journeyConfig'
 import { useJourneys } from '../store/journeyStore'
 import { Card, Screen, TrustBadge } from './ui'
 
@@ -74,6 +75,7 @@ export function JourneyDetail({ id }: { id: string }) {
       <div className="space-y-2">
         {journey.schedule.map((day) => {
           const freq = getFrequency(day.frequencyId)
+          const band = bandForDay(day, journey)
           const isDone = p?.completedDays.includes(day.day) ?? false
           const isCurrent = !isDone && (p?.currentDay ?? 1) === day.day
           const mood = p?.dailyMood?.[day.day]
@@ -109,6 +111,9 @@ export function JourneyDetail({ id }: { id: string }) {
                       {day.durationMin} דק׳
                     </span>{' '}
                     · {day.note}
+                    {band && !freq?.range && (
+                      <> · + {band.label.split('—')[0].trim()}</>
+                    )}
                   </p>
                 </div>
 

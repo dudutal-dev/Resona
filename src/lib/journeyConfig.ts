@@ -1,34 +1,60 @@
-import { BAND_MUSICAL_ROOT, defaultBeatHz, getFrequency } from './catalog'
-import type { JourneyDay, SessionConfig } from './types'
+import { BAND_MUSICAL_ROOT, PURPOSE_BAND, defaultBeatHz, getFrequency } from './catalog'
+import type { Journey, JourneyDay, SessionConfig } from './types'
 import { DEFAULT_CONFIG } from '../store/sessionStore'
+
+/** Level for a band that supports a day rather than being the day's subject. */
+const SUPPORTING_BEAT_LEVEL = 0.22
+/** Level for a band that IS the prescribed frequency of the day. */
+const PRIMARY_BEAT_LEVEL = 0.4
 
 /**
  * Turns a scheduled journey day into a playable session.
  *
- * A day that prescribes a solfeggio tone plays it as the melodic root with the
- * brainwave layer off. A day that prescribes a brainwave band turns that layer
- * on and pairs it with the band's matching musical root, because the melody
- * still needs a fundamental to be composed around — a band alone has no pitch.
+ * Every day runs both layers, which is what makes the headphones/speakers
+ * choice mean something on every screen. What changes is which layer is the
+ * subject:
+ *
+ * - A day prescribing a **brainwave band** makes that band primary and pairs it
+ *   with the band's matching musical root, because a band has no pitch of its
+ *   own and the melody still needs a fundamental to be composed around.
+ * - A day prescribing a **solfeggio tone** keeps that tone as the melodic root
+ *   and runs a supporting band underneath at a lower level, so the prescribed
+ *   frequency stays the thing you are listening to.
+ *
+ * The supporting band comes from the day if it names one, otherwise from the
+ * journey's purpose — a sleep journey leans on delta, a focus journey on beta.
  */
-export function configForDay(day: JourneyDay, base: SessionConfig = DEFAULT_CONFIG): SessionConfig {
+export function configForDay(
+  day: JourneyDay,
+  journey: Pick<Journey, 'purpose'>,
+  base: SessionConfig = DEFAULT_CONFIG,
+): SessionConfig {
   const target = getFrequency(day.frequencyId)
-  const isBand = !!target?.range
+  const dayIsBand = !!target?.range
 
-  const rootId = isBand ? (BAND_MUSICAL_ROOT[day.frequencyId] ?? base.rootId) : day.frequencyId
-  const beatId = isBand ? day.frequencyId : null
+  const rootId = dayIsBand ? (BAND_MUSICAL_ROOT[day.frequencyId] ?? base.rootId) : day.frequencyId
+  const beatId = dayIsBand
+    ? day.frequencyId
+    : (day.beatId ?? PURPOSE_BAND[journey.purpose] ?? 'bb-alpha')
+
+  const beat = getFrequency(beatId)
 
   return {
     ...base,
     rootId,
     beatId,
-    beatHz: isBand && target ? defaultBeatHz(target) : base.beatHz,
+    beatHz: beat ? defaultBeatHz(beat) : base.beatHz,
     timerMode: 'custom',
     customMinutes: day.durationMin,
     pace: day.pace ?? base.pace,
     levels: {
       ...base.levels,
-      // Brainwave days lean on the beat; solfeggio days lean on the melody.
-      beat: isBand ? Math.max(base.levels.beat, 0.4) : base.levels.beat,
+      beat: dayIsBand ? Math.max(base.levels.beat, PRIMARY_BEAT_LEVEL) : SUPPORTING_BEAT_LEVEL,
     },
   }
+}
+
+/** The band a day will actually run, for display before the day is started. */
+export function bandForDay(day: JourneyDay, journey: Pick<Journey, 'purpose'>) {
+  return getFrequency(configForDay(day, journey).beatId ?? '')
 }

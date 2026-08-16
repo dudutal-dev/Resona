@@ -78,7 +78,7 @@ describe('journeys', () => {
     for (const j of rhythmic) {
       // A band day has no pitch of its own, so compare the root the day
       // actually plays — the same value configForDay resolves.
-      const roots = j.schedule.map((d) => getFrequency(configForDay(d).rootId)!.hz!)
+      const roots = j.schedule.map((d) => getFrequency(configForDay(d, j).rootId)!.hz!)
       for (let i = 1; i < roots.length; i++) {
         expect(roots[i], `${j.id} day ${i + 1} drops from ${roots[i - 1]} to ${roots[i]}`)
           .toBeGreaterThanOrEqual(roots[i - 1])
@@ -121,16 +121,38 @@ describe('journeys', () => {
 })
 
 describe('configForDay', () => {
-  it('plays a solfeggio day as the melodic root with the beat layer off', () => {
+  it('keeps a solfeggio day as the root and adds a supporting band under it', () => {
     const day = { day: 1, frequencyId: 'sol-396', durationMin: 30, note: '' }
-    const config = configForDay(day)
+    const config = configForDay(day, { purpose: 'sleep' })
     expect(config.rootId).toBe('sol-396')
-    expect(config.beatId).toBeNull()
+    // A sleep journey leans on delta, and the support stays quieter than the
+    // prescribed tone so the day's own frequency remains the subject.
+    expect(config.beatId).toBe('bb-delta')
+    expect(config.levels.beat).toBeLessThan(config.levels.melody)
+  })
+
+  it('lets a day name its own supporting band', () => {
+    const day = { day: 1, frequencyId: 'sol-396', durationMin: 30, note: '', beatId: 'bb-gamma' }
+    expect(configForDay(day, { purpose: 'sleep' }).beatId).toBe('bb-gamma')
+  })
+
+  it('gives every journey day a brainwave layer', () => {
+    for (const j of JOURNEYS) {
+      for (const day of j.schedule) {
+        const config = configForDay(day, j)
+        expect(config.beatId, `${j.id} day ${day.day}`).toBeTruthy()
+        expect(getFrequency(config.beatId!)?.range, `${j.id} day ${day.day}`).toBeDefined()
+        // The beat rate must sit inside the band it came from.
+        const range = getFrequency(config.beatId!)!.range!
+        expect(config.beatHz).toBeGreaterThanOrEqual(range[0])
+        expect(config.beatHz).toBeLessThanOrEqual(range[1])
+      }
+    }
   })
 
   it('turns a band day into a beat plus a pitched root', () => {
     const day = { day: 4, frequencyId: 'bb-delta', durationMin: 60, note: '' }
-    const config = configForDay(day)
+    const config = configForDay(day, { purpose: 'sleep' })
     expect(config.beatId).toBe('bb-delta')
     expect(getFrequency(config.rootId)?.hz).toBeTypeOf('number')
     // The beat rate must fall inside the band it came from.
@@ -142,7 +164,7 @@ describe('configForDay', () => {
   it('honours the prescribed duration exactly, without rounding to a preset', () => {
     for (const j of JOURNEYS) {
       for (const day of j.schedule) {
-        const config = configForDay(day)
+        const config = configForDay(day, j)
         expect(resolveTimerMinutes(config)).toBe(day.durationMin)
       }
     }

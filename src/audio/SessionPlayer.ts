@@ -61,6 +61,13 @@ class SessionPlayer {
   private config: SessionConfig | null = null
   /** Set when the session was launched from a journey day, for the player card. */
   private journey: { journeyId: string; day: number } | null = null
+  /**
+   * Bumped by every play and every stop. Deferred work captures it and does
+   * nothing if it no longer matches — the intent it belonged to is gone.
+   */
+  private generation = 0
+  /** Whether the voices are actually running, as opposed to merely faded out. */
+  private voicesLive = false
 
   onChange(fn: Listener) {
     this.listeners.add(fn)
@@ -111,7 +118,11 @@ class SessionPlayer {
 
   /** Must be invoked from a user gesture the first time. */
   async play(config: SessionConfig) {
+    const generation = ++this.generation
     await this.ensureGraph()
+    // Building the graph awaits; another play or stop may have landed while it
+    // did, and that one is the newer intent.
+    if (generation !== this.generation) return
     this.config = config
     this.clearTimers()
 
@@ -123,7 +134,11 @@ class SessionPlayer {
 
     this.playing = true
     this.startedAt = Date.now()
-    this.mixer!.setFade(0, 0)
+    // Only drop to silence when the voices really were torn down. Resuming
+    // during a fade-out leaves them running, and slamming the fade to zero
+    // first would put an audible hole in a session that never stopped.
+    if (!this.voicesLive) this.mixer!.setFade(0, 0)
+    this.voicesLive = true
     this.mixer!.fadeIn(FADE_IN_SECONDS)
     this.scheduleTimer(config)
     // Claim first, then describe: the metadata only displays once the system
@@ -250,9 +265,17 @@ class SessionPlayer {
   /**
    * Manual stop still fades, just faster — a hard cut on a meditation app is
    * jarring enough that several competitors are criticised for it.
+   *
+   * The voices are torn down only after the fade has finished, and that delay
+   * is why the generation counter exists. Pressing play again during the fade
+   * used to start a new session that the old stop's timer then silenced a
+   * second later: the clock ran, the pause button showed, and nothing came
+   * out. Measured at 400 ms into the fade, output peaked at 0.0027 against
+   * 0.082 before the pause. A superseded teardown must not touch the graph.
    */
   async stop(fromTimer = false) {
     if (!this.playing) return
+    const generation = ++this.generation
     this.clearTimers()
     const fade = fromTimer ? 0.4 : 2.5
     this.mixer?.fadeOut(fade)
@@ -263,6 +286,8 @@ class SessionPlayer {
     this.emit()
 
     await new Promise((r) => setTimeout(r, fade * 1000 + 120))
+    if (generation !== this.generation) return
+    this.voicesLive = false
     this.melody?.stop()
     this.beat?.stop()
     this.ambience?.stop()

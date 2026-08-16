@@ -21,6 +21,7 @@ export class GenerativeMelody {
   private filter: Tone.Filter
   private filterLfo: Tone.LFO
   private chorus: Tone.Chorus
+  private panner: Tone.AutoPanner
 
   private lead: Tone.PolySynth<Tone.Synth>
   private pad: Tone.PolySynth<Tone.Synth>
@@ -38,6 +39,8 @@ export class GenerativeMelody {
   private density = 0.5
   /** 0 = drifting ambient, 1 = a steady pulse you could walk to. */
   private pace = 0.25
+  /** 0 = plain and grounded, 1 = swirling and unmoored. */
+  private depth = 0
   private leadEvent: number | null = null
   private padEvent: number | null = null
   private pulseEvent: number | null = null
@@ -47,11 +50,21 @@ export class GenerativeMelody {
     this.out = new Tone.Gain(1).connect(destination)
 
     this.reverb = new Tone.Reverb({ decay: 9, preDelay: 0.06, wet: 0.55 }).connect(this.out)
-    this.delay = new Tone.FeedbackDelay({ delayTime: 0.75, feedback: 0.42, wet: 0.26 }).connect(
-      this.reverb,
-    )
-    this.chorus = new Tone.Chorus({ frequency: 0.15, delayTime: 6, depth: 0.5, wet: 0.35 })
+    // maxDelay has to be declared up front: it sizes the underlying buffer, and
+    // depth pushes delayTime as far as 1.35s, past the 1s default.
+    this.delay = new Tone.FeedbackDelay({
+      maxDelay: 2,
+      delayTime: 0.75,
+      feedback: 0.42,
+      wet: 0.26,
+    }).connect(this.reverb)
+    // Stereo motion is a big part of the psychedelic character; at depth 0 it
+    // is fully bypassed so an ordinary session stays still.
+    this.panner = new Tone.AutoPanner({ frequency: 0.05, depth: 0.9, wet: 0 })
       .connect(this.delay)
+      .start()
+    this.chorus = new Tone.Chorus({ frequency: 0.15, delayTime: 6, depth: 0.5, wet: 0.35 })
+      .connect(this.panner)
       .start()
     this.filter = new Tone.Filter({ type: 'lowpass', frequency: 1200, rolloff: -24, Q: 0.6 }).connect(
       this.chorus,
@@ -125,11 +138,42 @@ export class GenerativeMelody {
     if (changed && this.running) this.scheduleVoices()
   }
 
+  /**
+   * Psychedelic character. One dial moves the whole signal path together —
+   * longer feedback, deeper chorus, wider stereo travel, a slower and broader
+   * filter sweep — and past the halfway point the scale itself switches to the
+   * upper harmonic series, which is where the unfamiliarity really comes from.
+   */
+  setDepth(value: number) {
+    const next = Math.max(0, Math.min(1, value))
+    if (next === this.depth) return
+    const crossedScaleThreshold = next >= 0.5 !== this.depth >= 0.5
+    this.depth = next
+
+    this.delay.wet.rampTo(0.26 + next * 0.3, 2)
+    this.delay.feedback.rampTo(0.42 + next * 0.3, 2)
+    this.delay.delayTime.rampTo(0.75 + next * 0.6, 2)
+    this.chorus.wet.rampTo(0.35 + next * 0.35, 2)
+    this.chorus.depth = 0.5 + next * 0.45
+    this.panner.wet.rampTo(next * 0.85, 2)
+    this.panner.frequency.rampTo(0.05 + next * 0.13, 2)
+
+    // A wider, slower sweep makes the timbre feel like it is breathing.
+    this.filterLfo.frequency.rampTo(0.021 - next * 0.012, 2)
+    this.filterLfo.min = 620 - next * 300
+    this.filterLfo.max = 2100 + next * 1400
+
+    if (crossedScaleThreshold) this.setRoot(this.root)
+  }
+
+  private scaleName(rootHz: number) {
+    return this.depth >= 0.5 ? ('harmonic' as const) : scaleForRoot(rootHz)
+  }
+
   /** Retunes every voice to a new root without stopping playback. */
   setRoot(rootHz: number) {
     this.root = rootHz
-    const scaleName = scaleForRoot(rootHz)
-    this.scale = playableScale(rootHz, SCALES[scaleName])
+    this.scale = playableScale(rootHz, SCALES[this.scaleName(rootHz)])
     this.degree = Math.floor(this.scale.length / 2)
 
     const droneHz = carrierFor(rootHz)
@@ -237,6 +281,7 @@ export class GenerativeMelody {
     this.droneGain.dispose()
     this.filter.dispose()
     this.chorus.dispose()
+    this.panner.dispose()
     this.delay.dispose()
     this.reverb.dispose()
     this.out.dispose()

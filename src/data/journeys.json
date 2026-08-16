@@ -192,5 +192,47 @@
       { "day": 6, "frequencyId": "bb-gamma", "durationMin": 20, "note": "פרץ קצר", "pace": 0.88 },
       { "day": 7, "frequencyId": "sol-852", "durationMin": 30, "note": "סיום גבוה", "pace": 0.8 }
     ]
+  },
+  {
+    "id": "journey-dissolve-3",
+    "title": "התמוססות",
+    "days": 3,
+    "purpose": "psychedelic",
+    "description": "שלוש האזנות שמכניסות בהדרגה לטקסטורה הפסיכדלית — הדים ארוכים, תנועה בין האוזניים, ומרווחים שלא שומעים בפסנתר.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-417", "durationMin": 25, "note": "הקצוות מתחילים להתרכך", "depth": 0.45 },
+      { "day": 2, "frequencyId": "bb-theta", "durationMin": 35, "note": "הסולם משתנה", "depth": 0.7 },
+      { "day": 3, "frequencyId": "sol-639", "durationMin": 40, "note": "התמוססות מלאה", "depth": 0.92 }
+    ]
+  },
+  {
+    "id": "journey-kaleido-7",
+    "title": "קליידוסקופ",
+    "days": 7,
+    "purpose": "psychedelic",
+    "description": "שבוע שבו הצליל מסתובב ומתקפל על עצמו. עומק גבוה לכל האורך, עם תנועה קלה שמונעת מהתמונה לקפוא.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-396", "durationMin": 30, "note": "הדפוס הראשון", "depth": 0.6, "pace": 0.3 },
+      { "day": 2, "frequencyId": "sol-528", "durationMin": 30, "note": "הסיבוב מתחיל", "depth": 0.7, "pace": 0.34 },
+      { "day": 3, "frequencyId": "bb-theta", "durationMin": 40, "note": "אמצע הדפוס", "depth": 0.8, "pace": 0.3 },
+      { "day": 4, "frequencyId": "sol-639", "durationMin": 35, "note": "השתקפויות", "depth": 0.85, "pace": 0.4 },
+      { "day": 5, "frequencyId": "sol-741", "durationMin": 35, "note": "צבע חדש", "depth": 0.9, "pace": 0.36 },
+      { "day": 6, "frequencyId": "bb-gamma", "durationMin": 25, "note": "הבזק", "depth": 0.95, "pace": 0.5 },
+      { "day": 7, "frequencyId": "sol-963", "durationMin": 40, "note": "הדפוס נסגר", "depth": 1, "pace": 0.28 }
+    ]
+  },
+  {
+    "id": "journey-void-5",
+    "title": "מרחב פתוח",
+    "days": 5,
+    "purpose": "psychedelic",
+    "description": "האזנות ארוכות ואיטיות במיוחד, בעומק מלא וכמעט בלי תנועה — הכי קרוב שיש כאן לחלל ריק.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-174", "durationMin": 40, "note": "הקרקע נעלמת", "depth": 0.75, "pace": 0.08 },
+      { "day": 2, "frequencyId": "bb-delta", "durationMin": 60, "note": "שקיעה איטית", "depth": 0.85, "pace": 0.05 },
+      { "day": 3, "frequencyId": "sol-285", "durationMin": 45, "note": "מרחב", "depth": 0.9, "pace": 0.08 },
+      { "day": 4, "frequencyId": "bb-theta", "durationMin": 60, "note": "בלי כיוון", "depth": 0.96, "pace": 0.05 },
+      { "day": 5, "frequencyId": "sol-963", "durationMin": 45, "note": "חזרה מלמעלה", "depth": 1, "pace": 0.12 }
+    ]
   }
 ]

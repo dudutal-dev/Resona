@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  JUST_HARMONIC,
   JUST_MAJOR,
   SCALES,
   buildScale,
@@ -50,6 +51,26 @@ describe('anchoring', () => {
 
   it('builds one pitch per ratio per octave before folding', () => {
     expect(buildScale(528, JUST_MAJOR, [0, 1])).toHaveLength(14)
+  })
+
+  it('keeps the anchoring guarantee on the psychedelic scale too', () => {
+    // The whole point of the upper-harmonic set is that it sounds unmoored
+    // while staying exactly as harmonically anchored as every other scale.
+    const root = 639
+    for (const pitch of playableScale(root, JUST_HARMONIC)) {
+      const match = JUST_HARMONIC.some((ratio) => {
+        const log2 = Math.log2(pitch / (root * ratio))
+        return Math.abs(log2 - Math.round(log2)) < 1e-9
+      })
+      expect(match, `${pitch} Hz is not a harmonic of ${root} Hz`).toBe(true)
+    }
+  })
+
+  it('places the harmonic scale intervals where no keyboard can reach', () => {
+    // 7/4 is ~969 cents, a full 31 cents flat of the equal-tempered minor
+    // seventh at 1000 — audibly "wrong" in the way that makes it interesting.
+    expect(1200 * Math.log2(7 / 4)).toBeCloseTo(968.83, 1)
+    expect(1200 * Math.log2(11 / 8)).toBeCloseTo(551.32, 1)
   })
 
   it('uses pure integer ratios, not equal temperament', () => {

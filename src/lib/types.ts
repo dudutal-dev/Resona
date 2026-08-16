@@ -27,6 +27,7 @@ export type JourneyPurpose =
   | 'creativity'
   | 'body'
   | 'rhythm'
+  | 'psychedelic'
 
 export type JourneyDay = {
   day: number
@@ -40,6 +41,8 @@ export type JourneyDay = {
    * that matches the journey's purpose.
    */
   beatId?: string
+  /** Overrides the session depth for this day. */
+  depth?: number
 }
 
 export type Journey = {
@@ -95,6 +98,8 @@ export type SessionConfig = {
   density: number
   /** Rhythmic character, 0 (drifting ambient) - 1 (a steady walkable pulse). */
   pace: number
+  /** Psychedelic character, 0 (grounded) - 1 (swirling, upper-harmonic scale). */
+  depth: number
 }
 
 /** Persisted preset. `layers` matches the schema in the build spec (§5.3). */

@@ -148,6 +148,7 @@ class SessionPlayer {
     this.melody.setRoot(rootHz)
     this.melody.setDensity(config.density)
     this.melody.setPace(config.pace)
+    this.melody.setDepth(config.depth)
     this.beat.setRoot(rootHz)
     this.beat.setBeatHz(config.beatHz)
     this.beat.setMode(config.beatMode)

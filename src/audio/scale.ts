@@ -16,12 +16,24 @@ export const JUST_PENTATONIC = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3] as const
 /** Minor-leaning set for the darker roots. */
 export const JUST_MINOR_PENTATONIC = [1, 6 / 5, 4 / 3, 3 / 2, 9 / 5] as const
 
-export type ScaleName = 'major' | 'pentatonic' | 'minorPentatonic'
+/**
+ * The upper harmonic series — the 7th, 11th and 13th partials.
+ *
+ * These intervals have no equivalent on a piano: 7/4 sits noticeably flat of a
+ * minor seventh and 11/8 lands between a fourth and a tritone. They sound
+ * unfamiliar and slightly unmoored, which is exactly the psychedelic quality,
+ * and they get there without giving up a thing — every one is still an exact
+ * whole-number ratio of the root, so the anchoring guarantee holds unchanged.
+ */
+export const JUST_HARMONIC = [1, 9 / 8, 5 / 4, 11 / 8, 3 / 2, 13 / 8, 7 / 4] as const
+
+export type ScaleName = 'major' | 'pentatonic' | 'minorPentatonic' | 'harmonic'
 
 export const SCALES: Record<ScaleName, readonly number[]> = {
   major: JUST_MAJOR,
   pentatonic: JUST_PENTATONIC,
   minorPentatonic: JUST_MINOR_PENTATONIC,
+  harmonic: JUST_HARMONIC,
 }
 
 /**

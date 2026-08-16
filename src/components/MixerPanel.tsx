@@ -40,7 +40,7 @@ const CloudIcon = () => (
 
 /** Per-layer volume plus the controls that shape each layer (§4.5). */
 export function MixerPanel() {
-  const { config, setLevel, setAmbience, setBeatHz, setDensity, setPace } = useSession()
+  const { config, setLevel, setAmbience, setBeatHz, setDensity, setPace, setDepth } = useSession()
   const [ambienceOptions, setAmbienceOptions] = useState<AmbienceOption[]>(BUILTIN_AMBIENCE)
 
   useEffect(() => {
@@ -87,6 +87,27 @@ export function MixerPanel() {
                     : 'קצבי'
             }
           />
+          <Slider
+            label="עומק"
+            value={config.depth}
+            onChange={setDepth}
+            display={
+              config.depth < 0.2
+                ? 'נקי'
+                : config.depth < 0.5
+                  ? 'מרחף'
+                  : config.depth < 0.8
+                    ? 'פסיכדלי'
+                    : 'עמוק'
+            }
+          />
+          {config.depth >= 0.5 && (
+            <p className="txt-3 text-[11px] leading-relaxed">
+              מעל חצי הסולם עובר לסדרת ההרמוניות העליונה — מרווחים של{' '}
+              <span className="ltr">7/4</span> ו-<span className="ltr">11/8</span> שאין להם מקבילה
+              בפסנתר. עדיין יחסים שלמים מדויקים של תדר היסוד.
+            </p>
+          )}
           {config.pace >= 0.45 && (
             <p className="txt-3 text-[11px] leading-relaxed">
               מעל "פועם" נכנסת פעימת בס על תדר היסוד, התווים מתקצרים והנגיעה נעשית נקישה במקום

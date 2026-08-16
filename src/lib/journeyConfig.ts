@@ -46,7 +46,12 @@ export function configForDay(
     beatHz: beat ? defaultBeatHz(beat) : base.beatHz,
     timerMode: 'custom',
     customMinutes: day.durationMin,
-    pace: day.pace ?? base.pace,
+    // Deliberately DEFAULT_CONFIG, not `base`: a guided day has to sound the
+    // same whatever was played before it. Falling back to the live session let
+    // a psychedelic day's depth leak into the next journey and quietly rewrite
+    // its scale.
+    pace: day.pace ?? DEFAULT_CONFIG.pace,
+    depth: day.depth ?? DEFAULT_CONFIG.depth,
     levels: {
       ...base.levels,
       beat: dayIsBand ? Math.max(base.levels.beat, PRIMARY_BEAT_LEVEL) : SUPPORTING_BEAT_LEVEL,

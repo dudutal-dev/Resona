@@ -14,6 +14,7 @@ export const DEFAULT_CONFIG: SessionConfig = {
   timerMode: '30',
   density: 0.5,
   pace: 0.25,
+  depth: 0,
 }
 
 type SessionState = {
@@ -35,6 +36,7 @@ type SessionState = {
   setTimerMode: (mode: TimerMode) => void
   setDensity: (value: number) => void
   setPace: (value: number) => void
+  setDepth: (value: number) => void
   loadConfig: (config: SessionConfig, journey?: { journeyId: string; day: number } | null) => void
 
   toggle: () => Promise<void>
@@ -94,6 +96,7 @@ export const useSession = create<SessionState>((set, get) => {
     setTimerMode: (mode) => commit({ ...get().config, timerMode: mode }),
     setDensity: (value) => commit({ ...get().config, density: value }),
     setPace: (value) => commit({ ...get().config, pace: value }),
+    setDepth: (value) => commit({ ...get().config, depth: value }),
 
     loadConfig: (config, journey = null) => {
       set({ activeJourney: journey })

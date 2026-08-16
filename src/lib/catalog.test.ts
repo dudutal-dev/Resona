@@ -11,6 +11,7 @@ import {
   getFrequency,
 } from './catalog'
 import { configForDay } from './journeyConfig'
+import { DEFAULT_CONFIG } from '../store/sessionStore'
 import { resolveTimerMinutes } from '../audio/SessionPlayer'
 
 describe('frequency catalog', () => {
@@ -168,5 +169,19 @@ describe('configForDay', () => {
         expect(resolveTimerMinutes(config)).toBe(day.durationMin)
       }
     }
+  })
+})
+
+describe('journey day isolation', () => {
+  it('does not let one day\'s character leak into the next', () => {
+    const psychedelic = { day: 1, frequencyId: 'sol-639', durationMin: 30, note: '', depth: 1, pace: 0.9 }
+    const plain = { day: 1, frequencyId: 'sol-528', durationMin: 20, note: '' }
+
+    // Play a deep, fast day, then start a day that specifies neither.
+    const after = configForDay(psychedelic, { purpose: 'psychedelic' })
+    const next = configForDay(plain, { purpose: 'spiritual' }, after)
+
+    expect(next.depth, 'depth leaked from the previous day').toBe(DEFAULT_CONFIG.depth)
+    expect(next.pace, 'pace leaked from the previous day').toBe(DEFAULT_CONFIG.pace)
   })
 })

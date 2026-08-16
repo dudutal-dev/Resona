@@ -6,7 +6,14 @@ import type { Journey, JourneyPurpose } from './types'
  * browse by. Themes are the shelf a person actually looks on: someone wants
  * "something for the evening", not "the anxiety purpose specifically".
  */
-export type JourneyTheme = 'start' | 'rest' | 'work' | 'motion' | 'inner' | 'psychedelic'
+export type JourneyTheme =
+  | 'start'
+  | 'rest'
+  | 'work'
+  | 'motion'
+  | 'inner'
+  | 'intimacy'
+  | 'psychedelic'
 
 /** Total by construction, so a new purpose cannot land without a shelf. */
 export const THEME_OF: Record<JourneyPurpose, JourneyTheme> = {
@@ -25,10 +32,20 @@ export const THEME_OF: Record<JourneyPurpose, JourneyTheme> = {
   spiritual: 'inner',
   creativity: 'inner',
 
+  intimacy: 'intimacy',
+
   psychedelic: 'psychedelic',
 }
 
-export const THEME_ORDER: JourneyTheme[] = ['start', 'rest', 'work', 'motion', 'inner', 'psychedelic']
+export const THEME_ORDER: JourneyTheme[] = [
+  'start',
+  'rest',
+  'work',
+  'motion',
+  'inner',
+  'intimacy',
+  'psychedelic',
+]
 
 export const THEME_LABEL: Record<JourneyTheme, string> = {
   start: 'התחלה',
@@ -36,6 +53,7 @@ export const THEME_LABEL: Record<JourneyTheme, string> = {
   work: 'ריכוז ועבודה',
   motion: 'תנועה וקצב',
   inner: 'פנימי',
+  intimacy: 'זוגיות',
   psychedelic: 'פסיכדלי',
 }
 
@@ -45,6 +63,7 @@ export const THEME_BLURB: Record<JourneyTheme, string> = {
   work: 'להאזנה תוך כדי עבודה, ולהרמת אנרגיה',
   motion: 'פעימה קבועה — להליכה, למתיחות, לעמידה',
   inner: 'מדיטציה, התבוננות ויצירה',
+  intimacy: 'ערב לשניים, מגע וקרבה',
   psychedelic: 'הדים ארוכים ומרווחים לא מוכרים',
 }
 
@@ -54,6 +73,7 @@ export const THEME_HUE: Record<JourneyTheme, number> = {
   work: 214,
   motion: 96,
   inner: 292,
+  intimacy: 345,
   psychedelic: 310,
 }
 

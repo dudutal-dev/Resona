@@ -327,5 +327,44 @@
       { "day": 4, "frequencyId": "sol-963", "durationMin": 15, "note": "גובה", "pace": 0.75, "density": 0.6 },
       { "day": 5, "frequencyId": "bb-gamma", "durationMin": 12, "note": "טעינה מלאה", "pace": 0.9, "density": 0.75 }
     ]
+  },
+  {
+    "id": "journey-closeness-5",
+    "title": "קרבה",
+    "days": 5,
+    "purpose": "intimacy",
+    "description": "חמישה ערבים סביב 639Hz — התדר שמיוחסת לו במסורת הרמוניה בין-אישית. חם ואיטי, מרווחים מוכרים בלבד, בלי שום דבר שמושך תשומת לב אליו.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-639", "durationMin": 30, "note": "להיות באותו חדר", "density": 0.4, "pace": 0.22, "depth": 0.3 },
+      { "day": 2, "frequencyId": "sol-528", "durationMin": 35, "note": "נשימה משותפת", "density": 0.45, "pace": 0.25, "depth": 0.35 },
+      { "day": 3, "frequencyId": "sol-639", "durationMin": 40, "note": "קצב משותף", "density": 0.45, "pace": 0.3, "depth": 0.4 },
+      { "day": 4, "frequencyId": "sol-417", "durationMin": 40, "note": "בלי מילים", "density": 0.5, "pace": 0.28, "depth": 0.42 },
+      { "day": 5, "frequencyId": "sol-639", "durationMin": 45, "note": "השקט שאחרי", "density": 0.42, "pace": 0.24, "depth": 0.45 }
+    ]
+  },
+  {
+    "id": "journey-touch-4",
+    "title": "מגע",
+    "days": 4,
+    "purpose": "intimacy",
+    "description": "האזנות ארוכות ואיטיות מאוד למגע ולעיסוי — תדרים נמוכים, תווים רחוקים זה מזה, וגלי תטא מתחת.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-174", "durationMin": 40, "note": "ידיים חמות", "beatId": "bb-theta", "density": 0.35, "pace": 0.15, "depth": 0.3 },
+      { "day": 2, "frequencyId": "sol-285", "durationMin": 45, "note": "לאט", "beatId": "bb-theta", "density": 0.38, "pace": 0.14, "depth": 0.35 },
+      { "day": 3, "frequencyId": "sol-432", "durationMin": 50, "note": "כוונון לגוף", "beatId": "bb-theta", "density": 0.4, "pace": 0.18, "depth": 0.4 },
+      { "day": 4, "frequencyId": "sol-639", "durationMin": 50, "note": "סיום ארוך", "beatId": "bb-theta", "density": 0.42, "pace": 0.16, "depth": 0.45 }
+    ]
+  },
+  {
+    "id": "journey-evening-3",
+    "title": "ערב לשניים",
+    "days": 3,
+    "purpose": "intimacy",
+    "description": "שלושה ערבים ארוכים, שעה ומעלה. פעימת בס איטית סביב שלושים לדקה — קצב מנוחה, לא קצב ריקוד.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-639", "durationMin": 60, "note": "פעימה איטית", "density": 0.45, "pace": 0.5, "depth": 0.4 },
+      { "day": 2, "frequencyId": "sol-528", "durationMin": 60, "note": "מתחמם", "density": 0.5, "pace": 0.55, "depth": 0.45 },
+      { "day": 3, "frequencyId": "sol-639", "durationMin": 75, "note": "לילה ארוך", "density": 0.48, "pace": 0.45, "depth": 0.48 }
+    ]
   }
 ]

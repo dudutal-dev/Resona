@@ -29,6 +29,7 @@ export type JourneyPurpose =
   | 'rhythm'
   | 'psychedelic'
   | 'work'
+  | 'intimacy'
 
 export type JourneyDay = {
   day: number

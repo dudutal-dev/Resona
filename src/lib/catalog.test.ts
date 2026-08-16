@@ -124,6 +124,20 @@ describe('journeys', () => {
     }
   })
 
+  it('keeps the intimacy journeys on the consonant scale', () => {
+    const intimacy = JOURNEYS.filter((j) => j.purpose === 'intimacy')
+    expect(intimacy.length).toBeGreaterThan(0)
+    for (const j of intimacy) {
+      for (const day of j.schedule) {
+        // Depth 0.5 is where the melody switches to the upper harmonic series.
+        // Those intervals are deliberately unsettling, which is the opposite of
+        // what this shelf is for — warmth has to stay on familiar intervals.
+        expect(day.depth, `${j.id} day ${day.day} crosses into the harmonic scale`)
+          .toBeLessThan(0.5)
+      }
+    }
+  })
+
   it('labels and colours every purpose in use', () => {
     for (const j of JOURNEYS) {
       expect(PURPOSE_LABEL[j.purpose], `no label for purpose ${j.purpose}`).toBeTruthy()

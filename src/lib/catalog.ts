@@ -70,6 +70,7 @@ export const PURPOSE_LABEL: Record<JourneyPurpose, string> = {
   rhythm: 'קצבי',
   psychedelic: 'פסיכדלי',
   work: 'עבודה',
+  intimacy: 'זוגיות',
 }
 
 /**
@@ -102,6 +103,7 @@ export const PURPOSE_BAND: Record<JourneyPurpose, string> = {
   rhythm: 'bb-beta',
   psychedelic: 'bb-theta',
   work: 'bb-beta',
+  intimacy: 'bb-alpha',
 }
 
 /** Middle of a band's range — the default beat rate when a band is picked. */

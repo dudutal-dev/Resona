@@ -22,6 +22,7 @@ export class GenerativeMelody {
   private filterLfo: Tone.LFO
   private chorus: Tone.Chorus
   private panner: Tone.AutoPanner
+  private baseDelay: number
 
   private lead: Tone.PolySynth<Tone.Synth>
   private pad: Tone.PolySynth<Tone.Synth>
@@ -44,6 +45,8 @@ export class GenerativeMelody {
   private leadEvent: number | null = null
   private padEvent: number | null = null
   private pulseEvent: number | null = null
+  /** Notes still owed in the current phrase; 0 means the next event is a rest. */
+  private phraseLeft = 0
   private running = false
 
   constructor(destination: Tone.InputNode) {
@@ -52,10 +55,15 @@ export class GenerativeMelody {
     this.reverb = new Tone.Reverb({ decay: 9, preDelay: 0.06, wet: 0.55 }).connect(this.out)
     // maxDelay has to be declared up front: it sizes the underlying buffer, and
     // depth pushes delayTime as far as 1.35s, past the 1s default.
+    // Delay time is drawn per session and sits deliberately off any round
+    // number: a fixed 0.75s echo at high feedback is itself a metronome, and it
+    // was beating against the note grid. Lower feedback keeps it as colour
+    // rather than as a rhythm.
+    this.baseDelay = 1.13 + Math.random() * 0.74
     this.delay = new Tone.FeedbackDelay({
-      maxDelay: 2,
-      delayTime: 0.75,
-      feedback: 0.42,
+      maxDelay: 4,
+      delayTime: this.baseDelay,
+      feedback: 0.28,
       wet: 0.26,
     }).connect(this.reverb)
     // Stereo motion is a big part of the psychedelic character; at depth 0 it
@@ -151,8 +159,8 @@ export class GenerativeMelody {
     this.depth = next
 
     this.delay.wet.rampTo(0.26 + next * 0.3, 2)
-    this.delay.feedback.rampTo(0.42 + next * 0.3, 2)
-    this.delay.delayTime.rampTo(0.75 + next * 0.6, 2)
+    this.delay.feedback.rampTo(0.28 + next * 0.28, 2)
+    this.delay.delayTime.rampTo(this.baseDelay + next * 0.8, 2)
     this.chorus.wet.rampTo(0.35 + next * 0.35, 2)
     this.chorus.depth = 0.5 + next * 0.45
     this.panner.wet.rampTo(next * 0.85, 2)
@@ -199,42 +207,101 @@ export class GenerativeMelody {
   }
 
   private scheduleVoices() {
-    const transport = engine.transport
     this.clearVoices()
+    const now = engine.transport.seconds
+    this.phraseLeft = 0
+    this.scheduleLead(now + 0.5)
+    this.schedulePad(now + 2 + Math.random() * 6)
+    this.schedulePulse()
+  }
 
-    // Lead voice. Each hit re-rolls its own length, velocity and octave, so the
-    // texture never settles into a repeating pattern even at a steady pace.
-    this.leadEvent = transport.scheduleRepeat((time) => {
-      const chance = 0.14 + this.density * 0.4 + this.pace * 0.32
-      if (Math.random() > chance) return
-      this.degree = nextDegree(this.degree, this.scale.length)
-      const freq = this.scale[this.degree]
-      const dur = (2 + Math.random() * 6) * (1 - this.pace * 0.82)
-      const vel = 0.2 + Math.random() * 0.35 + this.pace * 0.12
-      this.lead.triggerAttackRelease(freq, dur, time, vel)
+  /**
+   * The lead, as phrases rather than as a grid.
+   *
+   * The previous version fired on a strict repeating interval and gated each
+   * slot on probability. That leaves every note quantised to the same grid, and
+   * the ear locks onto it — worse, it beat against the pad's own fixed period
+   * so the line kept sliding out of step and back again.
+   *
+   * Now each note schedules the next one at a freshly drawn distance, and notes
+   * come in runs of three to nine with a breath between them. Nothing repeats,
+   * and a phrase reads as one continuous line instead of scattered pings.
+   */
+  private scheduleLead(at: number) {
+    const transport = engine.transport
+    this.leadEvent = transport.scheduleOnce((time) => {
+      if (!this.running) return
 
-      // Occasionally shadow the note a fifth or octave up for a shimmer.
-      if (Math.random() < 0.22) {
-        const partner = Math.random() < 0.5 ? freq * 1.5 : freq * 2
-        if (partner < 2400) {
-          this.lead.triggerAttackRelease(partner, dur * 0.7, time + this.leadInterval * 0.25, vel * 0.5)
-        }
+      const base = this.leadInterval
+      let gap: number
+
+      if (this.phraseLeft > 0) {
+        // Inside a phrase: notes stay close, with the spacing varying enough
+        // that no two bars scan alike.
+        gap = base * (0.55 + Math.random() * 0.9)
+        this.phraseLeft--
+        this.playLeadNote(time, false)
+      } else {
+        // Between phrases: a longer breath, then a new run. Denser settings
+        // shorten the breath and lengthen the run.
+        // Density has to bite hard here. Phrases group notes together, so a
+        // weak coupling leaves a "sparse" setting sounding busier than the old
+        // grid did — which would wreck the work journeys, whose whole job is to
+        // stay out of the way.
+        gap = base * (2.5 + Math.random() * 4) * (1.9 - this.density * 1.2)
+        this.phraseLeft = 1 + Math.floor(Math.random() * (2 + this.density * 7))
+        // Open the phrase from a new place in the register so successive
+        // phrases do not all start on the same note.
+        this.degree = Math.floor(Math.random() * this.scale.length)
+        this.playLeadNote(time, true)
       }
-    }, this.leadInterval)
 
-    // Pad voice: slow consonant clusters built from the root's harmonic series.
-    // It stays slow at every pace — it is the horizon the pulse moves against.
-    this.padEvent = transport.scheduleRepeat((time) => {
-      if (Math.random() > 0.45) return
-      const base = this.scale[Math.floor(Math.random() * this.scale.length)]
-      const voicing = [1, 3 / 2, 2][Math.floor(Math.random() * 3)]
-      const notes = [base, base * voicing].filter((f) => f > 80 && f < 2000)
-      this.pad.triggerAttackRelease(notes, 14 + Math.random() * 10, time, 0.16)
-    }, 11)
+      this.scheduleLead(at + gap)
+    }, at)
+  }
 
-    // Pulse: a low root on a strict grid. Silent below the pace threshold, so
-    // an ambient session never hears it.
-    this.pulseEvent = transport.scheduleRepeat((time) => {
+  private playLeadNote(time: number, phraseStart: boolean) {
+    if (!this.scale.length) return
+    if (!phraseStart) this.degree = nextDegree(this.degree, this.scale.length)
+    const freq = this.scale[this.degree]
+    const dur = (2 + Math.random() * 6) * (1 - this.pace * 0.82)
+    const vel = 0.18 + Math.random() * 0.3 + this.pace * 0.12 + (phraseStart ? 0.08 : 0)
+    this.lead.triggerAttackRelease(freq, dur, time, vel)
+
+    // Occasionally shadow the note a fifth or octave up for a shimmer.
+    if (Math.random() < 0.22) {
+      const partner = Math.random() < 0.5 ? freq * 1.5 : freq * 2
+      if (partner < 2400) {
+        this.lead.triggerAttackRelease(partner, dur * 0.7, time + 0.18 + Math.random() * 0.3, vel * 0.5)
+      }
+    }
+  }
+
+  /**
+   * Pad clusters. Also self-rescheduling: a fixed 11-second repeat was the most
+   * audible pattern in the whole piece, since a swell that regular reads as a
+   * loop no matter how the notes above it move.
+   */
+  private schedulePad(at: number) {
+    const transport = engine.transport
+    this.padEvent = transport.scheduleOnce((time) => {
+      if (!this.running) return
+      if (this.scale.length) {
+        const base = this.scale[Math.floor(Math.random() * this.scale.length)]
+        const voicing = [1, 3 / 2, 2][Math.floor(Math.random() * 3)]
+        const notes = [base, base * voicing].filter((f) => f > 80 && f < 2000)
+        this.pad.triggerAttackRelease(notes, 14 + Math.random() * 12, time, 0.16)
+      }
+      this.schedulePad(at + 9 + Math.random() * 17)
+    }, at)
+  }
+
+  /**
+   * The pulse is the one voice that SHOULD be strictly periodic — it is the
+   * beat. It stays on scheduleRepeat, and stays silent below the threshold.
+   */
+  private schedulePulse() {
+    this.pulseEvent = engine.transport.scheduleRepeat((time) => {
       if (this.pace < 0.45) return
       // Every other beat gets a lighter accent, which reads as a bar rather
       // than an undifferentiated tick.

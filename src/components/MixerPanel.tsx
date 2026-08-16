@@ -39,7 +39,7 @@ const CloudIcon = () => (
 
 /** Per-layer volume plus the controls that shape each layer (§4.5). */
 export function MixerPanel() {
-  const { config, setLevel, setAmbience, setBeatHz, setBeatMode, setDensity } = useSession()
+  const { config, setLevel, setAmbience, setBeatHz, setBeatMode, setDensity, setPace } = useSession()
   const [ambienceOptions, setAmbienceOptions] = useState<AmbienceOption[]>(BUILTIN_AMBIENCE)
 
   useEffect(() => {
@@ -65,13 +65,33 @@ export function MixerPanel() {
           value={config.levels.melody}
           onChange={(v) => setLevel('melody', v)}
         />
-        <div className="mt-3 border-t pt-3" style={{ borderColor: 'var(--border)' }}>
+        <div className="mt-3 space-y-3 border-t pt-3" style={{ borderColor: 'var(--border)' }}>
           <Slider
             label="צפיפות נגינה"
             value={config.density}
             onChange={setDensity}
             display={config.density < 0.33 ? 'דלילה' : config.density < 0.7 ? 'מאוזנת' : 'זורמת'}
           />
+          <Slider
+            label="קצב"
+            value={config.pace}
+            onChange={setPace}
+            display={
+              config.pace < 0.25
+                ? 'נייח'
+                : config.pace < 0.45
+                  ? 'זורם'
+                  : config.pace < 0.7
+                    ? 'פועם'
+                    : 'קצבי'
+            }
+          />
+          {config.pace >= 0.45 && (
+            <p className="txt-3 text-[11px] leading-relaxed">
+              מעל "פועם" נכנסת פעימת בס על תדר היסוד, התווים מתקצרים והנגיעה נעשית נקישה במקום
+              התנפחות.
+            </p>
+          )}
         </div>
       </div>
 

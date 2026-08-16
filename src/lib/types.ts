@@ -26,12 +26,15 @@ export type JourneyPurpose =
   | 'energy'
   | 'creativity'
   | 'body'
+  | 'rhythm'
 
 export type JourneyDay = {
   day: number
   frequencyId: string
   durationMin: number
   note: string
+  /** Overrides the session pace for this day. Omit to keep the user's setting. */
+  pace?: number
 }
 
 export type Journey = {
@@ -85,6 +88,8 @@ export type SessionConfig = {
   customMinutes?: number
   /** Musical density of the generative melody, 0 (sparse) - 1 (flowing). */
   density: number
+  /** Rhythmic character, 0 (drifting ambient) - 1 (a steady walkable pulse). */
+  pace: number
 }
 
 /** Persisted preset. `layers` matches the schema in the build spec (§5.3). */

@@ -72,6 +72,29 @@ describe('journeys', () => {
     }
   })
 
+  it('makes the rhythmic journeys actually climb the scale', () => {
+    const rhythmic = JOURNEYS.filter((j) => j.purpose === 'rhythm')
+    expect(rhythmic.length).toBeGreaterThan(0)
+    for (const j of rhythmic) {
+      // A band day has no pitch of its own, so compare the root the day
+      // actually plays — the same value configForDay resolves.
+      const roots = j.schedule.map((d) => getFrequency(configForDay(d).rootId)!.hz!)
+      for (let i = 1; i < roots.length; i++) {
+        expect(roots[i], `${j.id} day ${i + 1} drops from ${roots[i - 1]} to ${roots[i]}`)
+          .toBeGreaterThanOrEqual(roots[i - 1])
+      }
+    }
+  })
+
+  it('keeps the rhythmic journeys above the pace threshold that starts the pulse', () => {
+    for (const j of JOURNEYS.filter((x) => x.purpose === 'rhythm')) {
+      for (const day of j.schedule) {
+        expect(day.pace, `${j.id} day ${day.day}`).toBeGreaterThanOrEqual(0.45)
+        expect(day.pace).toBeLessThanOrEqual(1)
+      }
+    }
+  })
+
   it('labels and colours every purpose in use', () => {
     for (const j of JOURNEYS) {
       expect(PURPOSE_LABEL[j.purpose], `no label for purpose ${j.purpose}`).toBeTruthy()

@@ -24,6 +24,7 @@ export function configForDay(day: JourneyDay, base: SessionConfig = DEFAULT_CONF
     beatHz: isBand && target ? defaultBeatHz(target) : base.beatHz,
     timerMode: 'custom',
     customMinutes: day.durationMin,
+    pace: day.pace ?? base.pace,
     levels: {
       ...base.levels,
       // Brainwave days lean on the beat; solfeggio days lean on the melody.

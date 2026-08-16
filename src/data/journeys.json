@@ -144,5 +144,53 @@
       { "day": 13, "frequencyId": "bb-delta", "durationMin": 40, "note": "שקט" },
       { "day": 14, "frequencyId": "sol-963", "durationMin": 30, "note": "סיכום המסע" }
     ]
+  },
+  {
+    "id": "journey-ascend-9",
+    "title": "עלייה בסולם",
+    "days": 9,
+    "purpose": "rhythm",
+    "description": "יום לכל תדר בסולם הסולפג׳יו, מ-174 ועד 963 — כל יום מדרגה אחת למעלה, ובקצב פועם ולא נייח.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-174", "durationMin": 20, "note": "המדרגה הראשונה — נמוך ויציב", "pace": 0.5 },
+      { "day": 2, "frequencyId": "sol-285", "durationMin": 20, "note": "צעד למעלה", "pace": 0.52 },
+      { "day": 3, "frequencyId": "sol-396", "durationMin": 20, "note": "הקצב מתייצב", "pace": 0.56 },
+      { "day": 4, "frequencyId": "sol-417", "durationMin": 25, "note": "תנועה", "pace": 0.6 },
+      { "day": 5, "frequencyId": "sol-528", "durationMin": 25, "note": "אמצע הסולם", "pace": 0.64 },
+      { "day": 6, "frequencyId": "sol-639", "durationMin": 25, "note": "פתיחה", "pace": 0.68 },
+      { "day": 7, "frequencyId": "sol-741", "durationMin": 25, "note": "בהירות בקצב", "pace": 0.72 },
+      { "day": 8, "frequencyId": "sol-852", "durationMin": 25, "note": "כמעט למעלה", "pace": 0.76 },
+      { "day": 9, "frequencyId": "sol-963", "durationMin": 30, "note": "המדרגה העליונה", "pace": 0.8 }
+    ]
+  },
+  {
+    "id": "journey-pulse-5",
+    "title": "דופק בוקר",
+    "days": 5,
+    "purpose": "rhythm",
+    "description": "חמש האזנות קצרות וקצביות לתחילת יום — עולות בסולם ומעלות קצב יחד איתו.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-396", "durationMin": 15, "note": "התנעה", "pace": 0.55 },
+      { "day": 2, "frequencyId": "sol-417", "durationMin": 15, "note": "תנועה קדימה", "pace": 0.65 },
+      { "day": 3, "frequencyId": "sol-528", "durationMin": 20, "note": "קצב מלא", "pace": 0.75 },
+      { "day": 4, "frequencyId": "sol-741", "durationMin": 20, "note": "חדות", "pace": 0.85 },
+      { "day": 5, "frequencyId": "sol-852", "durationMin": 20, "note": "שיא הבוקר", "pace": 0.92 }
+    ]
+  },
+  {
+    "id": "journey-move-7",
+    "title": "תנועה",
+    "days": 7,
+    "purpose": "rhythm",
+    "description": "מסע להליכה, מתיחות או עבודה בעמידה. פעימה קבועה לאורך כל הדרך, עם עלייה מתמדת בסולם.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-417", "durationMin": 20, "note": "יציאה לדרך", "pace": 0.6 },
+      { "day": 2, "frequencyId": "sol-528", "durationMin": 25, "note": "מציאת הקצב", "pace": 0.66 },
+      { "day": 3, "frequencyId": "sol-639", "durationMin": 25, "note": "אמצע המסע", "pace": 0.7 },
+      { "day": 4, "frequencyId": "bb-beta", "durationMin": 25, "note": "ערנות בתנועה", "pace": 0.74 },
+      { "day": 5, "frequencyId": "sol-741", "durationMin": 30, "note": "קצב מתמשך", "pace": 0.78 },
+      { "day": 6, "frequencyId": "bb-gamma", "durationMin": 20, "note": "פרץ קצר", "pace": 0.88 },
+      { "day": 7, "frequencyId": "sol-852", "durationMin": 30, "note": "סיום גבוה", "pace": 0.8 }
+    ]
   }
 ]

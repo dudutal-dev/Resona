@@ -13,6 +13,7 @@ export const DEFAULT_CONFIG: SessionConfig = {
   levels: { melody: 0.75, beat: 0.3, ambience: 0.35, master: 0.85 },
   timerMode: '30',
   density: 0.5,
+  pace: 0.25,
 }
 
 type SessionState = {
@@ -33,6 +34,7 @@ type SessionState = {
   setLevel: (layer: keyof SessionConfig['levels'], value: number) => void
   setTimerMode: (mode: TimerMode) => void
   setDensity: (value: number) => void
+  setPace: (value: number) => void
   loadConfig: (config: SessionConfig, journey?: { journeyId: string; day: number } | null) => void
 
   toggle: () => Promise<void>
@@ -91,6 +93,7 @@ export const useSession = create<SessionState>((set, get) => {
 
     setTimerMode: (mode) => commit({ ...get().config, timerMode: mode }),
     setDensity: (value) => commit({ ...get().config, density: value }),
+    setPace: (value) => commit({ ...get().config, pace: value }),
 
     loadConfig: (config, journey = null) => {
       set({ activeJourney: journey })

@@ -48,6 +48,7 @@ export const PURPOSE_LABEL: Record<JourneyPurpose, string> = {
   energy: 'אנרגיה',
   creativity: 'יצירתיות',
   body: 'גוף',
+  rhythm: 'קצבי',
 }
 
 /**

@@ -14,6 +14,7 @@ const PURPOSE_HUE: Record<JourneyPurpose, number> = {
   energy: 28,
   creativity: 320,
   body: 8,
+  rhythm: 96,
 }
 
 export function JourneyList() {

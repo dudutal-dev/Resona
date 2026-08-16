@@ -1,6 +1,13 @@
 import { TRUST_NOTICE } from '../lib/catalog'
-import type { Frequency } from '../lib/types'
+import type { Frequency, FrequencyType } from '../lib/types'
 import { Sheet, TrustBadge } from './ui'
+
+const TYPE_LABEL: Record<FrequencyType, string> = {
+  solfeggio: 'סולם סולפג׳יו מסורתי',
+  tuning: 'כוונון מוזיקלי',
+  cosmic: 'מחזור מדוד, מוכפל באוקטבות',
+  binaural: 'טווח גלי מוח',
+}
 
 /**
  * The transparency layer (§6.6). Every claim in the app is reachable from here,
@@ -37,11 +44,7 @@ export function InfoPanel({
           <div className="min-w-0">
             <p className="ltr text-sm font-semibold">{hzText}</p>
             <p className="txt-3 mt-0.5 text-xs">
-              {freq.type === 'solfeggio'
-                ? 'סולם סולפג׳יו מסורתי'
-                : freq.type === 'tuning'
-                  ? 'כוונון מוזיקלי'
-                  : 'טווח גלי מוח'}
+              {TYPE_LABEL[freq.type]}
             </p>
           </div>
         </div>

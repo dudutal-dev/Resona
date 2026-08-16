@@ -17,11 +17,18 @@ import { DEFAULT_CONFIG } from '../store/sessionStore'
 import { resolveTimerMinutes } from '../audio/SessionPlayer'
 
 describe('frequency catalog', () => {
-  it('carries the nine solfeggio tones, five bands and the 432 tuning', () => {
+  it('carries the nine solfeggio tones, and keeps every root pitched', () => {
+    // The solfeggio set is canonical and fixed at nine. Everything else is
+    // content that is expected to grow, so it is checked structurally — an
+    // exact count here would fail on every addition without catching a bug.
     expect(FREQUENCIES.filter((f) => f.type === 'solfeggio')).toHaveLength(9)
-    expect(FREQUENCIES.filter((f) => f.type === 'binaural')).toHaveLength(5)
-    expect(FREQUENCIES.filter((f) => f.type === 'tuning')).toHaveLength(1)
-    expect(ROOT_FREQUENCIES).toHaveLength(10)
+    expect(FREQUENCIES.filter((f) => f.type === 'binaural').length).toBeGreaterThanOrEqual(5)
+    expect(ROOT_FREQUENCIES.length).toBeGreaterThan(9)
+    for (const f of ROOT_FREQUENCIES) expect(f.hz, f.id).toBeGreaterThan(0)
+    // A root and a band are different things; nothing may be both or neither.
+    for (const f of FREQUENCIES) {
+      expect(typeof f.hz === 'number', `${f.id} needs exactly one of hz / range`).toBe(!f.range)
+    }
   })
 
   it('gives every entry an id, a label and a transparency notice', () => {
@@ -36,19 +43,35 @@ describe('frequency catalog', () => {
     }
   })
 
-  it('marks solfeggio and tuning entries as tradition-based, not research-backed', () => {
+  it('never lets a solfeggio or cosmic tone claim research backing', () => {
+    // The direction that matters. A tone from tradition dressed up as evidence
+    // is the failure this app exists to avoid; the reverse — a band described
+    // conservatively — is not a lie.
     for (const f of FREQUENCIES) {
-      if (f.type === 'binaural') expect(f.trust).toBe('research_backed_partial')
-      else expect(f.trust).toBe('traditional')
+      if (f.type === 'solfeggio' || f.type === 'cosmic') expect(f.trust, f.id).toBe('traditional')
+      if (f.type === 'binaural') expect(f.trust, f.id).not.toBe('reference')
     }
   })
 
-  it('defaults each band to the middle of its range', () => {
+  it('starts every band at a rate inside its own range', () => {
     for (const f of BEAT_FREQUENCIES) {
       const hz = defaultBeatHz(f)
-      expect(hz).toBeGreaterThanOrEqual(f.range[0])
-      expect(hz).toBeLessThanOrEqual(f.range[1])
+      expect(hz, f.id).toBeGreaterThanOrEqual(f.range[0])
+      expect(hz, f.id).toBeLessThanOrEqual(f.range[1])
     }
+  })
+
+  it('honours a band that declares its own rate', () => {
+    // Schumann is the case: the window is wide enough to be usable, but the
+    // value the band is named for is 7.83, not the middle of that window.
+    const schumann = getFrequency('bb-schumann')!
+    expect(schumann.defaultHz).toBe(7.83)
+    expect(defaultBeatHz(schumann)).toBe(7.83)
+  })
+
+  it('lists the bands from slow to fast, as the picker heading promises', () => {
+    const starts = BEAT_FREQUENCIES.map((f) => f.range[0])
+    expect(starts).toEqual([...starts].sort((a, b) => a - b))
   })
 })
 

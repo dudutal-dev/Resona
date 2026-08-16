@@ -1,6 +1,12 @@
-export type TrustLevel = 'traditional' | 'research_backed_partial'
+/**
+ * `reference` exists for entries that make no claim at all — the standard
+ * A=440 tuning is the reason. Labelling it "tradition-based, unsupported by
+ * clinical evidence" would be plainly false, and the transparency guarantee is
+ * worth nothing if the badge lies in either direction.
+ */
+export type TrustLevel = 'traditional' | 'research_backed_partial' | 'reference'
 
-export type FrequencyType = 'solfeggio' | 'tuning' | 'binaural'
+export type FrequencyType = 'solfeggio' | 'tuning' | 'binaural' | 'cosmic'
 
 /** A single entry from `data/frequencies.json`. */
 export type Frequency = {
@@ -10,6 +16,12 @@ export type Frequency = {
   hz?: number
   /** Present for binaural entries — the [min, max] beat range in Hz. */
   range?: [number, number]
+  /**
+   * Rate to start a band at, when the middle of its range is not the point.
+   * Schumann is the case that needs it: the band is wide enough to be usable,
+   * but the value people mean is 7.83.
+   */
+  defaultHz?: number
   label: string
   trust: TrustLevel
   info: string

@@ -29,9 +29,15 @@ export const ROOT_GROUPS: { id: string; title: string; note: string; items: Freq
   },
   {
     id: 'tuning',
-    title: 'כוונון חלופי',
-    note: 'כוונון מוזיקלי במקום 440Hz הסטנדרטי',
+    title: 'כוונונים',
+    note: 'תקנים מוזיקליים — כולל 440Hz עצמו, להשוואה',
     items: FREQUENCIES.filter((f) => f.type === 'tuning'),
+  },
+  {
+    id: 'cosmic',
+    title: 'האוקטבה הקוסמית',
+    note: 'מחזורים ותהודות מדודים, מוכפלים באוקטבות עד לשמיעה',
+    items: FREQUENCIES.filter((f) => f.type === 'cosmic'),
   },
 ]
 
@@ -51,11 +57,13 @@ export function getJourney(id: string): Journey | undefined {
 export const TRUST_NOTICE: Record<TrustLevel, string> = {
   traditional: 'מבוסס מסורת ואמונה תרבותית ואינו נתמך בראיות מדעיות קליניות.',
   research_backed_partial: 'קיימות ראיות מחקריות חלקיות ולא עקביות.',
+  reference: 'כוונון ייחוס בשימוש כללי. אינו נושא טענת השפעה כלשהי.',
 }
 
 export const TRUST_SHORT: Record<TrustLevel, string> = {
   traditional: 'מסורתי',
   research_backed_partial: 'ראיות חלקיות',
+  reference: 'ייחוס',
 }
 
 export const PURPOSE_LABEL: Record<JourneyPurpose, string> = {
@@ -82,9 +90,12 @@ export const PURPOSE_LABEL: Record<JourneyPurpose, string> = {
 export const BAND_MUSICAL_ROOT: Record<string, string> = {
   'bb-delta': 'sol-174',
   'bb-theta': 'sol-396',
+  'bb-schumann': 'sol-432',
   'bb-alpha': 'sol-432',
+  'bb-smr': 'sol-528',
   'bb-beta': 'sol-741',
   'bb-gamma': 'sol-852',
+  'bb-gamma40': 'sol-963',
 }
 
 /**
@@ -108,9 +119,15 @@ export const PURPOSE_BAND: Record<JourneyPurpose, string> = {
   club: 'bb-beta',
 }
 
-/** Middle of a band's range — the default beat rate when a band is picked. */
+/**
+ * The rate a band starts at — its own declared value where it has one, and
+ * otherwise the middle of its range. Schumann is the reason for the override:
+ * the band is deliberately wide enough to be usable, but the number people
+ * come for is 7.83, not the midpoint of the window around it.
+ */
 export function defaultBeatHz(f: Frequency): number {
   if (!f.range) return 6
   const [lo, hi] = f.range
-  return Math.round(((lo + hi) / 2) * 10) / 10
+  const raw = f.defaultHz ?? (lo + hi) / 2
+  return Math.min(hi, Math.max(lo, Math.round(raw * 100) / 100))
 }

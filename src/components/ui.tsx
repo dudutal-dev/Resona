@@ -75,19 +75,26 @@ export function Card({
   )
 }
 
+/** [hue, saturation, lightness] per trust level — amber, cyan, slate. */
+const TRUST_TINT: Record<TrustLevel, [number, number, number]> = {
+  traditional: [43, 100, 71],
+  research_backed_partial: [188, 100, 74],
+  reference: [220, 12, 72],
+}
+
 /**
  * The transparency badge required by §5.1. It never appears without the full
  * sentence being one tap away — the short label alone would be misleading.
  */
 export function TrustBadge({ trust, full = false }: { trust: TrustLevel; full?: boolean }) {
-  const isTraditional = trust === 'traditional'
+  const [h, s, l] = TRUST_TINT[trust]
   return (
     <span
       className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium leading-tight"
       style={{
-        background: isTraditional ? 'rgba(255,209,102,0.12)' : 'rgba(77,232,255,0.12)',
-        color: isTraditional ? '#ffd166' : '#7ceeff',
-        border: `1px solid ${isTraditional ? 'rgba(255,209,102,0.3)' : 'rgba(77,232,255,0.3)'}`,
+        background: `hsl(${h} ${s}% ${l}% / 0.12)`,
+        color: `hsl(${h} ${s}% ${l}%)`,
+        border: `1px solid hsl(${h} ${s}% ${l}% / 0.3)`,
       }}
     >
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>

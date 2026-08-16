@@ -1,6 +1,34 @@
-import { BEAT_FREQUENCIES, ROOT_GROUPS, TRUST_NOTICE } from '../lib/catalog'
-import type { Frequency } from '../lib/types'
+import {
+  BEAT_FREQUENCIES,
+  ROOT_FREQUENCIES,
+  ROOT_GROUPS,
+  TRUST_NOTICE,
+  TRUST_SHORT,
+} from '../lib/catalog'
+import type { Frequency, TrustLevel } from '../lib/types'
 import { TrustBadge } from './ui'
+
+/**
+ * The transparency sentences a set of entries actually needs.
+ *
+ * A single sentence per section only stayed true while every entry in it shared
+ * a level. It no longer does — the standard A=440 tuning makes no claim, and
+ * the Schumann band is tradition rather than partial evidence — so a blanket
+ * footer would now misdescribe some of the rows above it.
+ */
+function Notices({ of }: { of: Frequency[] }) {
+  const levels = [...new Set(of.map((f) => f.trust))] as TrustLevel[]
+  return (
+    <div className="mt-3 space-y-1">
+      {levels.map((level) => (
+        <p key={level} className="txt-3 text-[11px] leading-relaxed">
+          {levels.length > 1 && <span className="font-semibold">{`${TRUST_SHORT[level]}: `}</span>}
+          {TRUST_NOTICE[level]}
+        </p>
+      ))}
+    </div>
+  )
+}
 
 function FrequencyRow({
   freq,
@@ -107,7 +135,7 @@ export function FrequencyPicker({
           ))}
         </div>
 
-        <p className="txt-3 mt-3 text-[11px] leading-relaxed">{TRUST_NOTICE.traditional}</p>
+        <Notices of={ROOT_FREQUENCIES} />
       </section>
 
       {showBeats && (
@@ -136,9 +164,7 @@ export function FrequencyPicker({
               />
             ))}
           </div>
-          <p className="txt-3 mt-2 text-[11px] leading-relaxed">
-            {TRUST_NOTICE.research_backed_partial}
-          </p>
+          <Notices of={BEAT_FREQUENCIES} />
         </section>
       )}
     </div>

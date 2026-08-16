@@ -188,7 +188,9 @@ export function MixerPanel() {
               label={`קצב פעימה — ${beat.label.split('—')[0].trim()}`}
               min={range[0]}
               max={range[1]}
-              step={0.5}
+              // A half-Hz step across a two-Hz band leaves four positions and
+              // cannot reach 7.83, which is the entire point of that band.
+              step={range[1] - range[0] <= 5 ? 0.01 : 0.5}
               value={Math.min(range[1], Math.max(range[0], config.beatHz))}
               onChange={setBeatHz}
               display={`${config.beatHz} Hz`}

@@ -86,7 +86,8 @@ export const useSession = create<SessionState>((set, get) => {
       commit({ ...config, beatId: id, beatHz: hz })
     },
 
-    setBeatHz: (hz) => commit({ ...get().config, beatHz: Math.round(hz * 10) / 10 }),
+    // Two decimals, not one: 7.83 is a specific number people come for.
+    setBeatHz: (hz) => commit({ ...get().config, beatHz: Math.round(hz * 100) / 100 }),
     setBeatMode: (mode) => commit({ ...get().config, beatMode: mode }),
     setAmbience: (id) => commit({ ...get().config, ambience: id }),
 

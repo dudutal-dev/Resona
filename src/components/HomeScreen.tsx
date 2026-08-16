@@ -1,4 +1,4 @@
-import { JOURNEYS, getFrequency, getJourney } from '../lib/catalog'
+import { BEAT_FREQUENCIES, JOURNEYS, ROOT_FREQUENCIES, getFrequency, getJourney } from '../lib/catalog'
 import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
@@ -161,7 +161,9 @@ export function HomeScreen() {
             <div className="min-w-0 flex-1">
               <p className="text-base font-bold">עיין בתדרים</p>
               <p className="txt-3 mt-0.5 text-xs">
-                9 תדרי סולפג׳יו, 5 טווחי גלי מוח, כוונון 432Hz — עם רמת הביסוס של כל אחד
+                <span className="ltr">{ROOT_FREQUENCIES.length}</span> תדרי יסוד ו-
+                <span className="ltr">{BEAT_FREQUENCIES.length}</span> טווחי גלי מוח — עם רמת
+                הביסוס של כל אחד
               </p>
             </div>
             <ArrowIcon />

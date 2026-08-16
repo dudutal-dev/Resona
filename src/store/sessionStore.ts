@@ -100,6 +100,8 @@ export const useSession = create<SessionState>((set, get) => {
 
     loadConfig: (config, journey = null) => {
       set({ activeJourney: journey })
+      // Before the commit, so the first metadata published already names the day.
+      player.setJourneyContext(journey)
       commit(config)
     },
 
@@ -110,6 +112,7 @@ export const useSession = create<SessionState>((set, get) => {
 
     stop: async () => {
       await player.stop()
+      player.setJourneyContext(null)
       set({ isPlaying: player.isPlaying, activeJourney: null })
     },
 

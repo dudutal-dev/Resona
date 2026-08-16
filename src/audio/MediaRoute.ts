@@ -233,7 +233,13 @@ class MediaRoute {
 
   // ---------------------------------------------------- lock-screen controls
 
-  setMetadata(title: string, subtitle: string) {
+  /**
+   * `artwork` is what the player draws next to the name. The app icon is kept
+   * at the end of the list as a fallback for a browser that refuses the drawn
+   * cover; it resolves only in the hosted build, which is exactly where a
+   * fallback would be needed.
+   */
+  setMetadata(title: string, subtitle: string, artwork: MediaImage[] = []) {
     if (!('mediaSession' in navigator)) return
     const MD = (window as unknown as { MediaMetadata?: typeof MediaMetadata }).MediaMetadata
     if (!MD) return
@@ -242,7 +248,7 @@ class MediaRoute {
       artist: subtitle,
       album: 'Resona',
       artwork: [
-        { src: `${import.meta.env.BASE_URL}icons/icon-192.png`, sizes: '192x192', type: 'image/png' },
+        ...artwork,
         { src: `${import.meta.env.BASE_URL}icons/icon-512.png`, sizes: '512x512', type: 'image/png' },
       ],
     })

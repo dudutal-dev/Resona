@@ -4,7 +4,9 @@ import { GenerativeMelody } from './GenerativeMelody'
 import { BinauralGenerator } from './BinauralGenerator'
 import { Ambience, BUILTIN_AMBIENCE, type AmbienceOption } from './Ambience'
 import { mediaRoute } from './MediaRoute'
-import { getFrequency } from '../lib/catalog'
+import { coverArtwork } from './artwork'
+import { getFrequency, getJourney } from '../lib/catalog'
+import { THEME_HUE, themeOf } from '../lib/themes'
 import type { SessionConfig, TimerMode } from '../lib/types'
 
 export const TIMER_MINUTES: Record<TimerMode, number | null> = {
@@ -57,6 +59,8 @@ class SessionPlayer {
   private listeners = new Set<Listener>()
   private ambienceOptions: AmbienceOption[] | null = null
   private config: SessionConfig | null = null
+  /** Set when the session was launched from a journey day, for the player card. */
+  private journey: { journeyId: string; day: number } | null = null
 
   onChange(fn: Listener) {
     this.listeners.add(fn)
@@ -130,13 +134,50 @@ class SessionPlayer {
     this.emit()
   }
 
-  /** Feeds the lock screen and headset controls. */
+  /**
+   * Tells the player card which journey day this session is, so the card can
+   * name it. Republishes immediately when something is already playing —
+   * journeys are started from a screen that loads the config first.
+   */
+  setJourneyContext(journey: { journeyId: string; day: number } | null) {
+    this.journey = journey
+    if (this.playing && this.config) this.publishNowPlaying(this.config)
+  }
+
+  /**
+   * Feeds the lock screen, the headset controls and any device being cast to.
+   *
+   * A journey day leads with the journey's name, because that is what a person
+   * glancing at a speaker wants to see; the frequencies move down to the second
+   * line rather than disappearing. The cover is drawn to match — see `artwork`.
+   */
   private publishNowPlaying(config: SessionConfig) {
     const root = getFrequency(config.rootId)
     const beat = config.beatId ? getFrequency(config.beatId) : null
-    const title = root ? `${root.hz} Hz · ${root.label}` : 'Resona'
-    const subtitle = beat ? `${config.beatHz} Hz · ${beat.label.split('—')[0].trim()}` : 'תדר יסוד'
-    mediaRoute.setMetadata(title, subtitle)
+    const journey = this.journey ? getJourney(this.journey.journeyId) : null
+    const day = this.journey?.day ?? 0
+    const beatName = beat ? beat.label.split('—')[0].trim() : null
+    const beatLine = beatName ? `${config.beatHz} Hz · ${beatName}` : 'תדר יסוד'
+
+    const title = journey
+      ? `${journey.title} · יום ${day}`
+      : root
+        ? `${root.hz} Hz · ${root.label}`
+        : 'Resona'
+    const subtitle = journey && root ? `${root.hz} Hz · ${beatLine}` : beatLine
+
+    mediaRoute.setMetadata(
+      title,
+      subtitle,
+      coverArtwork({
+        hue: root?.hue ?? 265,
+        accentHue: journey ? THEME_HUE[themeOf(journey)] : (beat?.hue ?? root?.hue ?? 265),
+        headline: root?.hz ? String(root.hz) : 'Resona',
+        unit: root?.hz ? 'Hz' : undefined,
+        caption: journey ? journey.title : (root?.label ?? 'Resona'),
+        footnote: journey ? `יום ${day} מתוך ${journey.days}` : (beatName ?? undefined),
+      }),
+    )
   }
 
   /** Live config update while playing — never restarts the audio. */

@@ -25,35 +25,21 @@ const ScreenIcon = () => (
 /**
  * Playback destination and screen behaviour.
  *
- * The in-app AirPlay picker only exists in Safari; everywhere else the honest
- * answer is that routing is an OS-level control, so that is what the panel
- * says instead of showing a button that would do nothing.
+ * Routing is an OS-level control here — see MediaRoute for why an in-page
+ * AirPlay button cannot work for generative audio — so the panel explains where
+ * the real control lives rather than offering one that silently fails.
  */
 export function OutputControl() {
   const { keepScreenAwake, setKeepScreenAwake } = useSettings()
   const isPlaying = useSession((s) => s.isPlaying)
-  const [canPick, setCanPick] = useState(false)
-  const [external, setExternal] = useState(false)
-  const [failed, setFailed] = useState(false)
   /** null = not attempted yet, false = asked for and refused. */
   const [wakeHeld, setWakeHeld] = useState<boolean | null>(null)
-
-  useEffect(() => {
-    setCanPick(mediaRoute.canPickOutputDevice())
-  }, [])
 
   // The wake lock is only worth holding while something is actually playing.
   useEffect(() => {
     const want = keepScreenAwake && isPlaying
     void mediaRoute.setWakeLock(want).then((held) => setWakeHeld(want ? held : null))
   }, [keepScreenAwake, isPlaying])
-
-  const pick = async () => {
-    setFailed(false)
-    const ok = await mediaRoute.showOutputPicker()
-    if (!ok) setFailed(true)
-    else setExternal(mediaRoute.isExternal)
-  }
 
   return (
     <div className="glass rounded-3xl p-4">
@@ -62,27 +48,15 @@ export function OutputControl() {
         השמעה ומכשירים
       </h3>
 
-      {canPick ? (
-        <>
-          <button onClick={() => void pick()} className="btn w-full text-xs" disabled={!isPlaying}>
-            {external ? 'החלף מכשיר השמעה' : 'השמע למכשיר בסביבה (AirPlay)'}
-          </button>
-          {!isPlaying && (
-            <p className="txt-3 mt-2 text-[11px]">התחל נגינה כדי לבחור מכשיר.</p>
-          )}
-          {failed && (
-            <p className="txt-3 mt-2 text-[11px]">
-              לא הצלחתי לפתוח את בורר המכשירים. אפשר לבחור מכשיר גם ממרכז הבקרה של המכשיר.
-            </p>
-          )}
-        </>
-      ) : (
-        <p className="txt-2 text-[12px] leading-relaxed">
-          הדפדפן הזה לא חושף בורר מכשירים לדף עצמו. אפשר לנתב את הצליל לרמקול, לטלוויזיה או
-          לאוזניות דרך בקרת השמע של המכשיר — <span className="font-semibold">מרכז הבקרה</span> באייפון
-          או בורר פלט השמע במחשב. הניתוב חל על כל מה שמתנגן, כולל Resona.
-        </p>
-      )}
+      <p className="txt-2 text-[12px] leading-relaxed">
+        כדי להשמיע לרמקול, לטלוויזיה, לרכב או לאוזניות — בחר את המכשיר ב
+        <span className="font-semibold">מרכז הבקרה</span> של הטלפון, או בבורר פלט השמע במחשב.
+        הבחירה מנתבת את כל מה שמתנגן במכשיר, כולל Resona.
+      </p>
+      <p className="txt-3 mt-2 text-[11px] leading-relaxed">
+        אין כאן כפתור AirPlay משלנו: AirPlay מקבל רק קובץ מדיה, ולמוזיקה שנוצרת בזמן אמת אין קובץ
+        למסור לו. ניתוב דרך המערכת עובד, ולכן זה מה שמומלץ.
+      </p>
 
       <div className="mt-4 border-t pt-4" style={{ borderColor: 'var(--border)' }}>
         <button

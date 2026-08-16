@@ -1,4 +1,4 @@
-import { Tone, engine } from './ToneEngine'
+import { Tone } from './ToneEngine'
 
 /**
  * Everything to do with where the sound goes and who controls it.
@@ -9,11 +9,8 @@ import { Tone, engine } from './ToneEngine'
  * 1. **Lock-screen / headset controls** via the Media Session API. Widely
  *    supported and cheap, so it is always on while playing.
  *
- * 2. **External output (AirPlay).** A raw Web Audio graph cannot be handed to
- *    AirPlay — only an HTMLMediaElement can. So the master is re-routed through
- *    a MediaStream into an <audio> element, which then exposes Safari's
- *    playback-target picker. This is a mode, not a parallel tap: connecting
- *    both paths at once would play everything twice.
+ * 2. **Now-playing attribution**, so the system credits this app rather than
+ *    whichever media app happened to hold the session before it.
  *
  * 3. **Screen wake lock**, so a session left running on a nightstand is not cut
  *    short by the screen turning off.
@@ -28,11 +25,6 @@ type SessionHandlers = {
   onPlay: () => void
   onPause: () => void
   onStop: () => void
-}
-
-/** Safari-only, and still prefixed. */
-type AirPlayElement = HTMLAudioElement & {
-  webkitShowPlaybackTargetPicker?: () => void
 }
 
 /**
@@ -66,86 +58,31 @@ function silentWavUrl(seconds = 2): string {
 }
 
 class MediaRoute {
-  private streamDest: MediaStreamAudioDestinationNode | null = null
-  private el: AirPlayElement | null = null
-  private external = false
   private wakeLock: WakeLockSentinel | null = null
   private wantWakeLock = false
   private silent: HTMLAudioElement | null = null
 
   // ---------------------------------------------------------------- routing
 
-  get isExternal() {
-    return this.external
-  }
-
   /**
-   * True when this browser can hand audio to an external device from inside the
-   * page. On iOS this is Safari's AirPlay picker; elsewhere it is usually
-   * absent, and the OS-level route picker is the answer instead.
+   * There is deliberately no in-page way to send this audio to a speaker.
+   *
+   * An earlier build tried: re-route the master into a MediaStream, feed it to
+   * an <audio> element, and open Safari's playback-target picker on that. The
+   * picker appeared, `play()` resolved without throwing — and nothing came out,
+   * because Safari does not actually render a Web-Audio-backed MediaStream
+   * through an audio element. Since the old path had already been disconnected
+   * from the destination by then, pressing the button silenced the app
+   * outright, and the "fall back if play() rejects" guard never fired because
+   * play() had not rejected.
+   *
+   * AirPlay only accepts a real media resource, and a generative synth has no
+   * such thing to hand it. The OS-level route does work — picking a target in
+   * Control Center moves every sound on the device, this app included — so
+   * that is what the UI points at instead of offering a control that cannot
+   * keep its promise.
    */
-  canPickOutputDevice(): boolean {
-    if (typeof document === 'undefined') return false
-    const probe = document.createElement('audio') as AirPlayElement
-    return typeof probe.webkitShowPlaybackTargetPicker === 'function'
-  }
-
-  /**
-   * Moves the master output onto an <audio> element fed by a MediaStream, or
-   * back to the default destination. Returns whether external mode is on.
-   */
-  async setExternal(enabled: boolean): Promise<boolean> {
-    if (!engine.isStarted) return this.external
-    if (enabled === this.external) return this.external
-
-    const limiter = engine.output
-    const ctx = Tone.getContext().rawContext as unknown as AudioContext
-
-    if (enabled) {
-      if (!this.streamDest) this.streamDest = ctx.createMediaStreamDestination()
-      if (!this.el) {
-        const el = document.createElement('audio') as AirPlayElement
-        el.autoplay = true
-        // Not user-visible; it exists purely to be an AirPlay-capable sink.
-        el.style.display = 'none'
-        el.setAttribute('playsinline', '')
-        document.body.appendChild(el)
-        this.el = el
-      }
-      limiter.disconnect()
-      limiter.connect(this.streamDest)
-      this.el.srcObject = this.streamDest.stream
-      try {
-        await this.el.play()
-      } catch {
-        // Autoplay refused: fall back rather than leaving the graph orphaned
-        // with no audible output at all.
-        limiter.disconnect()
-        limiter.toDestination()
-        this.external = false
-        return false
-      }
-      this.external = true
-    } else {
-      this.el?.pause()
-      if (this.el) this.el.srcObject = null
-      limiter.disconnect()
-      limiter.toDestination()
-      this.external = false
-    }
-    return this.external
-  }
-
-  /** Opens Safari's AirPlay target picker. No-op where unsupported. */
-  async showOutputPicker(): Promise<boolean> {
-    if (!this.canPickOutputDevice()) return false
-    if (!this.external) {
-      const ok = await this.setExternal(true)
-      if (!ok) return false
-    }
-    this.el?.webkitShowPlaybackTargetPicker?.()
-    return true
-  }
+  readonly canRouteInPage = false
 
   // ------------------------------------------------------- now-playing claim
 
@@ -284,13 +221,9 @@ class MediaRoute {
         }
       }
       if (this.wantWakeLock) await this.acquireWakeLock()
-      if (this.external) {
-        try {
-          await this.el?.play()
-        } catch {
-          /* the element needs a gesture too */
-        }
-      }
+      // Retake the now-playing claim; the silent element is paused when the
+      // page is hidden on some platforms.
+      await this.claimNowPlaying()
     } else {
       await this.releaseWakeLock()
     }

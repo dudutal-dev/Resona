@@ -51,6 +51,11 @@ export type Journey = {
   days: number
   purpose: JourneyPurpose
   description: string
+  /**
+   * Declares that the journey's roots move in one direction across its days.
+   * Tested when present, so a schedule edit cannot silently break the arc.
+   */
+  arc?: 'ascending' | 'descending'
   schedule: JourneyDay[]
 }
 

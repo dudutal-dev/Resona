@@ -73,18 +73,26 @@ describe('journeys', () => {
     }
   })
 
-  it('makes the rhythmic journeys actually climb the scale', () => {
-    const rhythmic = JOURNEYS.filter((j) => j.purpose === 'rhythm')
-    expect(rhythmic.length).toBeGreaterThan(0)
-    for (const j of rhythmic) {
+  it('honours every declared arc', () => {
+    const withArc = JOURNEYS.filter((j) => j.arc)
+    expect(withArc.length, 'no journey declares an arc').toBeGreaterThan(0)
+    for (const j of withArc) {
       // A band day has no pitch of its own, so compare the root the day
       // actually plays — the same value configForDay resolves.
       const roots = j.schedule.map((d) => getFrequency(configForDay(d, j).rootId)!.hz!)
       for (let i = 1; i < roots.length; i++) {
-        expect(roots[i], `${j.id} day ${i + 1} drops from ${roots[i - 1]} to ${roots[i]}`)
-          .toBeGreaterThanOrEqual(roots[i - 1])
+        const [prev, cur] = [roots[i - 1], roots[i]]
+        const msg = `${j.id} (${j.arc}) goes ${prev} -> ${cur} on day ${i + 1}`
+        if (j.arc === 'ascending') expect(cur, msg).toBeGreaterThanOrEqual(prev)
+        else expect(cur, msg).toBeLessThanOrEqual(prev)
       }
     }
+  })
+
+  it('covers both arc directions', () => {
+    const arcs = new Set(JOURNEYS.map((j) => j.arc).filter(Boolean))
+    expect(arcs).toContain('ascending')
+    expect(arcs).toContain('descending')
   })
 
   it('keeps the rhythmic journeys above the pace threshold that starts the pulse', () => {

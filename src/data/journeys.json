@@ -147,6 +147,7 @@
   },
   {
     "id": "journey-ascend-9",
+    "arc": "ascending",
     "title": "עלייה בסולם",
     "days": 9,
     "purpose": "rhythm",
@@ -165,6 +166,7 @@
   },
   {
     "id": "journey-pulse-5",
+    "arc": "ascending",
     "title": "דופק בוקר",
     "days": 5,
     "purpose": "rhythm",
@@ -179,6 +181,7 @@
   },
   {
     "id": "journey-move-7",
+    "arc": "ascending",
     "title": "תנועה",
     "days": 7,
     "purpose": "rhythm",
@@ -233,6 +236,54 @@
       { "day": 3, "frequencyId": "sol-285", "durationMin": 45, "note": "מרחב", "depth": 0.9, "pace": 0.08 },
       { "day": 4, "frequencyId": "bb-theta", "durationMin": 60, "note": "בלי כיוון", "depth": 0.96, "pace": 0.05 },
       { "day": 5, "frequencyId": "sol-963", "durationMin": 45, "note": "חזרה מלמעלה", "depth": 1, "pace": 0.12 }
+    ]
+  },
+  {
+    "id": "journey-spin-6",
+    "title": "סחרור",
+    "days": 6,
+    "purpose": "psychedelic",
+    "arc": "ascending",
+    "description": "הפינה שבה שני החוגים למעלה בבת אחת — עומק מלא יחד עם פעימה מהירה. הכי רחוק מהאמביינט שהאפליקציה מגיעה.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-417", "durationMin": 25, "note": "הסיבוב מתחיל", "depth": 0.65, "pace": 0.6 },
+      { "day": 2, "frequencyId": "sol-528", "durationMin": 30, "note": "תופס מהירות", "depth": 0.75, "pace": 0.68 },
+      { "day": 3, "frequencyId": "bb-beta", "durationMin": 30, "note": "ערנות בתוך הסחרור", "depth": 0.82, "pace": 0.72 },
+      { "day": 4, "frequencyId": "sol-741", "durationMin": 30, "note": "חדות בתוך התנועה", "depth": 0.88, "pace": 0.78 },
+      { "day": 5, "frequencyId": "bb-gamma", "durationMin": 25, "note": "המהיר ביותר", "depth": 0.95, "pace": 0.85 },
+      { "day": 6, "frequencyId": "sol-963", "durationMin": 35, "note": "הסחרור מתרחב", "depth": 1, "pace": 0.7 }
+    ]
+  },
+  {
+    "id": "journey-descent-7",
+    "title": "ירידה",
+    "days": 7,
+    "purpose": "psychedelic",
+    "arc": "descending",
+    "description": "הקשת ההפוכה של \"עלייה בסולם\" — יורד מ-963 עד 174, יום אחר יום, כשההאזנות מתארכות והעומק גדל ככל שיורדים.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-963", "durationMin": 30, "note": "מלמעלה", "depth": 0.6, "pace": 0.18 },
+      { "day": 2, "frequencyId": "sol-852", "durationMin": 35, "note": "מדרגה למטה", "depth": 0.7, "pace": 0.16 },
+      { "day": 3, "frequencyId": "sol-741", "durationMin": 35, "note": "ממשיכים לרדת", "depth": 0.78, "pace": 0.14 },
+      { "day": 4, "frequencyId": "sol-639", "durationMin": 40, "note": "אמצע הירידה", "depth": 0.85, "pace": 0.12 },
+      { "day": 5, "frequencyId": "sol-528", "durationMin": 40, "note": "מתחת לאמצע", "depth": 0.9, "pace": 0.1 },
+      { "day": 6, "frequencyId": "sol-396", "durationMin": 45, "note": "כבד יותר", "depth": 0.95, "pace": 0.08 },
+      { "day": 7, "frequencyId": "sol-174", "durationMin": 50, "note": "התחתית", "depth": 1, "pace": 0.06 }
+    ]
+  },
+  {
+    "id": "journey-aurora-5",
+    "title": "זוהר",
+    "days": 5,
+    "purpose": "psychedelic",
+    "arc": "ascending",
+    "description": "הקצה הבהיר של הפסיכדליה — תדרים גבוהים וגלי גמא, ער ונוצץ במקום כבד ועמוק.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-639", "durationMin": 25, "note": "האור הראשון", "depth": 0.7, "pace": 0.3 },
+      { "day": 2, "frequencyId": "bb-gamma", "durationMin": 20, "note": "הבהוב", "depth": 0.8, "pace": 0.45 },
+      { "day": 3, "frequencyId": "sol-852", "durationMin": 30, "note": "התרחבות", "depth": 0.88, "pace": 0.35 },
+      { "day": 4, "frequencyId": "bb-gamma", "durationMin": 25, "note": "שיא הבהירות", "depth": 0.94, "pace": 0.5 },
+      { "day": 5, "frequencyId": "sol-963", "durationMin": 30, "note": "זוהר מלא", "depth": 1, "pace": 0.4 }
     ]
   }
 ]

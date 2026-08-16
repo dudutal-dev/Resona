@@ -37,6 +37,11 @@ export function JourneyDetail({ id }: { id: string }) {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span className="chip">{PURPOSE_LABEL[journey.purpose]}</span>
+              {journey.arc && (
+                <span className="chip">
+                  {journey.arc === 'ascending' ? '↑ עולה בסולם' : '↓ יורד בסולם'}
+                </span>
+              )}
               <span className="txt-3 ltr text-[11px]">{journey.days} ימים</span>
             </div>
             <div className="mt-3 flex items-center gap-2">

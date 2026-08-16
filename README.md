@@ -43,8 +43,19 @@ npm test           # בדיקות יחידה
 npm run icons      # רינדור מחדש של אייקוני האפליקציה
 ```
 
-פריסה סטטית: להעלות את תוכן `dist/` לכל אחסון סטטי (Netlify / Vercel / GitHub Pages).
-ה-`base` הוא `./` והניתוב מבוסס hash, ולכן זה עובד גם מתת-תיקייה וגם ללא כללי rewrite.
+### פריסה
+
+**GitHub Pages** — האפליקציה הבנויה יושבת ב-`docs/` בענף `main` ומוגשת מ:
+`https://dudutal-dev.github.io/Resona/`
+
+הפעלה חד-פעמית: **Settings → Pages → Source: Deploy from a branch → Branch: `main` / `/docs` → Save**.
+אחרי שינוי בקוד: `npm run build:pages`, ואז commit ל-`docs/` מעדכן את האתר.
+
+**קובץ בודד** — `npm run build:single` יוצר `dist-single/resona.html`: קובץ אחד עם הכול בפנים,
+שרץ בלחיצה כפולה בלי שרת ובלי התקנה.
+
+**אחסון סטטי אחר** — להעלות את תוכן `dist/`. ה-`base` הוא `./` והניתוב מבוסס hash, ולכן זה עובד
+גם מתת-תיקייה וגם ללא כללי rewrite.
 
 ---
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRoute } from './lib/router'
 import { getFrequency } from './lib/catalog'
 import { useSession } from './store/sessionStore'
@@ -15,9 +15,13 @@ import { JourneyDayScreen } from './components/JourneyDayScreen'
 import { PresetList } from './components/PresetList'
 import { SettingsScreen } from './components/SettingsScreen'
 import { HeadphoneNotice } from './components/HeadphoneNotice'
+import { SplashScreen } from './components/SplashScreen'
 
 export default function App() {
   const route = useRoute()
+  // Shown once per launch, not once per install: it doubles as the gesture that
+  // opens the AudioContext, which every fresh page load needs again.
+  const [splashDone, setSplashDone] = useState(false)
   const rootId = useSession((s) => s.config.rootId)
   const isPlaying = useSession((s) => s.isPlaying)
   const tick = useSession((s) => s.tick)
@@ -53,7 +57,9 @@ export default function App() {
       </main>
       <MiniPlayer hidden={route.name === 'player'} />
       <BottomNav current={route.name} />
-      <HeadphoneNotice />
+      {/* The headphone question waits for the splash so two overlays never stack. */}
+      {splashDone && <HeadphoneNotice />}
+      {!splashDone && <SplashScreen onDone={() => setSplashDone(true)} />}
     </>
   )
 }

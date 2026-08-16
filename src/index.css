@@ -265,6 +265,19 @@ html.theme-light {
   }
 }
 
+@keyframes splash-title {
+  from {
+    opacity: 0;
+    letter-spacing: 0.42em;
+    filter: blur(9px);
+  }
+  to {
+    opacity: 1;
+    letter-spacing: -0.025em;
+    filter: blur(0);
+  }
+}
+
 /* Starfield only reads correctly against the dark canvas. */
 html.theme-light .dark-only {
   display: none;

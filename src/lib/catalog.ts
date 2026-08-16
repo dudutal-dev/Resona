@@ -44,6 +44,10 @@ export const PURPOSE_LABEL: Record<JourneyPurpose, string> = {
   focus: 'ריכוז',
   spiritual: 'רוחני',
   anxiety: 'חרדה',
+  intro: 'התחלה',
+  energy: 'אנרגיה',
+  creativity: 'יצירתיות',
+  body: 'גוף',
 }
 
 /**

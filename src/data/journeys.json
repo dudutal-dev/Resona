@@ -63,5 +63,86 @@
       { "day": 9, "frequencyId": "bb-alpha", "durationMin": 30, "note": "יציבות" },
       { "day": 10, "frequencyId": "sol-963", "durationMin": 30, "note": "סיכום המסע" }
     ]
+  },
+  {
+    "id": "journey-intro-3",
+    "title": "שלושה ימי היכרות",
+    "days": 3,
+    "purpose": "intro",
+    "description": "המסע הקצר ביותר. שלוש האזנות שמראות את ההבדל בין גל מוחי לתדר יסוד, כדי שתדע לאן להמשיך.",
+    "schedule": [
+      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 15, "note": "טעימה ראשונה — ערנות רגועה" },
+      { "day": 2, "frequencyId": "sol-528", "durationMin": 20, "note": "כך נשמעת מלודיה שנבנית מתדר יסוד" },
+      { "day": 3, "frequencyId": "bb-theta", "durationMin": 25, "note": "העמקה — ובחירה לאן ממשיכים" }
+    ]
+  },
+  {
+    "id": "journey-morning-5",
+    "title": "פתיחת יום",
+    "days": 5,
+    "purpose": "energy",
+    "description": "חמש האזנות בוקר קצרות שמעלות הילוך בהדרגה — מהתעוררות רכה ועד ערנות מלאה.",
+    "schedule": [
+      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 15, "note": "התעוררות רכה" },
+      { "day": 2, "frequencyId": "sol-741", "durationMin": 20, "note": "צלילות לפני היציאה" },
+      { "day": 3, "frequencyId": "bb-beta", "durationMin": 20, "note": "העלאת הילוך" },
+      { "day": 4, "frequencyId": "sol-852", "durationMin": 20, "note": "מיקוד וכוונה ליום" },
+      { "day": 5, "frequencyId": "bb-gamma", "durationMin": 15, "note": "פתיחה ערנית" }
+    ]
+  },
+  {
+    "id": "journey-creative-7",
+    "title": "זרימה יצירתית",
+    "days": 7,
+    "purpose": "creativity",
+    "description": "שבוע שנע בין הרפיה לחדות — תטא לרעיונות גולמיים, אלפא לעבודה רגועה, ובהירות לניסוח.",
+    "schedule": [
+      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 25, "note": "הרפיית הביקורת הפנימית" },
+      { "day": 2, "frequencyId": "sol-417", "durationMin": 30, "note": "פתיחות לשינוי" },
+      { "day": 3, "frequencyId": "bb-theta", "durationMin": 30, "note": "מצב חלימה ערה" },
+      { "day": 4, "frequencyId": "sol-528", "durationMin": 30, "note": "אמצע המסע — זרימה" },
+      { "day": 5, "frequencyId": "bb-alpha", "durationMin": 25, "note": "עבודה רגועה" },
+      { "day": 6, "frequencyId": "sol-741", "durationMin": 30, "note": "ניסוח ובהירות" },
+      { "day": 7, "frequencyId": "bb-gamma", "durationMin": 20, "note": "חיבור הקצוות" }
+    ]
+  },
+  {
+    "id": "journey-body-7",
+    "title": "רוגע גופני",
+    "days": 7,
+    "purpose": "body",
+    "description": "שבוע של האזנות ארוכות ושקטות להרפיית מתח פיזי מצטבר. מסע הרפיה — לא טיפול.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-174", "durationMin": 25, "note": "נחיתה בגוף" },
+      { "day": 2, "frequencyId": "sol-285", "durationMin": 25, "note": "תשומת לב לתחושה" },
+      { "day": 3, "frequencyId": "bb-theta", "durationMin": 30, "note": "שחרור עמוק" },
+      { "day": 4, "frequencyId": "sol-396", "durationMin": 30, "note": "הרפיית מתח מצטבר" },
+      { "day": 5, "frequencyId": "bb-delta", "durationMin": 45, "note": "מנוחה עמוקה" },
+      { "day": 6, "frequencyId": "sol-174", "durationMin": 30, "note": "יסוד ויציבות" },
+      { "day": 7, "frequencyId": "bb-theta", "durationMin": 30, "note": "סיכום — גוף רגוע" }
+    ]
+  },
+  {
+    "id": "journey-meditation-14",
+    "title": "העמקת מדיטציה",
+    "days": 14,
+    "purpose": "spiritual",
+    "description": "המסע הארוך ביותר. מתחיל בעשר דקות ומאריך בהדרגה עד ארבעים, כדי לבנות ישיבה יציבה במקום לקפוץ אליה.",
+    "schedule": [
+      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 10, "note": "ישיבה קצרה" },
+      { "day": 2, "frequencyId": "bb-alpha", "durationMin": 15, "note": "התארכות ראשונה" },
+      { "day": 3, "frequencyId": "sol-432", "durationMin": 20, "note": "כוונון" },
+      { "day": 4, "frequencyId": "bb-theta", "durationMin": 20, "note": "כניסה לתטא" },
+      { "day": 5, "frequencyId": "bb-theta", "durationMin": 25, "note": "שהייה" },
+      { "day": 6, "frequencyId": "sol-528", "durationMin": 25, "note": "מרכז רגשי" },
+      { "day": 7, "frequencyId": "bb-theta", "durationMin": 30, "note": "אמצע הדרך" },
+      { "day": 8, "frequencyId": "sol-639", "durationMin": 30, "note": "פתיחות" },
+      { "day": 9, "frequencyId": "bb-theta", "durationMin": 30, "note": "יציבות בתטא" },
+      { "day": 10, "frequencyId": "sol-852", "durationMin": 30, "note": "אינטואיציה" },
+      { "day": 11, "frequencyId": "bb-theta", "durationMin": 35, "note": "עומק" },
+      { "day": 12, "frequencyId": "sol-963", "durationMin": 35, "note": "מרחב" },
+      { "day": 13, "frequencyId": "bb-delta", "durationMin": 40, "note": "שקט" },
+      { "day": 14, "frequencyId": "sol-963", "durationMin": 30, "note": "סיכום המסע" }
+    ]
   }
 ]

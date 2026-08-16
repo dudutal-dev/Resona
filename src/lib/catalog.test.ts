@@ -4,6 +4,7 @@ import {
   BEAT_FREQUENCIES,
   FREQUENCIES,
   JOURNEYS,
+  PURPOSE_LABEL,
   ROOT_FREQUENCIES,
   TRUST_NOTICE,
   defaultBeatHz,
@@ -49,13 +50,31 @@ describe('frequency catalog', () => {
 })
 
 describe('journeys', () => {
-  it('has four journeys whose schedules match their declared length', () => {
-    expect(JOURNEYS).toHaveLength(4)
+  it('gives every journey a schedule matching its declared length', () => {
+    // Deliberately not a fixed count — journeys are content and are expected to
+    // grow; what must hold is that each one is internally consistent.
+    expect(JOURNEYS.length).toBeGreaterThanOrEqual(4)
     for (const j of JOURNEYS) {
-      expect(j.schedule).toHaveLength(j.days)
-      expect(j.schedule.map((d) => d.day)).toEqual(
+      expect(j.schedule, j.id).toHaveLength(j.days)
+      expect(j.schedule.map((d) => d.day), j.id).toEqual(
         Array.from({ length: j.days }, (_, i) => i + 1),
       )
+    }
+  })
+
+  it('gives every journey a unique id, a title and a description', () => {
+    const ids = new Set<string>()
+    for (const j of JOURNEYS) {
+      expect(ids.has(j.id), `duplicate journey id ${j.id}`).toBe(false)
+      ids.add(j.id)
+      expect(j.title.length, j.id).toBeGreaterThan(0)
+      expect(j.description.length, j.id).toBeGreaterThan(0)
+    }
+  })
+
+  it('labels and colours every purpose in use', () => {
+    for (const j of JOURNEYS) {
+      expect(PURPOSE_LABEL[j.purpose], `no label for purpose ${j.purpose}`).toBeTruthy()
     }
   })
 

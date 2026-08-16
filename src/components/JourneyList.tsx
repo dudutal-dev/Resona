@@ -1,9 +1,20 @@
 import { JOURNEYS, PURPOSE_LABEL, getFrequency } from '../lib/catalog'
+import type { JourneyPurpose } from '../lib/types'
 import { navigate } from '../lib/router'
 import { useJourneys } from '../store/journeyStore'
 import { Card, Screen } from './ui'
 
-const PURPOSE_HUE: Record<string, number> = { sleep: 258, focus: 44, spiritual: 292, anxiety: 190 }
+/** Typed as a total record so adding a purpose without a colour fails the build. */
+const PURPOSE_HUE: Record<JourneyPurpose, number> = {
+  sleep: 258,
+  focus: 44,
+  spiritual: 292,
+  anxiety: 190,
+  intro: 165,
+  energy: 28,
+  creativity: 320,
+  body: 8,
+}
 
 export function JourneyList() {
   const progress = useJourneys((s) => s.progress)
@@ -16,7 +27,7 @@ export function JourneyList() {
           const done = p?.completedDays.length ?? 0
           const pct = Math.round((done / journey.days) * 100)
           const complete = done >= journey.days
-          const hue = PURPOSE_HUE[journey.purpose] ?? 265
+          const hue = PURPOSE_HUE[journey.purpose]
 
           return (
             <Card key={journey.id} glow={!!p} onClick={() => navigate(`/journey/${journey.id}`)}>

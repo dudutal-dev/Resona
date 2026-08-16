@@ -17,7 +17,15 @@ export type Frequency = {
   hue: number
 }
 
-export type JourneyPurpose = 'sleep' | 'focus' | 'spiritual' | 'anxiety'
+export type JourneyPurpose =
+  | 'sleep'
+  | 'focus'
+  | 'spiritual'
+  | 'anxiety'
+  | 'intro'
+  | 'energy'
+  | 'creativity'
+  | 'body'
 
 export type JourneyDay = {
   day: number

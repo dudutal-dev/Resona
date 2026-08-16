@@ -52,6 +52,7 @@ export function configForDay(
     // its scale.
     pace: day.pace ?? DEFAULT_CONFIG.pace,
     depth: day.depth ?? DEFAULT_CONFIG.depth,
+    density: day.density ?? DEFAULT_CONFIG.density,
     levels: {
       ...base.levels,
       beat: dayIsBand ? Math.max(base.levels.beat, PRIMARY_BEAT_LEVEL) : SUPPORTING_BEAT_LEVEL,

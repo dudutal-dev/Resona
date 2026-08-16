@@ -28,6 +28,7 @@ export type JourneyPurpose =
   | 'body'
   | 'rhythm'
   | 'psychedelic'
+  | 'work'
 
 export type JourneyDay = {
   day: number
@@ -43,6 +44,11 @@ export type JourneyDay = {
   beatId?: string
   /** Overrides the session depth for this day. */
   depth?: number
+  /**
+   * Overrides note density. Low values leave long gaps, which is what makes a
+   * session usable as background for work rather than something you listen to.
+   */
+  density?: number
 }
 
 export type Journey = {

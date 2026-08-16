@@ -104,6 +104,24 @@ describe('journeys', () => {
     }
   })
 
+  it('keeps the work journeys unobtrusive enough to think over', () => {
+    const work = JOURNEYS.filter((j) => j.purpose === 'work')
+    expect(work.length).toBeGreaterThan(0)
+    for (const j of work) {
+      for (const day of j.schedule) {
+        const where = `${j.id} day ${day.day}`
+        // Sparse, still and undistorted: anything denser, faster or deeper
+        // stops being background and starts competing for attention.
+        expect(day.density, `${where} density`).toBeLessThanOrEqual(0.4)
+        expect(day.pace, `${where} pace`).toBeLessThanOrEqual(0.3)
+        expect(day.depth, `${where} depth`).toBe(0)
+      }
+      // A work session has to outlast a real block of work.
+      const longest = Math.max(...j.schedule.map((d) => d.durationMin))
+      expect(longest, `${j.id} longest session`).toBeGreaterThanOrEqual(60)
+    }
+  })
+
   it('labels and colours every purpose in use', () => {
     for (const j of JOURNEYS) {
       expect(PURPOSE_LABEL[j.purpose], `no label for purpose ${j.purpose}`).toBeTruthy()

@@ -16,6 +16,7 @@ const PURPOSE_HUE: Record<JourneyPurpose, number> = {
   body: 8,
   rhythm: 96,
   psychedelic: 300,
+  work: 214,
 }
 
 export function JourneyList() {

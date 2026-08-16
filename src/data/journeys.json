@@ -285,5 +285,47 @@
       { "day": 4, "frequencyId": "bb-gamma", "durationMin": 25, "note": "שיא הבהירות", "depth": 0.94, "pace": 0.5 },
       { "day": 5, "frequencyId": "sol-963", "durationMin": 30, "note": "זוהר מלא", "depth": 1, "pace": 0.4 }
     ]
+  },
+  {
+    "id": "journey-deepwork-5",
+    "title": "עבודה עמוקה",
+    "days": 5,
+    "purpose": "work",
+    "arc": "ascending",
+    "description": "חמישה בלוקים ארוכים להאזנה תוך כדי עבודה. צפיפות נמוכה ובלי עומק — מוזיקה שאפשר לחשוב מעליה, לא כזו שמושכת את האוזן.",
+    "schedule": [
+      { "day": 1, "frequencyId": "sol-528", "durationMin": 60, "note": "בלוק ראשון — כניסה לעבודה", "density": 0.3, "pace": 0.12, "depth": 0 },
+      { "day": 2, "frequencyId": "sol-639", "durationMin": 90, "note": "שעה וחצי רצופה", "density": 0.28, "pace": 0.12, "depth": 0 },
+      { "day": 3, "frequencyId": "bb-beta", "durationMin": 90, "note": "ריכוז מתמשך", "density": 0.25, "pace": 0.15, "depth": 0 },
+      { "day": 4, "frequencyId": "sol-741", "durationMin": 120, "note": "הבלוק הארוך ביותר", "density": 0.22, "pace": 0.1, "depth": 0 },
+      { "day": 5, "frequencyId": "sol-852", "durationMin": 90, "note": "סגירת השבוע", "density": 0.3, "pace": 0.14, "depth": 0 }
+    ]
+  },
+  {
+    "id": "journey-workday-4",
+    "title": "מקצב יום עבודה",
+    "days": 4,
+    "purpose": "work",
+    "description": "ארבעה חלקים של יום עבודה אחד — התארגנות, הבלוק העמוק, התאוששות הצהריים וסגירה. מיועד לחזור עליו יום אחר יום ולא לסיים אותו.",
+    "schedule": [
+      { "day": 1, "frequencyId": "bb-alpha", "durationMin": 30, "note": "בוקר — התארגנות לפני שמתחילים", "density": 0.35, "pace": 0.25, "depth": 0 },
+      { "day": 2, "frequencyId": "bb-beta", "durationMin": 120, "note": "הבלוק העמוק של היום", "density": 0.22, "pace": 0.12, "depth": 0 },
+      { "day": 3, "frequencyId": "sol-528", "durationMin": 45, "note": "צהריים — התאוששות קצרה", "density": 0.3, "pace": 0.08, "depth": 0 },
+      { "day": 4, "frequencyId": "sol-396", "durationMin": 40, "note": "סגירת יום — מורידים הילוך", "density": 0.28, "pace": 0.06, "depth": 0 }
+    ]
+  },
+  {
+    "id": "journey-charge-5",
+    "title": "טעינה",
+    "days": 5,
+    "purpose": "energy",
+    "description": "האזנות קצרות ואינטנסיביות להרמת אנרגיה באמצע יום — עשר עד עשרים דקות, קצב גבוה, גלי בטא וגמא.",
+    "schedule": [
+      { "day": 1, "frequencyId": "bb-beta", "durationMin": 15, "note": "טעינה ראשונה", "pace": 0.6, "density": 0.6 },
+      { "day": 2, "frequencyId": "sol-852", "durationMin": 12, "note": "קצר וחד", "pace": 0.7, "density": 0.65 },
+      { "day": 3, "frequencyId": "bb-gamma", "durationMin": 10, "note": "הקצר והמהיר ביותר", "pace": 0.85, "density": 0.7 },
+      { "day": 4, "frequencyId": "sol-963", "durationMin": 15, "note": "גובה", "pace": 0.75, "density": 0.6 },
+      { "day": 5, "frequencyId": "bb-gamma", "durationMin": 12, "note": "טעינה מלאה", "pace": 0.9, "density": 0.75 }
+    ]
   }
 ]

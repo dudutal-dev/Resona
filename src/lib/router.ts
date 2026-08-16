@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
 /**
  * Hash routing, chosen deliberately: it works from `file://`, from a static
@@ -58,13 +58,25 @@ export function back() {
 
 export function useRoute(): Route {
   const [route, setRoute] = useState<Route>(() => parseHash(window.location.hash))
+
   useEffect(() => {
-    const onChange = () => {
-      setRoute(parseHash(window.location.hash))
-      window.scrollTo({ top: 0 })
-    }
+    // Safari restores the scroll position of a hash entry asynchronously, which
+    // lands *after* any synchronous scroll we do during navigation — that is
+    // how a screen ends up opening halfway down with its header off-screen.
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+    const onChange = () => setRoute(parseHash(window.location.hash))
     window.addEventListener('hashchange', onChange)
     return () => window.removeEventListener('hashchange', onChange)
   }, [])
+
+  // Scroll after the new screen has rendered, not before, so the target exists
+  // and there is no old-page height to scroll within. The follow-up frame wins
+  // against anything the browser tries to restore behind us.
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+    const id = requestAnimationFrame(() => window.scrollTo(0, 0))
+    return () => cancelAnimationFrame(id)
+  }, [route])
+
   return route
 }

@@ -6,7 +6,10 @@
     <meta name="theme-color" content="#05030e" />
     <meta name="description" content="Resona — מלודיות גנרטיביות המולחנות סביב תדר יעד. סולפג׳יו, ביינאורל ו-432Hz, מיקסר שכבות ומסעות מודרכים." />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- "black", not "black-translucent": translucent puts the web view *under*
+         the status bar, and a screen header then collides with the clock. Opaque
+         keeps the content below it, and black matches the app's ground. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="apple-mobile-web-app-title" content="Resona" />
     <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
     <link rel="apple-touch-icon" href="./icons/icon-192.png" />

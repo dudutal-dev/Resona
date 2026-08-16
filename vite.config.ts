@@ -1,12 +1,22 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { fileURLToPath } from 'node:url'
+
+/**
+ * `SINGLE_FILE=1` produces one self-contained .html with every asset inlined:
+ * no server, no install, no build step for the person opening it — just a file
+ * that runs anywhere, including straight from disk. The service worker is left
+ * out of that target because a single file has nothing to precache.
+ */
+const singleFile = process.env.SINGLE_FILE === '1'
 
 export default defineConfig({
   base: './',
   plugins: [
     react(),
-    VitePWA({
+    !singleFile &&
+      VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png', 'icons/*.svg', 'audio/ambience/*'],
       manifest: {
@@ -36,8 +46,12 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
       },
       devOptions: { enabled: false },
-    }),
-  ],
+      }),
+  ].filter(Boolean),
+  build: singleFile ? { outDir: 'dist-single', assetsInlineLimit: 100 * 1024 * 1024 } : {},
+  resolve: singleFile
+    ? { alias: { 'virtual:pwa-register': fileURLToPath(new URL('./src/lib/pwa-noop.ts', import.meta.url)) } }
+    : {},
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],

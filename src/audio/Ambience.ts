@@ -41,6 +41,10 @@ export class Ambience {
 
   /** Merges any user-supplied files into the option list. Called once at boot. */
   async loadManifest(): Promise<AmbienceOption[]> {
+    // A page opened straight from disk cannot fetch siblings (file:// has a null
+    // origin), and the attempt logs a CORS error the caller cannot catch. The
+    // synthesised set needs no files, so skip it rather than make noise.
+    if (location.protocol === 'file:') return this.options()
     try {
       const res = await fetch(`${import.meta.env.BASE_URL}audio/ambience/manifest.json`)
       if (!res.ok) return this.options()

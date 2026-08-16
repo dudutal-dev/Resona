@@ -8,3 +8,4 @@ dev-dist
 
 # TypeScript incremental build cache
 *.tsbuildinfo
+dist-single

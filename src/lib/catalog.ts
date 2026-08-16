@@ -16,6 +16,25 @@ export const ROOT_FREQUENCIES = FREQUENCIES.filter(
   (f): f is Frequency & { hz: number } => typeof f.hz === 'number',
 )
 
+/**
+ * Root frequencies split by what they are, not by pitch. The solfeggio set and
+ * the 432 tuning carry different stories and shouldn't read as one list.
+ */
+export const ROOT_GROUPS: { id: string; title: string; note: string; items: Frequency[] }[] = [
+  {
+    id: 'solfeggio',
+    title: 'סולם הסולפג׳יו',
+    note: 'תשעה תדרים מהמסורת, מהנמוך לגבוה',
+    items: FREQUENCIES.filter((f) => f.type === 'solfeggio'),
+  },
+  {
+    id: 'tuning',
+    title: 'כוונון חלופי',
+    note: 'כוונון מוזיקלי במקום 440Hz הסטנדרטי',
+    items: FREQUENCIES.filter((f) => f.type === 'tuning'),
+  },
+]
+
 /** Frequencies usable as a brainwave beat — everything with a range. */
 export const BEAT_FREQUENCIES = FREQUENCIES.filter(
   (f): f is Frequency & { range: [number, number] } => Array.isArray(f.range),

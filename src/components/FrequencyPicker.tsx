@@ -1,4 +1,4 @@
-import { BEAT_FREQUENCIES, ROOT_FREQUENCIES, TRUST_NOTICE } from '../lib/catalog'
+import { BEAT_FREQUENCIES, ROOT_GROUPS, TRUST_NOTICE } from '../lib/catalog'
 import type { Frequency } from '../lib/types'
 import { TrustBadge } from './ui'
 
@@ -80,29 +80,41 @@ export function FrequencyPicker({
   return (
     <div className="space-y-6">
       <section>
-        <div className="mb-2 flex items-baseline justify-between">
+        <div className="mb-3 flex items-baseline justify-between">
           <h3 className="text-sm font-bold">תדר יסוד</h3>
           <span className="txt-3 text-[11px]">כל תו במלודיה נגזר ממנו</span>
         </div>
-        <div className="space-y-2">
-          {ROOT_FREQUENCIES.map((f) => (
-            <FrequencyRow
-              key={f.id}
-              freq={f}
-              selected={selectedRoot === f.id}
-              onSelect={() => onSelectRoot(f.id)}
-              onInfo={onInfo ? () => onInfo(f) : undefined}
-            />
+
+        <div className="space-y-5">
+          {ROOT_GROUPS.map((group) => (
+            <div key={group.id}>
+              <div className="mb-2 flex items-baseline gap-2 px-1">
+                <h4 className="text-[12px] font-bold txt-2">{group.title}</h4>
+                <span className="txt-3 truncate text-[10px]">{group.note}</span>
+              </div>
+              <div className="space-y-2">
+                {group.items.map((f) => (
+                  <FrequencyRow
+                    key={f.id}
+                    freq={f}
+                    selected={selectedRoot === f.id}
+                    onSelect={() => onSelectRoot(f.id)}
+                    onInfo={onInfo ? () => onInfo(f) : undefined}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
-        <p className="txt-3 mt-2 text-[11px] leading-relaxed">{TRUST_NOTICE.traditional}</p>
+
+        <p className="txt-3 mt-3 text-[11px] leading-relaxed">{TRUST_NOTICE.traditional}</p>
       </section>
 
       {showBeats && (
         <section>
-          <div className="mb-2 flex items-baseline justify-between">
-            <h3 className="text-sm font-bold">גל מוחי (שכבה נוספת)</h3>
-            <span className="txt-3 text-[11px]">ביינאורל / איזוכרוני</span>
+          <div className="mb-3 flex items-baseline justify-between">
+            <h3 className="text-sm font-bold">גלי מוח</h3>
+            <span className="txt-3 text-[11px]">מהאיטי למהיר</span>
           </div>
           <div className="space-y-2">
             <button

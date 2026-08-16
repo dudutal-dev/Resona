@@ -11,6 +11,8 @@ import {
   getFrequency,
 } from './catalog'
 import { configForDay } from './journeyConfig'
+import { THEME_OF, journeysByTheme } from './themes'
+import { ROOT_GROUPS } from './catalog'
 import { DEFAULT_CONFIG } from '../store/sessionStore'
 import { resolveTimerMinutes } from '../audio/SessionPlayer'
 
@@ -209,5 +211,27 @@ describe('journey day isolation', () => {
 
     expect(next.depth, 'depth leaked from the previous day').toBe(DEFAULT_CONFIG.depth)
     expect(next.pace, 'pace leaked from the previous day').toBe(DEFAULT_CONFIG.pace)
+  })
+})
+
+
+describe('grouping', () => {
+  it('shelves every journey exactly once', () => {
+    const grouped = journeysByTheme().flatMap((g) => g.journeys)
+    // Grouping is presentation, and a presentation bug that hides content is
+    // invisible until someone notices a journey they cannot find.
+    expect(grouped).toHaveLength(JOURNEYS.length)
+    expect(new Set(grouped.map((j) => j.id)).size).toBe(JOURNEYS.length)
+    for (const j of JOURNEYS) expect(THEME_OF[j.purpose], `${j.id} has no theme`).toBeTruthy()
+  })
+
+  it('lists every root frequency exactly once across the picker groups', () => {
+    const listed = ROOT_GROUPS.flatMap((g) => g.items)
+    expect(listed.map((f) => f.id).sort()).toEqual(ROOT_FREQUENCIES.map((f) => f.id).sort())
+  })
+
+  it('orders the solfeggio group by pitch', () => {
+    const hz = ROOT_GROUPS.find((g) => g.id === 'solfeggio')!.items.map((f) => f.hz!)
+    expect(hz).toEqual([...hz].sort((a, b) => a - b))
   })
 })

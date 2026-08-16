@@ -35,6 +35,8 @@ export function OutputControl() {
   const [canPick, setCanPick] = useState(false)
   const [external, setExternal] = useState(false)
   const [failed, setFailed] = useState(false)
+  /** null = not attempted yet, false = asked for and refused. */
+  const [wakeHeld, setWakeHeld] = useState<boolean | null>(null)
 
   useEffect(() => {
     setCanPick(mediaRoute.canPickOutputDevice())
@@ -42,7 +44,8 @@ export function OutputControl() {
 
   // The wake lock is only worth holding while something is actually playing.
   useEffect(() => {
-    void mediaRoute.setWakeLock(keepScreenAwake && isPlaying)
+    const want = keepScreenAwake && isPlaying
+    void mediaRoute.setWakeLock(want).then((held) => setWakeHeld(want ? held : null))
   }, [keepScreenAwake, isPlaying])
 
   const pick = async () => {
@@ -94,8 +97,15 @@ export function OutputControl() {
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-semibold">השאר את המסך דלוק</span>
             <span className="txt-3 mt-0.5 block text-[11px] leading-relaxed">
-              מונע מהמסך לכבות באמצע האזנה. זו הדרך היחידה להמשיך לנגן ברצף בטלפון — ראה ההסבר
-              בעמוד אודות.
+              {!mediaRoute.supportsWakeLock
+                ? 'הדפדפן הזה לא תומך בנעילת מסך. אפשר להאריך את זמן הכיבוי בהגדרות המכשיר.'
+                : keepScreenAwake && !isPlaying
+                  ? 'יופעל כשתתחיל נגינה.'
+                  : wakeHeld === false
+                    ? 'הבקשה נדחתה על ידי הדפדפן. בדרך כלל זה קורה כשהדף לא בחזית.'
+                    : wakeHeld
+                      ? 'פעיל — המסך לא ייכבה בזמן ההאזנה.'
+                      : 'מונע מהמסך לכבות באמצע האזנה. אינו מאפשר נגינה אחרי מעבר לאפליקציה אחרת.'}
             </span>
           </span>
           <span

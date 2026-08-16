@@ -35,12 +35,43 @@ type AirPlayElement = HTMLAudioElement & {
   webkitShowPlaybackTargetPicker?: () => void
 }
 
+/**
+ * A short run of silence as a real WAV, built at runtime so nothing has to be
+ * fetched and the single-file build stays self-contained. 8-bit PCM encodes
+ * silence as 128, not 0.
+ */
+function silentWavUrl(seconds = 2): string {
+  const rate = 8000
+  const samples = rate * seconds
+  const buf = new ArrayBuffer(44 + samples)
+  const view = new DataView(buf)
+  const ascii = (offset: string | number, text?: string) => {
+    const [o, t] = typeof offset === 'number' ? [offset, text!] : [0, offset]
+    for (let i = 0; i < t.length; i++) view.setUint8(o + i, t.charCodeAt(i))
+  }
+  ascii(0, 'RIFF')
+  view.setUint32(4, 36 + samples, true)
+  ascii(8, 'WAVEfmt ')
+  view.setUint32(16, 16, true) // PCM chunk size
+  view.setUint16(20, 1, true) // PCM
+  view.setUint16(22, 1, true) // mono
+  view.setUint32(24, rate, true)
+  view.setUint32(28, rate, true) // byte rate
+  view.setUint16(32, 1, true) // block align
+  view.setUint16(34, 8, true) // bits per sample
+  ascii(36, 'data')
+  view.setUint32(40, samples, true)
+  new Uint8Array(buf, 44).fill(128)
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }))
+}
+
 class MediaRoute {
   private streamDest: MediaStreamAudioDestinationNode | null = null
   private el: AirPlayElement | null = null
   private external = false
   private wakeLock: WakeLockSentinel | null = null
   private wantWakeLock = false
+  private silent: HTMLAudioElement | null = null
 
   // ---------------------------------------------------------------- routing
 
@@ -116,6 +147,45 @@ class MediaRoute {
     return true
   }
 
+  // ------------------------------------------------------- now-playing claim
+
+  /**
+   * Makes the system attribute the current audio to this app.
+   *
+   * iOS only hands the Now Playing session — the lock-screen card, and the name
+   * shown when audio is routed to a speaker or a car — to a page that has an
+   * HTMLMediaElement actually playing. A Web Audio graph on its own claims
+   * nothing, so the system keeps displaying whichever media app held the
+   * session last, which is why sessions showed up labelled "Apple Music".
+   *
+   * A looping silent element is enough to take the claim, at which point the
+   * Media Session metadata set below is what gets displayed.
+   */
+  async claimNowPlaying() {
+    if (!this.silent) {
+      const el = document.createElement('audio')
+      el.src = silentWavUrl()
+      el.loop = true
+      el.setAttribute('playsinline', '')
+      // Not muted: a muted element does not count as playing media, which is
+      // the entire point of having it.
+      el.volume = 0.001
+      el.style.display = 'none'
+      document.body.appendChild(el)
+      this.silent = el
+    }
+    try {
+      await this.silent.play()
+    } catch {
+      // Needs a user gesture; the session still plays, it just keeps the
+      // system's previous attribution.
+    }
+  }
+
+  releaseNowPlaying() {
+    this.silent?.pause()
+  }
+
   // ---------------------------------------------------- lock-screen controls
 
   setMetadata(title: string, subtitle: string) {
@@ -157,10 +227,23 @@ class MediaRoute {
    * Keeps the screen on during a session. Supported on iOS 16.4+ and most
    * desktop browsers; silently does nothing elsewhere.
    */
-  async setWakeLock(want: boolean) {
+  async setWakeLock(want: boolean): Promise<boolean> {
     this.wantWakeLock = want
-    if (want) await this.acquireWakeLock()
-    else await this.releaseWakeLock()
+    if (!want) {
+      await this.releaseWakeLock()
+      return false
+    }
+    await this.acquireWakeLock()
+    return this.wakeLock !== null
+  }
+
+  /** Whether a lock is actually held right now, not merely wanted. */
+  get hasWakeLock() {
+    return this.wakeLock !== null
+  }
+
+  get supportsWakeLock() {
+    return typeof navigator !== 'undefined' && 'wakeLock' in navigator
   }
 
   private async acquireWakeLock() {

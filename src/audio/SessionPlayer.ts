@@ -122,6 +122,9 @@ class SessionPlayer {
     this.mixer!.setFade(0, 0)
     this.mixer!.fadeIn(FADE_IN_SECONDS)
     this.scheduleTimer(config)
+    // Claim first, then describe: the metadata only displays once the system
+    // has handed this page the now-playing session.
+    void mediaRoute.claimNowPlaying()
     this.publishNowPlaying(config)
     mediaRoute.setPlaybackState('playing')
     this.emit()
@@ -213,6 +216,7 @@ class SessionPlayer {
     this.mixer?.fadeOut(fade)
     this.playing = false
     this.endsAt = null
+    mediaRoute.releaseNowPlaying()
     mediaRoute.setPlaybackState('paused')
     this.emit()
 

@@ -1,4 +1,4 @@
-import { Tone } from './ToneEngine'
+import { Tone, engine } from './ToneEngine'
 
 /**
  * Everything to do with where the sound goes and who controls it.
@@ -9,8 +9,11 @@ import { Tone } from './ToneEngine'
  * 1. **Lock-screen / headset controls** via the Media Session API. Widely
  *    supported and cheap, so it is always on while playing.
  *
- * 2. **Now-playing attribution**, so the system credits this app rather than
- *    whichever media app happened to hold the session before it.
+ * 2. **Now-playing attribution and AirPlay**, both of which need the audio to
+ *    reach the system through an HTMLMediaElement. There is exactly ONE such
+ *    element here, and that is load-bearing: two of them compete for the same
+ *    playback session, and on iOS the route follows the wrong one — which is
+ *    how adding a separate silent element for attribution silenced casting.
  *
  * 3. **Screen wake lock**, so a session left running on a nightstand is not cut
  *    short by the screen turning off.
@@ -57,70 +60,175 @@ function silentWavUrl(seconds = 2): string {
   return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }))
 }
 
+/** Safari-only, and still prefixed. */
+type AirPlayElement = HTMLAudioElement & {
+  webkitShowPlaybackTargetPicker?: () => void
+}
+
 class MediaRoute {
   private wakeLock: WakeLockSentinel | null = null
   private wantWakeLock = false
-  private silent: HTMLAudioElement | null = null
+  private el: AirPlayElement | null = null
+  private external = false
+  private streamDest: MediaStreamAudioDestinationNode | null = null
+  private streamProbe: AnalyserNode | null = null
+  private silentUrl: string | null = null
+
+  // ------------------------------------------------ the single media element
+
+  /**
+   * One element, two jobs.
+   *
+   * iOS hands the Now Playing session — the lock-screen card and the name shown
+   * at a playback target — only to a page with a media element actually
+   * playing, and AirPlay likewise can only be offered on a media element. Both
+   * needs are served here by the same `<audio>`, because a second one would
+   * contend for the session and the cast route would follow whichever won.
+   *
+   * Its source switches with the mode:
+   *   - idle:  a looping near-silence, enough to hold the session so the system
+   *            shows this app's name instead of the last media app's.
+   *   - cast:  the live master, piped through a MediaStream, so what the remote
+   *            speaker plays is the actual session.
+   */
+  private element(): AirPlayElement {
+    if (!this.el) {
+      const el = document.createElement('audio') as AirPlayElement
+      el.loop = true
+      el.setAttribute('playsinline', '')
+      el.style.display = 'none'
+      document.body.appendChild(el)
+      this.el = el
+    }
+    return this.el
+  }
 
   // ---------------------------------------------------------------- routing
 
-  /**
-   * There is deliberately no in-page way to send this audio to a speaker.
-   *
-   * An earlier build tried: re-route the master into a MediaStream, feed it to
-   * an <audio> element, and open Safari's playback-target picker on that. The
-   * picker appeared, `play()` resolved without throwing — and nothing came out,
-   * because Safari does not actually render a Web-Audio-backed MediaStream
-   * through an audio element. Since the old path had already been disconnected
-   * from the destination by then, pressing the button silenced the app
-   * outright, and the "fall back if play() rejects" guard never fired because
-   * play() had not rejected.
-   *
-   * AirPlay only accepts a real media resource, and a generative synth has no
-   * such thing to hand it. The OS-level route does work — picking a target in
-   * Control Center moves every sound on the device, this app included — so
-   * that is what the UI points at instead of offering a control that cannot
-   * keep its promise.
-   */
-  readonly canRouteInPage = false
+  get isExternal() {
+    return this.external
+  }
 
-  // ------------------------------------------------------- now-playing claim
+  /** Safari exposes the picker; other browsers leave routing to the OS. */
+  canPickOutputDevice(): boolean {
+    if (typeof document === 'undefined') return false
+    const probe = document.createElement('audio') as AirPlayElement
+    return typeof probe.webkitShowPlaybackTargetPicker === 'function'
+  }
 
   /**
-   * Makes the system attribute the current audio to this app.
+   * Moves the master onto the media element, or back to the speakers.
    *
-   * iOS only hands the Now Playing session — the lock-screen card, and the name
-   * shown when audio is routed to a speaker or a car — to a page that has an
-   * HTMLMediaElement actually playing. A Web Audio graph on its own claims
-   * nothing, so the system keeps displaying whichever media app held the
-   * session last, which is why sessions showed up labelled "Apple Music".
-   *
-   * A looping silent element is enough to take the claim, at which point the
-   * Media Session metadata set below is what gets displayed.
+   * The previous attempt trusted `play()` resolving as proof that audio was
+   * flowing. It is not — it resolves for a stream that renders nothing, and
+   * because the direct path had already been torn down, the app went silent
+   * with no error to catch. So the signal is measured before committing, and
+   * anything short of real audio puts the direct path straight back.
    */
-  async claimNowPlaying() {
-    if (!this.silent) {
-      const el = document.createElement('audio')
-      el.src = silentWavUrl()
-      el.loop = true
-      el.setAttribute('playsinline', '')
-      // Not muted: a muted element does not count as playing media, which is
-      // the entire point of having it.
-      el.volume = 0.001
-      el.style.display = 'none'
-      document.body.appendChild(el)
-      this.silent = el
+  async setExternal(enabled: boolean): Promise<boolean> {
+    if (!engine.isStarted) return this.external
+    if (enabled === this.external) return this.external
+
+    const limiter = engine.output
+    const ctx = Tone.getContext().rawContext as unknown as AudioContext
+    const el = this.element()
+
+    if (!enabled) {
+      limiter.disconnect()
+      limiter.toDestination()
+      this.external = false
+      // Back to holding the session with silence rather than the live mix.
+      await this.playSilence()
+      return false
     }
+
+    if (!this.streamDest) {
+      this.streamDest = ctx.createMediaStreamDestination()
+      this.streamProbe = ctx.createAnalyser()
+      this.streamProbe.fftSize = 2048
+      limiter.connect(this.streamProbe)
+    }
+
+    limiter.disconnect()
+    limiter.connect(this.streamDest)
+    if (this.streamProbe) limiter.connect(this.streamProbe)
+
+    el.pause()
+    el.removeAttribute('src')
+    el.srcObject = this.streamDest.stream
+    el.volume = 1
+
+    const ok = await this.startAndVerify(el)
+    if (!ok) {
+      limiter.disconnect()
+      limiter.toDestination()
+      el.srcObject = null
+      await this.playSilence()
+      this.external = false
+      return false
+    }
+
+    this.external = true
+    return true
+  }
+
+  /** Plays, then confirms the element is really running on a live signal. */
+  private async startAndVerify(el: HTMLAudioElement): Promise<boolean> {
     try {
-      await this.silent.play()
+      await el.play()
     } catch {
-      // Needs a user gesture; the session still plays, it just keeps the
-      // system's previous attribution.
+      return false
+    }
+    // Give the element a moment to actually start rendering.
+    await new Promise((r) => setTimeout(r, 350))
+    if (el.paused || el.ended) return false
+    return this.streamHasSignal()
+  }
+
+  /** True when the graph is producing a non-silent signal right now. */
+  private streamHasSignal(): boolean {
+    if (!this.streamProbe) return true
+    const buf = new Float32Array(this.streamProbe.fftSize)
+    this.streamProbe.getFloatTimeDomainData(buf)
+    let peak = 0
+    for (const v of buf) peak = Math.max(peak, Math.abs(v))
+    // The session fades in, so this only has to clear the noise floor.
+    return peak > 0.0005
+  }
+
+  private async playSilence() {
+    const el = this.element()
+    el.srcObject = null
+    if (!this.silentUrl) this.silentUrl = silentWavUrl()
+    if (el.getAttribute('src') !== this.silentUrl) el.src = this.silentUrl
+    // Not muted: a muted element does not count as playing media, which is the
+    // entire point of holding it.
+    el.volume = 0.001
+    try {
+      await el.play()
+    } catch {
+      /* needs a gesture; playback itself is unaffected */
     }
   }
 
+  /** Opens Safari's AirPlay picker, switching to the castable route first. */
+  async showOutputPicker(): Promise<boolean> {
+    if (!this.canPickOutputDevice()) return false
+    if (!this.external && !(await this.setExternal(true))) return false
+    this.el?.webkitShowPlaybackTargetPicker?.()
+    return true
+  }
+
+  // ------------------------------------------------------- now-playing claim
+
+  /** Takes the Now Playing session so the system shows this app's name. */
+  async claimNowPlaying() {
+    if (this.external) return // the live route already holds it
+    await this.playSilence()
+  }
+
   releaseNowPlaying() {
-    this.silent?.pause()
+    this.el?.pause()
   }
 
   // ---------------------------------------------------- lock-screen controls
@@ -221,9 +329,12 @@ class MediaRoute {
         }
       }
       if (this.wantWakeLock) await this.acquireWakeLock()
-      // Retake the now-playing claim; the silent element is paused when the
-      // page is hidden on some platforms.
-      await this.claimNowPlaying()
+      // The element is paused when the page hides on some platforms.
+      try {
+        await this.el?.play()
+      } catch {
+        /* needs a gesture */
+      }
     } else {
       await this.releaseWakeLock()
     }

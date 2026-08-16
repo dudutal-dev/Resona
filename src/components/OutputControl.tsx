@@ -22,18 +22,41 @@ const ScreenIcon = () => (
   </svg>
 )
 
-/**
- * Playback destination and screen behaviour.
- *
- * Routing is an OS-level control here — see MediaRoute for why an in-page
- * AirPlay button cannot work for generative audio — so the panel explains where
- * the real control lives rather than offering one that silently fails.
- */
+/** Playback destination and screen behaviour. */
 export function OutputControl() {
   const { keepScreenAwake, setKeepScreenAwake } = useSettings()
   const isPlaying = useSession((s) => s.isPlaying)
   /** null = not attempted yet, false = asked for and refused. */
   const [wakeHeld, setWakeHeld] = useState<boolean | null>(null)
+  const [canPick, setCanPick] = useState(false)
+  const [external, setExternal] = useState(false)
+  const [castFailed, setCastFailed] = useState(false)
+  const [busy, setBusy] = useState(false)
+
+  useEffect(() => {
+    setCanPick(mediaRoute.canPickOutputDevice())
+  }, [])
+
+  // Casting is a property of the audio graph, which a stop tears down.
+  useEffect(() => {
+    if (!isPlaying) setExternal(false)
+  }, [isPlaying])
+
+  const cast = async () => {
+    setBusy(true)
+    setCastFailed(false)
+    const ok = await mediaRoute.showOutputPicker()
+    setExternal(mediaRoute.isExternal)
+    if (!ok) setCastFailed(true)
+    setBusy(false)
+  }
+
+  const backToPhone = async () => {
+    setBusy(true)
+    await mediaRoute.setExternal(false)
+    setExternal(mediaRoute.isExternal)
+    setBusy(false)
+  }
 
   // The wake lock is only worth holding while something is actually playing.
   useEffect(() => {
@@ -48,15 +71,39 @@ export function OutputControl() {
         השמעה ומכשירים
       </h3>
 
-      <p className="txt-2 text-[12px] leading-relaxed">
-        כדי להשמיע לרמקול, לטלוויזיה, לרכב או לאוזניות — בחר את המכשיר ב
-        <span className="font-semibold">מרכז הבקרה</span> של הטלפון, או בבורר פלט השמע במחשב.
-        הבחירה מנתבת את כל מה שמתנגן במכשיר, כולל Resona.
-      </p>
-      <p className="txt-3 mt-2 text-[11px] leading-relaxed">
-        אין כאן כפתור AirPlay משלנו: AirPlay מקבל רק קובץ מדיה, ולמוזיקה שנוצרת בזמן אמת אין קובץ
-        למסור לו. ניתוב דרך המערכת עובד, ולכן זה מה שמומלץ.
-      </p>
+      {canPick ? (
+        <>
+          <button
+            onClick={() => void cast()}
+            disabled={!isPlaying || busy}
+            className={`btn w-full text-xs ${external ? '' : 'btn-primary'}`}
+            style={!isPlaying || busy ? { opacity: 0.5 } : undefined}
+          >
+            {busy ? 'מחבר…' : external ? 'החלף מכשיר' : 'השמע למכשיר בסביבה'}
+          </button>
+
+          {external && (
+            <button onClick={() => void backToPhone()} disabled={busy} className="btn mt-2 w-full text-xs">
+              חזור להשמעה מהטלפון
+            </button>
+          )}
+
+          <p className="txt-3 mt-2 text-[11px] leading-relaxed">
+            {!isPlaying
+              ? 'התחל נגינה כדי לבחור מכשיר.'
+              : castFailed
+                ? 'לא הצלחתי להעביר את הצליל — חזרתי להשמעה מהטלפון כדי שלא תישאר בלי סאונד. אפשר לנסות גם ממרכז הבקרה.'
+                : external
+                  ? 'משדר למכשיר חיצוני. שם הפריט והתדר הנוכחי מוצגים במכשיר.'
+                  : 'שולח את ההאזנה לרמקול, לטלוויזיה או לרכב, עם שם התדר על המסך שלהם.'}
+          </p>
+        </>
+      ) : (
+        <p className="txt-2 text-[12px] leading-relaxed">
+          הדפדפן הזה לא חושף בורר מכשירים לדף עצמו. אפשר לנתב את הצליל דרך בקרת השמע של המכשיר —
+          <span className="font-semibold"> מרכז הבקרה</span> בטלפון, או בורר פלט השמע במחשב.
+        </p>
+      )}
 
       <div className="mt-4 border-t pt-4" style={{ borderColor: 'var(--border)' }}>
         <button

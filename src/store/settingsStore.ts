@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { STORAGE_KEYS, readJSON, removeKey, writeJSON } from '../lib/storage'
+import { mediaRoute } from '../audio/MediaRoute'
 
 export type Theme = 'dark' | 'light'
 
@@ -9,17 +10,25 @@ type Settings = {
   reducedMotion: boolean
   /** Dismissed once the headphone note has been acknowledged. */
   headphoneNoticeSeen: boolean
+  /** Holds a screen wake lock while a session plays. */
+  keepScreenAwake: boolean
 }
 
 type SettingsState = Settings & {
   setTheme: (theme: Theme) => void
   toggleTheme: () => void
   setReducedMotion: (v: boolean) => void
+  setKeepScreenAwake: (v: boolean) => void
   dismissHeadphoneNotice: () => void
   resetAllData: () => void
 }
 
-const DEFAULTS: Settings = { theme: 'dark', reducedMotion: false, headphoneNoticeSeen: false }
+const DEFAULTS: Settings = {
+  theme: 'dark',
+  reducedMotion: false,
+  headphoneNoticeSeen: false,
+  keepScreenAwake: false,
+}
 
 function applyTheme(theme: Theme) {
   const root = document.documentElement
@@ -36,6 +45,7 @@ export const useSettings = create<SettingsState>((set, get) => {
       theme: get().theme,
       reducedMotion: get().reducedMotion,
       headphoneNoticeSeen: get().headphoneNoticeSeen,
+      keepScreenAwake: get().keepScreenAwake,
       ...next,
     }
     set(next)
@@ -54,6 +64,10 @@ export const useSettings = create<SettingsState>((set, get) => {
       persist({ theme })
     },
     setReducedMotion: (v) => persist({ reducedMotion: v }),
+    setKeepScreenAwake: (v) => {
+      void mediaRoute.setWakeLock(v)
+      persist({ keepScreenAwake: v })
+    },
     dismissHeadphoneNotice: () => persist({ headphoneNoticeSeen: true }),
     resetAllData: () => {
       for (const key of Object.values(STORAGE_KEYS)) removeKey(key)

@@ -16,6 +16,8 @@ import { PresetList } from './components/PresetList'
 import { SettingsScreen } from './components/SettingsScreen'
 import { HeadphoneNotice } from './components/HeadphoneNotice'
 import { SplashScreen } from './components/SplashScreen'
+import { AboutScreen } from './components/AboutScreen'
+import { player } from './audio/SessionPlayer'
 
 export default function App() {
   const route = useRoute()
@@ -34,6 +36,11 @@ export default function App() {
     const meta = document.querySelector('meta[name="theme-color"]')
     meta?.setAttribute('content', theme === 'light' ? '#f3f0fb' : '#05030e')
   }, [rootId, theme])
+
+  // Lock-screen controls and the return-from-background path, wired once.
+  useEffect(() => {
+    player.installSystemIntegration(() => useSession.getState().config)
+  }, [])
 
   // Drive the elapsed/remaining readouts. Only runs while something is playing.
   useEffect(() => {
@@ -54,6 +61,7 @@ export default function App() {
         {route.name === 'journeyDay' && <JourneyDayScreen id={route.id} day={route.day} />}
         {route.name === 'presets' && <PresetList />}
         {route.name === 'settings' && <SettingsScreen />}
+        {route.name === 'about' && <AboutScreen />}
       </main>
       <MiniPlayer hidden={route.name === 'player'} />
       <BottomNav current={route.name} />

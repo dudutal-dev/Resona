@@ -3,6 +3,7 @@ import { Mixer } from './Mixer'
 import { GenerativeMelody } from './GenerativeMelody'
 import { BinauralGenerator } from './BinauralGenerator'
 import { Ambience, BUILTIN_AMBIENCE, type AmbienceOption } from './Ambience'
+import { mediaRoute } from './MediaRoute'
 import { getFrequency } from '../lib/catalog'
 import type { SessionConfig, TimerMode } from '../lib/types'
 
@@ -121,7 +122,18 @@ class SessionPlayer {
     this.mixer!.setFade(0, 0)
     this.mixer!.fadeIn(FADE_IN_SECONDS)
     this.scheduleTimer(config)
+    this.publishNowPlaying(config)
+    mediaRoute.setPlaybackState('playing')
     this.emit()
+  }
+
+  /** Feeds the lock screen and headset controls. */
+  private publishNowPlaying(config: SessionConfig) {
+    const root = getFrequency(config.rootId)
+    const beat = config.beatId ? getFrequency(config.beatId) : null
+    const title = root ? `${root.hz} Hz · ${root.label}` : 'Resona'
+    const subtitle = beat ? `${config.beatHz} Hz · ${beat.label.split('—')[0].trim()}` : 'תדר יסוד'
+    mediaRoute.setMetadata(title, subtitle)
   }
 
   /** Live config update while playing — never restarts the audio. */
@@ -144,6 +156,8 @@ class SessionPlayer {
     this.mixer.setLevel('beat', config.beatId ? config.levels.beat : 0)
     this.mixer.setLevel('ambience', config.levels.ambience)
     engine.setMasterVolume(config.levels.master)
+
+    if (this.playing) this.publishNowPlaying(config)
 
     // Changing the timer mid-session re-arms it from now.
     if (
@@ -197,6 +211,7 @@ class SessionPlayer {
     this.mixer?.fadeOut(fade)
     this.playing = false
     this.endsAt = null
+    mediaRoute.setPlaybackState('paused')
     this.emit()
 
     await new Promise((r) => setTimeout(r, fade * 1000 + 120))
@@ -209,6 +224,25 @@ class SessionPlayer {
   async toggle(config: SessionConfig) {
     if (this.playing) await this.stop()
     else await this.play(config)
+  }
+
+  /**
+   * Wires the lock-screen buttons and the return-from-background path. Called
+   * once at boot; `getConfig` is read lazily so the handlers always act on the
+   * current session rather than a snapshot taken at registration time.
+   */
+  installSystemIntegration(getConfig: () => SessionConfig) {
+    mediaRoute.setHandlers({
+      onPlay: () => {
+        if (!this.playing) void this.play(getConfig())
+      },
+      onPause: () => void this.stop(),
+      onStop: () => void this.stop(),
+    })
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') void mediaRoute.resumeIfNeeded(this.playing)
+    })
   }
 }
 

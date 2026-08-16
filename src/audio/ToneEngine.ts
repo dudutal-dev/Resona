@@ -50,6 +50,15 @@ class ToneEngine {
     return this.masterGain
   }
 
+  /**
+   * The last node before the speakers. Exposed so the output can be re-routed
+   * to a MediaStream for AirPlay without the mixer knowing about it.
+   */
+  get output(): Tone.Limiter {
+    if (!this.limiter) throw new Error('ToneEngine.start() must run first')
+    return this.limiter
+  }
+
   get analyser(): Tone.Analyser | null {
     return this.analyserNode
   }

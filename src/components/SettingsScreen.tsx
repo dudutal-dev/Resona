@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useSettings } from '../store/settingsStore'
 import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
+import { navigate } from '../lib/router'
 import { Card, Screen } from './ui'
 
 function Toggle({
@@ -89,17 +90,18 @@ export function SettingsScreen() {
           {wiped && <p className="chip mt-2">הנתונים נמחקו</p>}
         </Card>
 
-        <Card>
-          <h3 className="text-sm font-bold">על Resona</h3>
-          <p className="txt-2 mt-1 text-[11px] leading-relaxed">
-            המלודיה נוצרת בזמן אמת מסולם אינטונציה טהורה שבנוי סביב תדר היעד שנבחר — כל תו הוא מכפלה
-            הרמונית של אותו תדר. אין קבצי מוזיקה, אין לופ, ולכן אין שתי האזנות זהות.
-          </p>
-          <p className="txt-3 mt-3 text-[11px] leading-relaxed">
-            Resona הוא כלי להרפיה והאזנה. אינו מכשיר רפואי, אינו מאבחן ואינו מטפל, ואינו תחליף לייעוץ
-            מקצועי. בעל אפילפסיה, רגישות לגירוי קצבי או מצב נוירולוגי — היוועץ ברופא לפני שימוש
-            בשכבת הגלים המוחיים.
-          </p>
+        <Card onClick={() => navigate('/about')}>
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-sm font-bold">אודות</h3>
+              <p className="txt-3 mt-0.5 text-[11px]">
+                איך האפליקציה עובדת, נגינה ברקע, פרטיות, שקיפות והקרדיטים
+              </p>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden className="txt-3 shrink-0">
+              <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
         </Card>
       </div>
     </Screen>

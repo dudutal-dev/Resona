@@ -1,0 +1,129 @@
+import { JOURNEYS, FREQUENCIES } from '../lib/catalog'
+import { Card, Screen } from './ui'
+
+const APP_VERSION = '1.0'
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <Card className="mb-3">
+      <h2 className="mb-2 text-sm font-bold">{title}</h2>
+      <div className="txt-2 space-y-2 text-[12px] leading-relaxed">{children}</div>
+    </Card>
+  )
+}
+
+export function AboutScreen() {
+  return (
+    <Screen title="אודות" subtitle={`Resona · גרסה ${APP_VERSION}`} onBack>
+      {/* Credit */}
+      <Card glow className="mb-5 text-center">
+        <div
+          className="mx-auto grid h-16 w-16 place-items-center rounded-2xl"
+          style={{
+            background: 'var(--accent-soft)',
+            border: '1px solid var(--accent-line)',
+            boxShadow: '0 0 40px -8px var(--glow)',
+          }}
+        >
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--accent)' }} aria-hidden>
+            <circle cx="12" cy="12" r="3" fill="currentColor" />
+            <circle cx="12" cy="12" r="7" stroke="currentColor" strokeWidth="1.4" opacity="0.65" />
+            <circle cx="12" cy="12" r="10.5" stroke="currentColor" strokeWidth="1.2" opacity="0.35" />
+          </svg>
+        </div>
+        <h2 className="glow-text mt-3 text-2xl font-bold">Resona</h2>
+        <p className="txt-3 mt-1 text-[11px]">פותח ועוצב על ידי</p>
+        <p className="mt-0.5 text-lg font-bold" style={{ color: 'var(--accent)' }}>
+          דודו טל
+        </p>
+      </Card>
+
+      <Section title="מה זה">
+        <p>
+          Resona מנגן מוזיקה אמביינטית שנוצרת בזמן אמת סביב תדר יעד שאתה בוחר — סולפג׳יו, כוונון
+          432Hz, וטווחי גלי מוח. אפשר לערבב שלוש שכבות, לשמור פריסטים, ולעבור מסעות מודרכים
+          רב-יומיים.
+        </p>
+        <p>
+          כרגע יש באפליקציה{' '}
+          <span className="ltr font-semibold">{FREQUENCIES.length}</span> תדרים ו-
+          <span className="ltr font-semibold">{JOURNEYS.length}</span> מסעות.
+        </p>
+      </Section>
+
+      <Section title="הרעיון — עיגון">
+        <p>
+          ברוב האפליקציות התדר והמוזיקה הם שני דברים נפרדים: או מוזיקה נעימה בלי תדר מוצהר, או טון
+          מתמשך שאינו מוזיקה. כאן התדר שבחרת הוא <strong>תדר היסוד שממנו המלודיה נגזרת</strong>.
+        </p>
+        <p>
+          כל תו שתשמע הוא התדר כפול יחס הרמוני טהור — <span className="ltr">3/2</span>,{' '}
+          <span className="ltr">5/4</span>, <span className="ltr">9/8</span> — כפול חזקה של שתיים.
+          לא קיים באפליקציה צליל שאינו יחס שלם של התדר שבחרת, וזה נבדק אוטומטית בכל שינוי בקוד.
+        </p>
+        <p>
+          המלודיה נבנית מחדש בכל האזנה דרך הליכה הסתברותית על דרגות הסולם. אין קובץ מוזיקה ואין
+          לופ — ולכן אין שתי האזנות זהות, גם באותו תדר.
+        </p>
+      </Section>
+
+      <Section title="נגינה ברקע ובמכשירים אחרים">
+        <p>
+          <strong>ניתוב למכשיר חיצוני:</strong> אפשר להשמיע לרמקול, לטלוויזיה או לאוזניות. בספארי
+          יש כפתור AirPlay ישירות במסך הנגן; בכל מקרה אפשר לבחור מכשיר גם ממרכז הבקרה, והניתוב
+          יחול גם על Resona.
+        </p>
+        <p>
+          <strong>מעבר לאפליקציה אחרת:</strong> כאן יש מגבלה אמיתית שחשוב להכיר. דפדפנים בטלפון —
+          ובמיוחד ספארי באייפון — משהים את מנוע האודיו ברגע שעוזבים את הדף, ואין לאפליקציית ווב שום
+          דרך לבקש חריגה מזה. זו מגבלת מערכת הפעלה, לא באג.
+        </p>
+        <p>
+          מה שכן עובד: הפעלת <strong>"השאר את המסך דלוק"</strong> במסך הנגן מונעת מהמסך לכבות, וכך
+          ההאזנה נמשכת ברצף. חזרה לאפליקציה מחדשת את הנגינה מיד, ופקדי הנעילה של המכשיר שולטים
+          בהפעלה ובעצירה.
+        </p>
+      </Section>
+
+      <Section title="פרטיות">
+        <p>
+          אין חשבון, אין הרשמה, אין שרת ואין מעקב. הפריסטים, התקדמות המסעות וההגדרות נשמרים
+          ב-localStorage של הדפדפן במכשיר שלך בלבד, ולא נשלחים לשום מקום.
+        </p>
+        <p>
+          אחרי הטעינה הראשונה האפליקציה עובדת אופליין במלואה — מנוע האודיו מסנתז הכול מקומית ואינו
+          פונה לרשת בזמן נגינה.
+        </p>
+      </Section>
+
+      <Section title="שקיפות">
+        <p>
+          לכל תדר באפליקציה מוצמדת רמת ביסוס, והיא מוצגת בכל מקום שבו התדר מופיע — לא מוסתרת
+          בעמוד תנאים.
+        </p>
+        <p>
+          תדרי הסולפג׳יו וכוונון 432Hz מסומנים כ<strong>מסורתיים</strong>: מבוססי מסורת ואמונה
+          תרבותית, ללא ראיות מדעיות קליניות. גלי המוח מסומנים כבעלי{' '}
+          <strong>ראיות חלקיות</strong>: נחקרו, עם ממצאים לא עקביים.
+        </p>
+        <p>
+          Resona הוא כלי להרפיה והאזנה. אינו מכשיר רפואי, אינו מאבחן ואינו מטפל, ואינו תחליף לייעוץ
+          מקצועי. במקרה של אפילפסיה, רגישות לגירוי קצבי או מצב נוירולוגי — כדאי להיוועץ ברופא לפני
+          שימוש בשכבת הגלים המוחיים.
+        </p>
+      </Section>
+
+      <Section title="איך זה בנוי">
+        <p>
+          אפליקציית ווב (PWA) שרצה כולה בדפדפן. React ו-TypeScript לממשק, Tone.js למנוע האודיו,
+          Tailwind לעיצוב. הוויזואליזציה והמסך הפותח מצוירים ב-Canvas לפי צפיפות הפיקסלים של המסך.
+        </p>
+        <p>גם סאונדי הסביבה — גשם, ים, רוח, רעש — מסונתזים ואינם קבצי אודיו, ולכן אין בהם לופ.</p>
+      </Section>
+
+      <p className="txt-3 mt-5 px-1 text-center text-[11px]">
+        © {new Date().getFullYear()} דודו טל · Resona {APP_VERSION}
+      </p>
+    </Screen>
+  )
+}

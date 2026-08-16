@@ -8,6 +8,7 @@ import { navigate } from '../lib/router'
 import { Visualizer } from './Visualizer'
 import { MixerPanel } from './MixerPanel'
 import { TimerControl } from './TimerControl'
+import { OutputControl } from './OutputControl'
 import { InfoPanel } from './InfoPanel'
 import { FrequencyPicker } from './FrequencyPicker'
 import { Screen, Sheet, TrustBadge, formatClock } from './ui'
@@ -147,6 +148,7 @@ export function PlayerScreen() {
       <div className="mt-7 space-y-5">
         <MixerPanel />
         <TimerControl />
+        <OutputControl />
       </div>
 
       {/* ---- Sheets ---------------------------------------------------------- */}

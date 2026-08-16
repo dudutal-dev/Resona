@@ -32,8 +32,19 @@ export type Frequency = {
 /**
  * Which engine composes the melody. Not a continuum — `ambient` refuses to
  * repeat, the club styles are built on a grid, and they use different voices.
+ *
+ * Declared as a list first so the picker, the journey data and the tests all
+ * read from one place; adding a style in one of them and forgetting the others
+ * is the mistake this prevents.
  */
-export type MelodyStyle = 'ambient' | 'techno' | 'trance'
+export const MELODY_STYLES = ['ambient', 'techno', 'trance', 'psytrance', 'deephouse'] as const
+
+export type MelodyStyle = (typeof MELODY_STYLES)[number]
+
+/** Everything driven by the grid — that is, everything but ambient. */
+export type ClubStyle = Exclude<MelodyStyle, 'ambient'>
+
+export const CLUB_STYLES = MELODY_STYLES.filter((s): s is ClubStyle => s !== 'ambient')
 
 export type JourneyPurpose =
   | 'sleep'

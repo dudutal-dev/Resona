@@ -1,22 +1,30 @@
 import { Tone, engine } from './ToneEngine'
 import { foldToRange } from './scale'
+import type { ClubStyle } from '../lib/types'
 
 /**
- * The club layer — techno and trance, built on the same anchoring rule as
- * everything else.
+ * The club layer — techno, trance, psytrance and deep house — built on the same
+ * anchoring rule as everything else.
  *
  * This is a deliberate exception to how the rest of the melody engine works,
  * and it is worth being explicit about why. The ambient layer was rewritten to
  * remove every fixed period, because a loop that repeats under a meditation is
- * the thing people complain about. Techno and trance are the opposite: the
- * repetition IS the form. A four-on-the-floor kick that wandered off the grid
- * would not be a more interesting techno track, it would be a broken one.
+ * the thing people complain about. These four are the opposite: the repetition
+ * IS the form. A four-on-the-floor kick that wandered off the grid would not be
+ * a more interesting track, it would be a broken one.
  *
  * So here the grid is real: one 16th-note step clock, a bar counter, and
- * sections that turn voices on and off as the arrangement moves through drive,
- * breakdown, build and drop. What still refuses to repeat is the material —
- * the arpeggio figure is regenerated every few bars, and every pitch, kick
- * included, is a whole-number ratio of the session's target frequency.
+ * sections that turn voices on and off as the arrangement moves. What still
+ * refuses to repeat is the material — the figure is regenerated every few bars,
+ * and every pitch, kick included, is a whole-number ratio of the session's
+ * target frequency.
+ *
+ * What separates the styles is not the tempo, which is the easy part. It is
+ * where the bass sits against the kick (under it, between the kicks, rolling
+ * through the gaps, or long and syncopated), whether the off-16ths are straight
+ * or shuffled, whether the harmony is arpeggiated or stabbed as a chord, and
+ * whether the arrangement is allowed to tear the floor down at all. Each of
+ * those is one switch below, and together they are the genres.
  *
  * The kick deserves a note of its own: it is the target frequency, folded down
  * by octaves until it lands where a kick drum lives. On a 528 Hz session the
@@ -24,15 +32,51 @@ import { foldToRange } from './scale'
  * library, and the loudest thing in the mix is the frequency itself.
  */
 
-export type ClubStyle = 'techno' | 'trance'
-
 const STEPS_PER_BAR = 16
 
-/** Bars in one arrangement cycle. Trance breathes over a longer span. */
-const CYCLE_BARS: Record<ClubStyle, number> = { techno: 16, trance: 32 }
+/** Bars in one arrangement cycle. Trance and psy breathe over a longer span. */
+const CYCLE_BARS: Record<ClubStyle, number> = {
+  techno: 16,
+  trance: 32,
+  psytrance: 32,
+  deephouse: 16,
+}
 
 /** Base tempo before `pace` nudges it. */
-const BASE_BPM: Record<ClubStyle, number> = { techno: 126, trance: 136 }
+const BASE_BPM: Record<ClubStyle, number> = {
+  techno: 126,
+  trance: 136,
+  psytrance: 144,
+  deephouse: 122,
+}
+
+/**
+ * Shuffle, as a fraction of a 16th pushed onto the off-16ths.
+ *
+ * Deep house is the only style here that swings, and it is not a detail — a
+ * straight deep-house groove sounds like slow techno. Everything else in the
+ * genre (the soft kick, the offbeat open hat, the chord stabs) is sitting on
+ * top of that shuffle.
+ */
+const SWING: Record<ClubStyle, number> = {
+  techno: 0,
+  trance: 0,
+  psytrance: 0,
+  deephouse: 0.22,
+}
+
+/** Per-style kick shaping. The drum is the genre's signature as much as the tempo. */
+const KICK_SHAPE: Record<ClubStyle, { pitchDecay: number; decay: number; volume: number }> = {
+  // Punchy and short, with a fast pitch drop.
+  techno: { pitchDecay: 0.048, decay: 0.34, volume: -6 },
+  trance: { pitchDecay: 0.042, decay: 0.3, volume: -6 },
+  // Psy kicks are tight and get out of the way fast, because the bass roll
+  // needs the rest of the beat to itself.
+  psytrance: { pitchDecay: 0.028, decay: 0.2, volume: -5 },
+  // Deep house is rounder and softer: a longer pitch fall, less click, and it
+  // sits lower in the mix than in any of the others.
+  deephouse: { pitchDecay: 0.075, decay: 0.42, volume: -9 },
+}
 
 /**
  * Tempo for a style and pace. Exported so the mixer can show the real number
@@ -76,6 +120,8 @@ export class ClubGroove {
   private step = 0
   /** Chord-tone offsets for the current figure, `null` for a rest. */
   private figure: (number | null)[] = []
+  /** The scale-degree offsets the current figure is drawn from. */
+  private chord: number[] = [0, 2, 4]
   private base = 0
   /** Scale indices spanning one octave — 7 for the major set, 5 for pentatonic. */
   private octaveStep = 7
@@ -151,7 +197,49 @@ export class ClubGroove {
   setStyle(style: ClubStyle) {
     if (style === this.style) return
     this.style = style
+    this.applyStyleVoicing()
+    this.regenerate()
     this.retime()
+  }
+
+  /** Timbres that belong to the genre rather than to the arrangement. */
+  private applyStyleVoicing() {
+    const k = KICK_SHAPE[this.style]
+    this.kick.set({
+      pitchDecay: k.pitchDecay,
+      volume: k.volume,
+      envelope: { attack: 0.001, decay: k.decay, sustain: 0, release: 0.08 },
+    })
+
+    const house = this.style === 'deephouse'
+    // Deep house voices chords, not a saw arpeggio: a triangle with a slow
+    // release reads as a warm electric-piano stab, which is the sound the genre
+    // is built on. A sawtooth here would just be trance played slowly.
+    this.arp.set({
+      oscillator: { type: house ? 'triangle' : 'sawtooth' },
+      envelope: house
+        ? { attack: 0.012, decay: 0.5, sustain: 0.12, release: 0.9 }
+        : { attack: 0.005, decay: 0.14, sustain: 0.08, release: 0.14 },
+      volume: house ? -22 : -20,
+    })
+    this.arpFilter.Q.rampTo(this.style === 'psytrance' ? 6 : house ? 1.2 : 3, 0.5)
+
+    // The psy bass roll only works if each note is gone before the next lands.
+    this.bass.set({
+      envelope: this.style === 'psytrance'
+        ? { attack: 0.002, decay: 0.09, sustain: 0.02, release: 0.05 }
+        : house
+          ? { attack: 0.008, decay: 0.3, sustain: 0.4, release: 0.25 }
+          : { attack: 0.004, decay: 0.16, sustain: 0.15, release: 0.09 },
+      oscillator: { type: house ? 'sine' : 'sawtooth' },
+      volume: house ? -11 : -14,
+    })
+
+    // Open hats need a tail; closed ones must not have one.
+    this.hat.set({
+      envelope: { attack: 0.001, decay: house ? 0.06 : 0.035, sustain: 0 },
+      volume: house ? -24 : -26,
+    })
   }
 
   setPace(value: number) {
@@ -208,6 +296,53 @@ export class ClubGroove {
    */
   private section(bar: number): Section {
     const pos = bar % CYCLE_BARS[this.style]
+
+    if (this.style === 'deephouse') {
+      // No drops, ever. Deep house rolls, and the movement comes from the
+      // chords dropping out for a couple of bars and the filter breathing —
+      // an arrangement that kept tearing the floor down would be a different
+      // genre wearing the tempo.
+      const sweep = Math.sin((pos / CYCLE_BARS.deephouse) * Math.PI * 2)
+      return {
+        kick: true,
+        clap: pos >= 1,
+        bass: true,
+        arp: pos < 12 || pos >= 14,
+        hats: true,
+        cutoff: 1400 + sweep * 900,
+        wet: 0.3,
+      }
+    }
+
+    if (this.style === 'psytrance') {
+      if (pos < 20) {
+        return {
+          kick: true,
+          clap: false,
+          bass: true,
+          arp: pos >= 4,
+          hats: true,
+          cutoff: 700 + (pos / 20) * 3000,
+          wet: 0.24,
+        }
+      }
+      if (pos < 26) {
+        // The psy breakdown drops the roll, not just the kick — the bassline is
+        // the thing the floor is riding, so leaving it in would keep the drive
+        // that the breakdown exists to release.
+        return { kick: false, clap: false, bass: false, arp: true, hats: false, cutoff: 800, wet: 0.6 }
+      }
+      const t = (pos - 26) / 6
+      return {
+        kick: pos >= 28,
+        clap: false,
+        bass: pos >= 28,
+        arp: true,
+        hats: true,
+        cutoff: 800 + t * 5200,
+        wet: 0.6 - t * 0.36,
+      }
+    }
 
     if (this.style === 'techno') {
       const stripped = pos >= 14
@@ -281,6 +416,21 @@ export class ClubGroove {
     const skipped = this.depth >= 0.5 ? [3, 5, 6] : [1, 3, 5]
     const colour = skipped[Math.floor(Math.random() * skipped.length)]
     const chord = [0, 2, 4, colour].sort((a, b) => a - b)
+    this.chord = chord
+
+    if (this.style === 'deephouse') {
+      // House does not arpeggiate, it stabs. The chord lands on the offbeat
+      // eighths — against the kick, never with it — which is where the genre's
+      // push comes from, with an occasional pickup before the bar turns over.
+      this.figure = Array.from({ length: STEPS_PER_BAR }, (_, i) => {
+        if (i % 4 === 2) return 0
+        if (i === 15 && Math.random() < this.density * 0.7) return 0
+        if (i % 8 === 7 && Math.random() < this.density * 0.4) return 0
+        return null
+      })
+      return
+    }
+
     const rising = Math.random() < 0.6
     const octaveJump = Math.random() < 0.45
     this.figure = Array.from({ length: STEPS_PER_BAR }, (_, i) => {
@@ -319,11 +469,15 @@ export class ClubGroove {
     }, this.stepSeconds)
   }
 
-  private tick(time: number) {
+  private tick(rawTime: number) {
     const step = this.step++
     const inBar = step % STEPS_PER_BAR
     const bar = Math.floor(step / STEPS_PER_BAR)
     const s = this.section(bar)
+    // Shuffle pushes the off-16ths late. The kick and the downbeats are left
+    // exactly where they were: a swung kick is a mistake, not a groove.
+    const swung = inBar % 2 === 1 ? rawTime + SWING[this.style] * this.stepSeconds : rawTime
+    const time = swung
 
     if (inBar === 0) {
       this.arpFilter.frequency.rampTo(s.cutoff, this.stepSeconds * STEPS_PER_BAR, time)
@@ -343,8 +497,11 @@ export class ClubGroove {
     }
 
     if (s.hats) {
-      // Offbeat eighths — the pulse between the kicks.
-      if (inBar % 4 === 2) this.hat.triggerAttackRelease(0.03, time, 0.75)
+      // Offbeat eighths — the pulse between the kicks. In deep house that hit
+      // is the open hat and it carries the groove; in psy the 16ths underneath
+      // are what makes the tempo feel like 144 rather than 120.
+      if (inBar % 4 === 2) this.hat.triggerAttackRelease(0.06, time, 0.8)
+      else if (this.style === 'psytrance') this.hat.triggerAttackRelease(0.018, time, 0.3)
       else if (inBar % 2 === 1 && this.density > 0.55) {
         this.hat.triggerAttackRelease(0.02, time, 0.35)
       }
@@ -355,29 +512,66 @@ export class ClubGroove {
   }
 
   /**
-   * Techno puts the bass under the kick; trance puts it between the kicks. That
-   * single placement difference is most of what separates the two genres to the
-   * ear, and it costs one condition here.
+   * Where the bass sits relative to the kick is most of what separates these
+   * genres to the ear, and it costs one switch here.
+   *
+   * Techno puts it under the kick. Trance puts it between the kicks. Psytrance
+   * rolls it — the kick takes the downbeat and the bass fills the other three
+   * 16ths of every beat, which is the sound the whole genre is named for. Deep
+   * house plays a long sub on the beat with a syncopated pickup, and lets the
+   * chords do the pushing instead.
    */
   private playBass(inBar: number, time: number) {
     if (!this.scale.length) return
-    const hit = this.style === 'trance' ? inBar % 4 === 2 : inBar % 4 === 0 || inBar % 8 === 6
+    const beatStep = inBar % 4
+    let hit: boolean
+    let length = this.stepSeconds * 1.6
+    let velocity = 0.85
+    switch (this.style) {
+      case 'trance':
+        hit = beatStep === 2
+        break
+      case 'psytrance':
+        // Every 16th except the one the kick is on.
+        hit = beatStep !== 0
+        length = this.stepSeconds * 0.62
+        velocity = beatStep === 2 ? 0.9 : 0.72
+        break
+      case 'deephouse':
+        hit = beatStep === 0 || inBar % 8 === 6
+        length = this.stepSeconds * 3.2
+        velocity = 0.7
+        break
+      default:
+        hit = beatStep === 0 || inBar % 8 === 6
+    }
     if (!hit) return
-    const degree = this.figure[inBar] ?? 0
+    const degree = this.figure[inBar] ?? this.chord[Math.floor(inBar / 4) % this.chord.length]
     // Folding to a sub register collapses octaves anyway, so the bass only has
     // to agree with the figure's pitch class.
     const pitch = this.scale[Math.min(this.scale.length - 1, this.base + degree)]
-    this.bass.triggerAttackRelease(foldToRange(pitch, 55, 110), this.stepSeconds * 1.6, time, 0.85)
+    this.bass.triggerAttackRelease(foldToRange(pitch, 55, 110), length, time, velocity)
   }
 
   private playArp(inBar: number, time: number) {
     if (!this.scale.length) return
     const offset = this.figure[inBar]
     if (offset === null || offset === undefined) return
-    const idx = Math.min(this.scale.length - 1, this.base + offset)
-    const pitch = foldToRange(this.scale[idx], 220, 880)
+
+    const pitchAt = (o: number) =>
+      foldToRange(this.scale[Math.min(this.scale.length - 1, this.base + o)], 220, 880)
+
+    if (this.style === 'deephouse') {
+      // The whole chord at once, held long enough to overlap the next one. Four
+      // voices rather than three: the colour tone is what makes a house chord
+      // sound like a seventh instead of a plain triad.
+      const notes = [...new Set(this.chord.map(pitchAt))]
+      this.arp.triggerAttackRelease(notes, this.stepSeconds * 5, time, 0.42)
+      return
+    }
+
     const accent = inBar % 4 === 0 ? 0.75 : 0.5
-    this.arp.triggerAttackRelease(pitch, this.stepSeconds * 1.4, time, accent)
+    this.arp.triggerAttackRelease(pitchAt(offset), this.stepSeconds * 1.4, time, accent)
   }
 
   private clear() {

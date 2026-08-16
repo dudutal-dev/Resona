@@ -1540,5 +1540,289 @@
         "style": "techno"
       }
     ]
+  },
+  {
+    "id": "journey-psy-6",
+    "title": "פסיטראנס — שישה סטים",
+    "days": 6,
+    "purpose": "club",
+    "arc": "ascending",
+    "description": "144 פעימות ובס מתגלגל: הקיק לוקח את הפעימה, והבס ממלא את שלוש השמיניות-עשרה שאחריה. ברייקדאון שבו הרול נעצר לגמרי, ואז חוזר. הסולם עולה לאורך השבוע מ-417Hz ל-963Hz.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-417",
+        "durationMin": 45,
+        "note": "הרול נכנס",
+        "pace": 0.45,
+        "depth": 0.3,
+        "density": 0.62,
+        "style": "psytrance"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 50,
+        "note": "פילטר נפתח",
+        "pace": 0.52,
+        "depth": 0.4,
+        "density": 0.66,
+        "style": "psytrance"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-639",
+        "durationMin": 55,
+        "note": "אסיד",
+        "pace": 0.6,
+        "depth": 0.5,
+        "density": 0.7,
+        "style": "psytrance"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-741",
+        "durationMin": 60,
+        "note": "הסולם מתחלף",
+        "pace": 0.68,
+        "depth": 0.62,
+        "density": 0.74,
+        "style": "psytrance"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-852",
+        "durationMin": 60,
+        "note": "ברייקדאון ארוך",
+        "pace": 0.76,
+        "depth": 0.72,
+        "density": 0.78,
+        "style": "psytrance",
+        "beatId": "bb-gamma"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-963",
+        "durationMin": 65,
+        "note": "הסט המלא",
+        "pace": 0.82,
+        "depth": 0.82,
+        "density": 0.8,
+        "style": "psytrance",
+        "beatId": "bb-gamma40"
+      }
+    ]
+  },
+  {
+    "id": "journey-psy-night-4",
+    "title": "פסי לילי — ארבעה לילות",
+    "days": 4,
+    "purpose": "club",
+    "description": "פסיטראנס איטי יותר ועמוק יותר, על הסדרה ההרמונית העליונה — מרווחים של 11/8 ו-7/4 שאין להם מקבילה בפסנתר. ארבעה לילות ארוכים, עם גלי תטא מתחת.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "cos-136",
+        "durationMin": 60,
+        "note": "OM כתדר יסוד",
+        "pace": 0.4,
+        "depth": 0.6,
+        "density": 0.6,
+        "style": "psytrance",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-396",
+        "durationMin": 70,
+        "note": "עמוק יותר",
+        "pace": 0.44,
+        "depth": 0.7,
+        "density": 0.64,
+        "style": "psytrance",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 3,
+        "frequencyId": "cos-210",
+        "durationMin": 70,
+        "note": "הירח",
+        "pace": 0.42,
+        "depth": 0.78,
+        "density": 0.62,
+        "style": "psytrance",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-852",
+        "durationMin": 75,
+        "note": "הלילה הארוך",
+        "pace": 0.48,
+        "depth": 0.88,
+        "density": 0.68,
+        "style": "psytrance",
+        "beatId": "bb-theta"
+      }
+    ]
+  },
+  {
+    "id": "journey-house-5",
+    "title": "דיפ האוס — חמישה ערבים",
+    "days": 5,
+    "purpose": "club",
+    "description": "122 פעימות עם שאפל: הגרוב מתנדנד, הקיק רך, ההאט הפתוח נופל על השמינית המוקדמת, והאקורדים נוחתים בין הפעימות. בלי דרופים ובלי ברייקדאונים — זה פשוט מתגלגל.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-432",
+        "durationMin": 60,
+        "note": "הגרוב מתיישב",
+        "pace": 0.42,
+        "depth": 0.15,
+        "density": 0.55,
+        "style": "deephouse",
+        "beatId": "bb-alpha"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 60,
+        "note": "האקורדים מתרחבים",
+        "pace": 0.48,
+        "depth": 0.2,
+        "density": 0.6,
+        "style": "deephouse",
+        "beatId": "bb-alpha"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-639",
+        "durationMin": 70,
+        "note": "ערב ארוך",
+        "pace": 0.5,
+        "depth": 0.25,
+        "density": 0.64,
+        "style": "deephouse",
+        "beatId": "bb-alpha"
+      },
+      {
+        "day": 4,
+        "frequencyId": "cos-194",
+        "durationMin": 70,
+        "note": "יום כדור הארץ כיסוד",
+        "pace": 0.46,
+        "depth": 0.3,
+        "density": 0.62,
+        "style": "deephouse",
+        "beatId": "bb-alpha"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-741",
+        "durationMin": 75,
+        "note": "הסט המלא",
+        "pace": 0.54,
+        "depth": 0.35,
+        "density": 0.68,
+        "style": "deephouse",
+        "beatId": "bb-smr"
+      }
+    ]
+  },
+  {
+    "id": "journey-house-psy-4",
+    "title": "דיפ האוס פסיכדלי",
+    "days": 4,
+    "purpose": "club",
+    "description": "אותו גרוב מתנדנד, אבל האקורדים נבנים מהסדרה ההרמונית העליונה — 11/8, 13/8 ו-7/4. אקורדים שנשמעים מוכרים ולא מוכרים בו-זמנית, מעל בס רך ושקט. ארבעה ערבים ארוכים.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-639",
+        "durationMin": 70,
+        "note": "האקורד מתעקם",
+        "pace": 0.46,
+        "depth": 0.55,
+        "density": 0.6,
+        "style": "deephouse",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 2,
+        "frequencyId": "cos-136",
+        "durationMin": 75,
+        "note": "OM מתחת לגרוב",
+        "pace": 0.44,
+        "depth": 0.65,
+        "density": 0.62,
+        "style": "deephouse",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 75,
+        "note": "רחב יותר",
+        "pace": 0.5,
+        "depth": 0.75,
+        "density": 0.65,
+        "style": "deephouse",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 4,
+        "frequencyId": "cos-172",
+        "durationMin": 80,
+        "note": "הערב הארוך",
+        "pace": 0.48,
+        "depth": 0.85,
+        "density": 0.66,
+        "style": "deephouse",
+        "beatId": "bb-theta"
+      }
+    ]
+  },
+  {
+    "id": "journey-house-work-3",
+    "title": "דיפ האוס לעבודה",
+    "days": 3,
+    "purpose": "club",
+    "description": "אותו גרוב, דליל בהרבה: אקורדים בודדים, בס רך ובלי שום דבר שמושך תשומת לב. תשעים דקות ברצף, עם SMR — הטווח של ערנות רגועה — מתחת.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-432",
+        "durationMin": 90,
+        "note": "רקע יציב",
+        "pace": 0.36,
+        "depth": 0.1,
+        "density": 0.28,
+        "style": "deephouse",
+        "beatId": "bb-smr"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-741",
+        "durationMin": 90,
+        "note": "מעט יותר תנועה",
+        "pace": 0.4,
+        "depth": 0.12,
+        "density": 0.32,
+        "style": "deephouse",
+        "beatId": "bb-smr"
+      },
+      {
+        "day": 3,
+        "frequencyId": "cos-194",
+        "durationMin": 90,
+        "note": "בלוק ארוך",
+        "pace": 0.38,
+        "depth": 0.1,
+        "density": 0.3,
+        "style": "deephouse",
+        "beatId": "bb-smr"
+      }
+    ]
   }
 ]

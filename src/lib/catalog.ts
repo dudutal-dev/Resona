@@ -1,6 +1,6 @@
 import frequenciesRaw from '../data/frequencies.json'
 import journeysRaw from '../data/journeys.json'
-import type { Frequency, Journey, JourneyPurpose, TrustLevel } from './types'
+import type { Frequency, Journey, JourneyPurpose, MelodyStyle, TrustLevel } from './types'
 
 export const FREQUENCIES = frequenciesRaw as Frequency[]
 export const JOURNEYS = journeysRaw as Journey[]
@@ -66,6 +66,14 @@ export const TRUST_SHORT: Record<TrustLevel, string> = {
   reference: 'ייחוס',
 }
 
+export const STYLE_LABEL: Record<MelodyStyle, string> = {
+  ambient: 'אמביינט',
+  techno: 'טכנו',
+  trance: 'טראנס',
+  psytrance: 'פסיטראנס',
+  deephouse: 'דיפ האוס',
+}
+
 export const PURPOSE_LABEL: Record<JourneyPurpose, string> = {
   sleep: 'שינה',
   focus: 'ריכוז',
@@ -79,7 +87,7 @@ export const PURPOSE_LABEL: Record<JourneyPurpose, string> = {
   psychedelic: 'פסיכדלי',
   work: 'עבודה',
   intimacy: 'זוגיות',
-  club: 'טכנו וטראנס',
+  club: 'קלאב',
 }
 
 /**

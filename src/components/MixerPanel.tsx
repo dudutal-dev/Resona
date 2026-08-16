@@ -1,18 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BUILTIN_AMBIENCE, type AmbienceOption } from '../audio/Ambience'
 import { clubBpm } from '../audio/ClubGroove'
 import { player } from '../audio/SessionPlayer'
-import { getFrequency } from '../lib/catalog'
-import type { MelodyStyle } from '../lib/types'
+import { STYLE_LABEL, getFrequency } from '../lib/catalog'
+import { MELODY_STYLES, type ClubStyle } from '../lib/types'
 import { useSession } from '../store/sessionStore'
 import { ListeningMode } from './ListeningMode'
 import { Slider } from './ui'
 
-const STYLES: { id: MelodyStyle; label: string }[] = [
-  { id: 'ambient', label: 'אמביינט' },
-  { id: 'techno', label: 'טכנו' },
-  { id: 'trance', label: 'טראנס' },
-]
+/** One line per club style, describing what it actually does to the groove. */
+const STYLE_NOTE: Record<ClubStyle, string> = {
+  techno: 'קיק על כל פעימה, בס מתחתיו, האט בין הפעימות וארפג׳ שמתחלף כל ארבע תיבות. הקיק כמעט אף פעם לא עוזב.',
+  trance: 'שש עשרה תיבות נהיגה, ברייקדאון שבו הקיק נעלם, בילד עם פילטר עולה ודרופ. הבס יושב בין הפעימות.',
+  psytrance: 'בס מתגלגל — הקיק לוקח את הפעימה והבס ממלא את שלושת השמיניות-עשרה שאחריה. 144 פעימות, האטים צפופים ופילטר עם רזוננס.',
+  deephouse: 'גרוב מתנדנד (שאפל), קיק רך, האט פתוח על השמינית המוקדמת, ואקורדים שנופלים בין הפעימות. בלי דרופים — זה מתגלגל.',
+}
 
 const WaveIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -51,6 +53,8 @@ export function MixerPanel() {
   const { config, setLevel, setAmbience, setBeatHz, setDensity, setPace, setDepth, setStyle } =
     useSession()
   const [ambienceOptions, setAmbienceOptions] = useState<AmbienceOption[]>(BUILTIN_AMBIENCE)
+  const styleRow = useRef<HTMLDivElement | null>(null)
+  const activeChip = useRef<HTMLButtonElement | null>(null)
 
   useEffect(() => {
     let alive = true
@@ -68,6 +72,16 @@ export function MixerPanel() {
   const club = style !== 'ambient'
   const root = getFrequency(config.rootId)
 
+  // The styles do not fit on one line, so opening the panel on a journey day
+  // could leave the day's own style scrolled out of sight. Scrolling the row
+  // itself rather than calling scrollIntoView keeps the page where it was.
+  useEffect(() => {
+    const row = styleRow.current
+    const chip = activeChip.current
+    if (!row || !chip) return
+    row.scrollTo({ left: chip.offsetLeft - (row.clientWidth - chip.clientWidth) / 2 })
+  }, [style])
+
   return (
     <div className="space-y-5">
       {/* Melody layer */}
@@ -84,22 +98,26 @@ export function MixerPanel() {
               quietly follow the listener into every session after it. */}
           <div>
             <span className="txt-2 text-xs font-semibold">אופי המלודיה</span>
-            <div className="mt-2 grid grid-cols-3 gap-2">
-              {STYLES.map((s) => {
-                const active = style === s.id
+            <div
+              ref={styleRow}
+              className="no-scrollbar -mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1"
+            >
+              {MELODY_STYLES.map((id) => {
+                const active = style === id
                 return (
                   <button
-                    key={s.id}
-                    onClick={() => setStyle(s.id)}
+                    key={id}
+                    ref={active ? activeChip : undefined}
+                    onClick={() => setStyle(id)}
                     aria-pressed={active}
-                    className="rounded-2xl px-2 py-2 text-xs font-semibold transition-all active:scale-95"
+                    className="shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all active:scale-95"
                     style={{
                       background: active ? 'var(--accent-soft)' : 'var(--card)',
                       border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,
                       color: active ? 'var(--accent)' : 'var(--txt-2)',
                     }}
                   >
-                    {s.label}
+                    {STYLE_LABEL[id]}
                   </button>
                 )
               })}
@@ -117,7 +135,7 @@ export function MixerPanel() {
             onChange={setPace}
             display={
               club
-                ? `${Math.round(clubBpm(style as 'techno' | 'trance', config.pace))} BPM`
+                ? `${Math.round(clubBpm(style as ClubStyle, config.pace))} BPM`
                 : config.pace < 0.25
                   ? 'נייח'
                   : config.pace < 0.45
@@ -150,10 +168,7 @@ export function MixerPanel() {
           )}
           {club ? (
             <p className="txt-3 text-[11px] leading-relaxed">
-              {style === 'techno'
-                ? 'טכנו: קיק על כל פעימה, בס מתחתיו, האט בין הפעימות וארפג׳ שמתחלף כל ארבע תיבות.'
-                : 'טראנס: שש עשרה תיבות נהיגה, ברייקדאון שבו הקיק נעלם, בילד עם פילטר עולה ודרופ. הבס יושב בין הפעימות.'}{' '}
-              הקיק עצמו הוא{' '}
+              {STYLE_NOTE[style as ClubStyle]} הקיק עצמו הוא{' '}
               {root?.hz ? (
                 <>
                   <span className="ltr">{root.hz} Hz</span> מקופל אוקטבות מטה

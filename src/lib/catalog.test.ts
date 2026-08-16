@@ -13,6 +13,7 @@ import {
 import { configForDay } from './journeyConfig'
 import { THEME_OF, journeysByTheme } from './themes'
 import { ROOT_GROUPS } from './catalog'
+import { CLUB_STYLES } from './types'
 import { DEFAULT_CONFIG } from '../store/sessionStore'
 import { resolveTimerMinutes } from '../audio/SessionPlayer'
 
@@ -171,7 +172,7 @@ describe('journeys', () => {
           // The club styles are a different engine, not a louder ambient one.
           // A club day without one would play drifting pads under a title that
           // promises techno.
-          expect(['techno', 'trance'], `${where} style`).toContain(day.style)
+          expect(CLUB_STYLES as string[], `${where} style`).toContain(day.style)
         } else {
           // And the reverse: a kick must not appear under a sleep journey
           // because a style was pasted into the wrong entry.
@@ -184,8 +185,8 @@ describe('journeys', () => {
   it('keeps every club day inside a tempo that is still the genre', () => {
     for (const j of JOURNEYS.filter((x) => x.purpose === 'club')) {
       for (const day of j.schedule) {
-        // pace maps to BPM as base +/- 8, so this keeps techno in 122-134 and
-        // trance in 132-144. Below this the grid stops reading as a floor.
+        // pace maps to BPM as base +/- 8, so this keeps every style inside its
+        // own genre's tempo. Below this the grid stops reading as a floor.
         expect(day.pace, `${j.id} day ${day.day}`).toBeGreaterThanOrEqual(0.3)
         expect(day.pace, `${j.id} day ${day.day}`).toBeLessThanOrEqual(1)
       }

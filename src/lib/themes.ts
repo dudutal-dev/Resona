@@ -58,7 +58,7 @@ export const THEME_LABEL: Record<JourneyTheme, string> = {
   motion: 'תנועה וקצב',
   inner: 'פנימי',
   intimacy: 'זוגיות',
-  club: 'טכנו וטראנס',
+  club: 'קלאב',
   psychedelic: 'פסיכדלי',
 }
 
@@ -69,7 +69,7 @@ export const THEME_BLURB: Record<JourneyTheme, string> = {
   motion: 'פעימה קבועה — להליכה, למתיחות, לעמידה',
   inner: 'מדיטציה, התבוננות ויצירה',
   intimacy: 'ערב לשניים, מגע וקרבה',
-  club: 'קיק על התדר עצמו, בס וארפג׳ים — סטים לתנועה',
+  club: 'טכנו, טראנס, פסיטראנס ודיפ האוס — הקיק הוא התדר עצמו',
   psychedelic: 'הדים ארוכים ומרווחים לא מוכרים',
 }
 

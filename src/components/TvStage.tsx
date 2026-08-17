@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { mediaRoute } from '../audio/MediaRoute'
+import { figureAt } from '../data/figures'
 import { freqLabel, getFrequency, getJourney, journeyTitle, shortLabel } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { useSession } from '../store/sessionStore'
+import { useSettings } from '../store/settingsStore'
 import { FigureField } from './FigureField'
 import { formatClock } from './ui'
 
@@ -25,6 +27,8 @@ import { formatClock } from './ui'
 export function TvStage({ onClose }: { onClose: () => void }) {
   const { t, lang } = useT()
   const { config, isPlaying, elapsed, remaining, activeJourney } = useSession()
+  const figure = figureAt(useSettings((s) => s.figure))
+  const nextFigure = useSettings((s) => s.nextFigure)
   const stageRef = useRef<HTMLDivElement>(null)
   const [chromeVisible, setChromeVisible] = useState(true)
   const [portrait, setPortrait] = useState(false)
@@ -132,15 +136,33 @@ export function TvStage({ onClose }: { onClose: () => void }) {
         </div>
       </div>
 
-      {/* Controls, fading with the rest of the chrome. */}
+      {/*
+        Controls, fading with the rest of the chrome. Ordered above the canvas
+        explicitly rather than by being later in the document, since the canvas
+        fills the stage and anything that ends up painting over these takes every
+        press with it — including the way out.
+      */}
       <div
-        className={`absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4 transition-opacity duration-500 ${
+        className={`absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-3 p-4 transition-opacity duration-500 ${
           chromeVisible ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
       >
-        <button onClick={onClose} className="btn h-11 rounded-2xl px-4 text-xs">
-          {t('tv.exit')}
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={onClose} className="btn h-11 rounded-2xl px-4 text-xs">
+            {t('tv.exit')}
+          </button>
+          <button
+            onClick={(e) => {
+              // The stage itself listens for taps to bring the chrome back; without
+              // this the click would also count as that and restart its timer.
+              e.stopPropagation()
+              nextFigure()
+            }}
+            className="btn h-11 rounded-2xl px-4 text-xs"
+          >
+            {t('tv.figure')} · {t(figure.name)}
+          </button>
+        </div>
         <p className="max-w-[22rem] text-end text-[11px] leading-relaxed txt-3">
           {t('tv.mirror')}
           {portrait && <span className="block mt-1 opacity-80">{t('tv.rotate')}</span>}
@@ -148,7 +170,7 @@ export function TvStage({ onClose }: { onClose: () => void }) {
       </div>
 
       <p
-        className={`absolute inset-x-0 bottom-3 text-center text-[11px] txt-3 transition-opacity duration-500 ${
+        className={`pointer-events-none absolute inset-x-0 bottom-3 z-10 text-center text-[11px] txt-3 transition-opacity duration-500 ${
           chromeVisible ? 'opacity-100' : 'opacity-0'
         }`}
       >

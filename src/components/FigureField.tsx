@@ -1,48 +1,42 @@
 import { useEffect, useRef } from 'react'
-import figureData from '../data/figure.json'
 import { engine } from '../audio/ToneEngine'
 import { BAND_COUNT, MAX_RATIO, RATIOS, readBands } from '../audio/harmonics'
+import { figureAt } from '../data/figures'
 import { getFrequency } from '../lib/catalog'
 import { useSession } from '../store/sessionStore'
 import { useSettings } from '../store/settingsStore'
 
 /**
- * The figure, as a living field of light.
+ * The figure, whole, moved by the sound.
  *
- * `scripts/extract-figure.mjs` reduces the source artwork to some thirty-eight
- * thousand points and this draws every one of them itself, every frame. That is
- * the whole reason for the detour: a picture can be lit and faded, but only a
- * point cloud can be *moved*, and moving is what makes it belong to the sound.
+ * The artwork is drawn as itself — every pixel of it, at the resolution it was
+ * made — and everything here is about making that picture live without taking it
+ * apart. An earlier version reduced it to forty thousand points and redrew those
+ * each frame, which moved beautifully and threw away exactly what made the
+ * artwork worth using: its detail. This keeps the detail and finds the movement
+ * elsewhere.
  *
- * The mapping from sound to picture is the artwork's own. Its colour runs from
- * red at the feet through the spectrum to violet at the crown, which is the same
- * order as the intervals of the just scale, so height is the axis: the figure is
- * cut into seven horizontal shells, each answering to one interval. Play a fifth
- * and the fifth's height is what lights, opens and throws a wave. Nothing is
- * assigned arbitrarily — the picture already knew.
+ * Three things move it, and one of them is the whole idea:
  *
- * Four things move the points, in rising order of how much they matter:
+ *   1. It breathes. A slow scale on the overall level, so the body swells as it
+ *      plays.
+ *   2. It lights along its height. The artwork's colour runs from red at the feet
+ *      through the spectrum to violet at the crown, which is the order of the
+ *      intervals of the just scale — so height stands for interval. A copy of the
+ *      figure is masked by a vertical gradient whose stops are the seven band
+ *      levels and added back over itself: play a fifth, and the fifth's height is
+ *      the part of the body that glows. It glows in the artwork's own colours,
+ *      because only the mask's alpha is ever touched. Nothing is assigned
+ *      arbitrarily — the picture already knew which height held which interval.
+ *   3. The sound bends it. The figure is drawn as a stack of horizontal strips,
+ *      each shifted sideways by the waveform read at its own height: the sound as
+ *      a standing wave on a body. It is the same picture, sheared, not a
+ *      reconstruction of it — at rest every offset is zero and the strips lie
+ *      back down into the original image exactly.
  *
- *   1. A slow per-point drift, so nothing is ever perfectly still.
- *   2. A global breath on the overall level.
- *   3. The waveform, read at the height each point sits at and pushing it
- *      sideways from the midline — the sound as a standing wave on the body.
- *   4. Its shell's level, which brightens it and opens it outward.
- *
- * A transient in a band fires an impulse into its shell, which travels outward
- * and settles, so the figure visibly answers a note being struck.
- *
- * Colour is rotated, not replaced: every point keeps the hue it had in the
- * artwork, turned by the difference between the cloud's own mean hue and the
- * accent of the frequency being played. So the figure follows the app's colour
- * without losing the spectrum that made it worth using.
- *
- * The points are written straight into an `ImageData` rather than drawn. Tens of
- * thousands of `fillRect` calls with a freshly built `hsla()` string each, twice
- * over for the glow, measured at 350ms a frame; writing pixels by hand and
- * letting `Uint8ClampedArray` saturate — which is additive blending for free —
- * measures around 5ms, and puts each point on a device pixel exactly instead of
- * smearing it across four.
+ * Around it: dust that brightens on its interval, ellipses crossing the frame
+ * with a satellite on each, and a ring thrown from the height of any band that
+ * jumps. A standing person in a 16:9 frame leaves a lot of empty picture.
  */
 
 type Props = {
@@ -52,67 +46,20 @@ type Props = {
   className?: string
 }
 
-type Point = {
-  /** Home position, in image widths, relative to the centre of the figure. */
-  x: number
-  y: number
-  luma: number
-  /** Hue as the artwork had it, in degrees. */
-  hue: number
-  /** A lit point in the body rather than the body itself. */
-  node: boolean
-  /** Which interval's shell this point belongs to: 0 at the feet. */
-  band: number
-  phase: number
-}
-
-const DATA = figureData as unknown as {
-  width: number
-  scale: number
-  top: number
-  bottom: number
-  baseHue: number
-  p: number[]
-}
-
-const FIGURE_TOP = DATA.top / DATA.scale
-const FIGURE_BOTTOM = DATA.bottom / DATA.scale
-const FIGURE_HEIGHT = FIGURE_BOTTOM - FIGURE_TOP
-
-/** Built once for the module — the geometry never changes. */
-const POINTS: Point[] = (() => {
-  const s = DATA.scale
-  const out: Point[] = []
-  for (let i = 0, n = 0; i < DATA.p.length; i += 4, n++) {
-    const y = DATA.p[i + 1] / s
-    const hk = DATA.p[i + 3]
-    // From the feet up, so the lowest interval sits at the base of the figure.
-    const height = (FIGURE_BOTTOM - y) / FIGURE_HEIGHT
-    out.push({
-      x: DATA.p[i] / s,
-      y,
-      // Gamma, not the raw value: the render draws the legs and the far arm far
-      // dimmer than the chest, and a straight reading leaves them as specks.
-      luma: Math.pow(DATA.p[i + 2] / 63, 0.8),
-      hue: ((hk >> 1) / 64) * 360,
-      node: (hk & 1) === 1,
-      band: Math.max(0, Math.min(BAND_COUNT - 1, Math.floor(height * BAND_COUNT))),
-      // Deterministic, so the drift is stable across reloads.
-      phase: ((n * 2654435761) % 1000) / 1000,
-    })
-  }
-  return out
-})()
+/**
+ * Horizontal strips the figure is drawn in. Ninety-six is fine enough that the
+ * shear reads as a curve rather than as steps, and few enough that the whole
+ * stack is a small part of a frame.
+ */
+const STRIPS = 96
+/** How far the waveform may push a strip, as a fraction of the figure's width. */
+const SWAY = 0.02
 
 /**
- * Dust across the whole frame, in fractions of it.
- *
- * The figure is a standing person and the stage is 16:9, so however well the
- * body is drawn there is a great deal of empty picture beside it. This fills it
- * with something that belongs to the sound: each mote is assigned an interval
- * and brightens on it, so the air around the figure carries the harmony too.
- * Generated from a fixed sequence rather than `Math.random`, so the sky is the
- * same every time the stage is opened.
+ * Dust across the whole frame, in fractions of it. Each mote is assigned an
+ * interval and brightens on it, so the air around the figure carries the harmony
+ * too. Generated from a fixed sequence rather than `Math.random`, so the sky is
+ * the same every time the stage is opened.
  */
 const DUST = (() => {
   let seed = 20250817
@@ -129,45 +76,11 @@ const DUST = (() => {
   }))
 })()
 
-/**
- * Colours are resolved to numbers before the point loop, because the loop is
- * where all the time goes. The whole palette is rebuilt each frame — it has to
- * be, the accent moves — and every point then just scales the three numbers its
- * hue bucket gives it.
- */
-function hslToRgb(hue: number, light: number, into: Float32Array, at: number) {
-  const h = (((hue % 360) + 360) % 360) / 60
-  const l = light / 100
-  const c = 1 - Math.abs(2 * l - 1) // saturation is always 100% here
-  const x = c * (1 - Math.abs((h % 2) - 1))
-  const m = l - c / 2
-  let r = 0
-  let g = 0
-  let b = 0
-  if (h < 1) [r, g, b] = [c, x, 0]
-  else if (h < 2) [r, g, b] = [x, c, 0]
-  else if (h < 3) [r, g, b] = [0, c, x]
-  else if (h < 4) [r, g, b] = [0, x, c]
-  else if (h < 5) [r, g, b] = [x, 0, c]
-  else [r, g, b] = [c, 0, x]
-  into[at] = (r + m) * 255
-  into[at + 1] = (g + m) * 255
-  into[at + 2] = (b + m) * 255
-}
-
-/**
- * Hue buckets in the palette. Fine enough that the spectrum reads as continuous,
- * few enough that rebuilding all of them every frame costs nothing.
- */
-const HUE_STEPS = 48
-
-/** How far the figure's colour follows the accent. See the note where it is used. */
-const HUE_FOLLOW = 0.34
-
 export function FigureField({ playing, scale = 1, className = '' }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
   const reducedMotion = useSettings((s) => s.reducedMotion)
+  const figure = figureAt(useSettings((s) => s.figure))
   const rootId = useSession((s) => s.config.rootId)
   // Held in a ref so changing frequency retunes the reading on the next frame
   // instead of tearing down and restarting the animation.
@@ -181,9 +94,42 @@ export function FigureField({ playing, scale = 1, className = '' }: Props) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    const bloom = document.createElement('canvas')
-    const bctx = bloom.getContext('2d')
-    if (!bctx) return
+    /**
+     * Two working canvases. `posed` holds the figure with this frame's shear
+     * applied, so the glow pass can reuse it instead of laying out all the strips
+     * again; `glow` holds a copy of that, masked down to the heights the harmony
+     * is sounding at.
+     */
+    const posed = document.createElement('canvas')
+    const pctx = posed.getContext('2d')
+    const glow = document.createElement('canvas')
+    const gctx = glow.getContext('2d')
+    /**
+     * The artwork at 24 pixels wide, which is the whole trick behind the wash
+     * that fills the sides of the frame: drawn back out across the full width it
+     * is a heavy blur that the browser interpolates for free, in the artwork's
+     * own colours. No filter, no second pass, and it works in every browser
+     * rather than in the ones with `ctx.filter`.
+     */
+    const ambient = document.createElement('canvas')
+    const actx = ambient.getContext('2d')
+    if (!pctx || !gctx || !actx) return
+
+    const image = new Image()
+    let ready = false
+    image.decoding = 'async'
+    image.src = figure.src
+    void image
+      .decode()
+      .then(() => {
+        ambient.width = 24
+        ambient.height = Math.max(1, Math.round((24 * image.naturalHeight) / image.naturalWidth))
+        actx.drawImage(image, 0, 0, ambient.width, ambient.height)
+        ready = true
+      })
+      .catch(() => {
+        ready = false
+      })
 
     let raf = 0
     let t = 0
@@ -194,25 +140,13 @@ export function FigureField({ playing, scale = 1, className = '' }: Props) {
     const impulse = new Float32Array(BAND_COUNT)
     const waves: { r: number; life: number; band: number }[] = []
 
-    /** Two lightnesses per hue bucket: the body's, and a lit point's. */
-    const palette = new Float32Array(HUE_STEPS * 6)
-    /** How much of a point's light goes into the glow buffer. */
-    const BLOOM_GAIN = 0.5
-
     let w = 0
     let h = 0
-    let dpr = 1
-    const BLOOM_SCALE = 0.32
-
-    let field: ImageData | null = null
-    let fieldWords: Uint32Array | null = null
-    let bloomField: ImageData | null = null
-    let bloomWords: Uint32Array | null = null
 
     const resize = () => {
-      // Three, not two: sharpness was the whole complaint about the first
-      // version, and on a phone or a 4K panel the extra device pixels are there.
-      dpr = Math.min(window.devicePixelRatio || 1, 3)
+      // Three, not two: sharpness is the point of drawing the artwork whole, and
+      // on a phone or a 4K panel the extra device pixels are there.
+      const dpr = Math.min(window.devicePixelRatio || 1, 3)
       w = wrap.clientWidth
       h = wrap.clientHeight
       if (!w || !h) return
@@ -221,12 +155,12 @@ export function FigureField({ playing, scale = 1, className = '' }: Props) {
       canvas.style.width = `${w}px`
       canvas.style.height = `${h}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      bloom.width = Math.max(1, Math.round(canvas.width * BLOOM_SCALE))
-      bloom.height = Math.max(1, Math.round(canvas.height * BLOOM_SCALE))
-      field = ctx.createImageData(canvas.width, canvas.height)
-      fieldWords = new Uint32Array(field.data.buffer)
-      bloomField = bctx.createImageData(bloom.width, bloom.height)
-      bloomWords = new Uint32Array(bloomField.data.buffer)
+      for (const c of [posed, glow]) {
+        c.width = canvas.width
+        c.height = canvas.height
+      }
+      pctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      gctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
     resize()
     const ro = new ResizeObserver(resize)
@@ -235,10 +169,13 @@ export function FigureField({ playing, scale = 1, className = '' }: Props) {
     const hueOf = () =>
       Number(getComputedStyle(document.documentElement).getPropertyValue('--h').trim()) || 265
 
+    /** Where the figure sits in the frame this frame, after the breath. */
+    let top = 0
+    let extent = 0
+
     const draw = () => {
       raf = requestAnimationFrame(draw)
       if (!w || !h) return
-      if (!field || !fieldWords || !bloomField || !bloomWords) return
       t += reducedMotion ? 0.003 : 0.01
 
       const spectrum = playing ? engine.getSpectrum() : null
@@ -256,117 +193,40 @@ export function FigureField({ playing, scale = 1, className = '' }: Props) {
       }
 
       const H = hueOf()
-      /**
-       * The spectrum leans toward the accent rather than being turned onto it.
-       *
-       * A full rotation is what this first did, and it costs the thing the
-       * artwork was chosen for: at 528Hz the accent is green and the cloud's mean
-       * hue is 324, so every point turned by 184 degrees — the figure came out
-       * with green hair, a magenta chest and cyan legs, which is the artwork's
-       * own order inverted. A third of the way keeps red at the feet and violet
-       * at the crown while the whole body still visibly changes colour with the
-       * frequency, which is what the app's accent is for.
-       */
-      const turn = (H - DATA.baseHue) * HUE_FOLLOW
-      for (let i = 0; i < HUE_STEPS; i++) {
-        const hue = (i / HUE_STEPS) * 360 + turn
-        hslToRgb(hue, 64, palette, i * 6)
-        hslToRgb(hue, 88, palette, i * 6 + 3)
+      ctx.clearRect(0, 0, w, h)
+
+      // ---- The wash --------------------------------------------------------
+      // The artwork is a portrait panel and the stage is 16:9, so without this
+      // it hangs in the middle of a black frame with a hard edge down each side.
+      // Its own colours, blurred out to fill the picture, give the sides
+      // something that belongs to it.
+      if (ready && ambient.width) {
+        const cover = Math.max(w / ambient.width, h / ambient.height)
+        const cw = ambient.width * cover
+        const chh = ambient.height * cover
+        ctx.globalAlpha = 0.26 + energy * 0.14
+        ctx.imageSmoothingEnabled = true
+        ctx.drawImage(ambient, (w - cw) / 2, (h - chh) / 2, cw, chh)
+        ctx.globalAlpha = 1
+        // Pulled down at the edges, so the wash stays behind the picture instead
+        // of competing with the readouts sitting in the corners.
+        const vignette = ctx.createRadialGradient(
+          w / 2, h / 2, Math.min(w, h) * 0.25,
+          w / 2, h / 2, Math.max(w, h) * 0.62,
+        )
+        vignette.addColorStop(0, 'rgba(0,0,0,0)')
+        vignette.addColorStop(1, 'rgba(0,0,0,0.72)')
+        ctx.fillStyle = vignette
+        ctx.fillRect(0, 0, w, h)
       }
 
-      // Fit the figure to the frame with margin, and centre it.
-      const unit = (h * 0.9) / FIGURE_HEIGHT
-      const cx = w / 2
-      const cy = h / 2 - (FIGURE_TOP + FIGURE_HEIGHT / 2) * unit
-
-      const px = field.data
-      const bpx = bloomField.data
-      const fw = field.width
-      const fh = field.height
-      const bw = bloomField.width
-      const bh = bloomField.height
-      fieldWords.fill(0)
-      bloomWords.fill(0)
-
-      const waveLen = wave?.length ?? 0
-      // One source pixel, in device pixels. Sizing the splat by this rather than
-      // by a constant keeps the artwork's own line weight at any resolution:
-      // neither thinned to dashes on a 4K panel nor fattened to blobs on a phone.
-      const splat = Math.max(1, Math.min(4, Math.round((unit / DATA.width) * dpr * 1.15)))
-
-      for (let i = 0; i < POINTS.length; i++) {
-        const p = POINTS[i]
-        const band = bands[p.band]
-
-        // The shell opens outward from the midline, and the waveform pushes the
-        // body sideways at the height it is read at — a standing wave on a
-        // person. Vertically it barely moves: a body that slides up and down
-        // stops reading as one.
-        let sway = band * 0.05 + impulse[p.band] * 0.09
-        if (waveLen) {
-          const idx = ((((FIGURE_BOTTOM - p.y) / FIGURE_HEIGHT) * waveLen) | 0) % waveLen
-          sway += (wave![idx] ?? 0) * 0.14
-        }
-        const drift = reducedMotion ? 0 : Math.sin(t * 1.6 + p.phase * 42) * 0.0016
-
-        const x = ((cx + (p.x * (1 + sway) + drift) * unit) * dpr) | 0
-        const y = ((cy + (p.y * (1 + energy * 0.012) + drift) * unit) * dpr) | 0
-        if (x < 0 || y < 0 || x >= fw || y >= fh) continue
-
-        let a = p.node
-          ? p.luma * (0.4 + band * 0.9 + energy * 0.3)
-          : p.luma * (0.62 + band * 0.45 + energy * 0.16)
-        if (a > 1) a = 1
-
-        const slot = ((((p.hue / 360) * HUE_STEPS) | 0) % HUE_STEPS) * 6 + (p.node ? 3 : 0)
-        const r = palette[slot] * a
-        const g = palette[slot + 1] * a
-        const b = palette[slot + 2] * a
-
-        for (let dy = 0; dy < splat; dy++) {
-          const yy = y + dy
-          if (yy >= fh) break
-          let o = (yy * fw + x) * 4
-          for (let dx = 0; dx < splat; dx++, o += 4) {
-            if (x + dx >= fw) break
-            px[o] += r
-            px[o + 1] += g
-            px[o + 2] += b
-            px[o + 3] = 255
-          }
-        }
-
-        // The same point, once, into the smaller buffer the glow comes from.
-        const bx = (x * BLOOM_SCALE) | 0
-        const by = (y * BLOOM_SCALE) | 0
-        if (bx < bw && by < bh) {
-          const o = (by * bw + bx) * 4
-          bpx[o] += r * BLOOM_GAIN
-          bpx[o + 1] += g * BLOOM_GAIN
-          bpx[o + 2] += b * BLOOM_GAIN
-          bpx[o + 3] = 255
-        }
-      }
-
-      ctx.setTransform(1, 0, 0, 1, 0, 0)
-      ctx.globalCompositeOperation = 'source-over'
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      ctx.putImageData(field, 0, 0)
-      bctx.putImageData(bloomField, 0, 0)
-
-      // The upscale is the blur: one drawImage, interpolated by the browser.
       ctx.globalCompositeOperation = 'lighter'
-      ctx.imageSmoothingEnabled = true
-      ctx.globalAlpha = 0.5 + energy * 0.3
-      ctx.drawImage(bloom, 0, 0, canvas.width, canvas.height)
-      ctx.globalAlpha = 1
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
       // ---- Ground bloom ---------------------------------------------------
-      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, h * 0.55)
-      glow.addColorStop(0, `hsla(${H + 20}, 100%, 62%, ${0.05 + energy * 0.12})`)
-      glow.addColorStop(1, 'hsla(0,0%,0%,0)')
-      ctx.fillStyle = glow
+      const ground = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, h * 0.6)
+      ground.addColorStop(0, `hsla(${H + 20}, 100%, 62%, ${0.05 + energy * 0.12})`)
+      ground.addColorStop(1, 'hsla(0,0%,0%,0)')
+      ctx.fillStyle = ground
       ctx.fillRect(0, 0, w, h)
 
       // ---- Dust ------------------------------------------------------------
@@ -379,23 +239,113 @@ export function FigureField({ playing, scale = 1, className = '' }: Props) {
         ctx.fillRect(d.x * w, d.y * h, d.size * scale, d.size * scale)
       }
 
+      // ---- The figure ------------------------------------------------------
+      if (ready && image.naturalHeight) {
+        // Fitted to the height with a margin, and breathing on the level.
+        const breath = 1 + energy * 0.035 + (reducedMotion ? 0 : Math.sin(t * 0.9) * 0.006)
+        const dh = h * 0.94 * breath
+        const dw = (dh * image.naturalWidth) / image.naturalHeight
+        const dx = (w - dw) / 2
+        const dy = (h - dh) / 2
+        top = dy
+        extent = dh
+
+        pctx.clearRect(0, 0, w, h)
+        const waveLen = wave?.length ?? 0
+        const sliceH = image.naturalHeight / STRIPS
+        const strip = dh / STRIPS
+        for (let i = 0; i < STRIPS; i++) {
+          // Strip 0 is the crown, so the interval is read from the bottom up.
+          const fromFoot = 1 - i / STRIPS
+          let offset = 0
+          if (waveLen) {
+            const band = Math.min(BAND_COUNT - 1, Math.floor(fromFoot * BAND_COUNT))
+            const sample = wave![(fromFoot * waveLen) | 0] ?? 0
+            offset = sample * dw * SWAY * (0.4 + bands[band] + impulse[band] * 0.8)
+          }
+          pctx.drawImage(
+            image,
+            0,
+            i * sliceH,
+            image.naturalWidth,
+            sliceH,
+            dx + offset,
+            dy + i * strip,
+            dw,
+            // A shade over, so neighbouring strips overlap instead of showing
+            // hairlines between them when the height does not divide evenly.
+            strip + 1,
+          )
+        }
+
+        /**
+         * Feathered, then added rather than painted on.
+         *
+         * Both matter for the same reason. The artwork's own background is not
+         * black — it is nebula — so a plain draw puts a visible rectangle in the
+         * frame however well the figure inside it is lit. Adding it means black
+         * contributes nothing and the panel dissolves into the wash; feathering
+         * the last stretch of each edge takes care of what is left. Two
+         * `destination-in` fills in a row multiply their alphas, which is how one
+         * horizontal and one vertical gradient make a soft-edged frame.
+         */
+        pctx.globalCompositeOperation = 'destination-in'
+        const across = pctx.createLinearGradient(dx, 0, dx + dw, 0)
+        across.addColorStop(0, 'rgba(0,0,0,0)')
+        across.addColorStop(0.24, 'rgba(0,0,0,1)')
+        across.addColorStop(0.76, 'rgba(0,0,0,1)')
+        across.addColorStop(1, 'rgba(0,0,0,0)')
+        pctx.fillStyle = across
+        pctx.fillRect(0, 0, w, h)
+        const down = pctx.createLinearGradient(0, dy, 0, dy + dh)
+        down.addColorStop(0, 'rgba(0,0,0,0)')
+        down.addColorStop(0.07, 'rgba(0,0,0,1)')
+        down.addColorStop(0.93, 'rgba(0,0,0,1)')
+        down.addColorStop(1, 'rgba(0,0,0,0)')
+        pctx.fillStyle = down
+        pctx.fillRect(0, 0, w, h)
+        pctx.globalCompositeOperation = 'source-over'
+
+        ctx.globalCompositeOperation = 'lighter'
+        ctx.drawImage(posed, 0, 0, w, h)
+
+        // The harmony, as light along the body.
+        gctx.clearRect(0, 0, w, h)
+        gctx.globalCompositeOperation = 'source-over'
+        gctx.drawImage(posed, 0, 0, w, h)
+        const mask = gctx.createLinearGradient(0, dy, 0, dy + dh)
+        for (let i = BAND_COUNT - 1; i >= 0; i--) {
+          const level = Math.min(1, bands[i] * 1.1 + impulse[i] * 0.5)
+          // Stop 0 is the crown; band 0 is the feet.
+          mask.addColorStop(1 - (i + 0.5) / BAND_COUNT, `rgba(255,255,255,${level})`)
+        }
+        gctx.globalCompositeOperation = 'destination-in'
+        gctx.fillStyle = mask
+        gctx.fillRect(0, 0, w, h)
+
+        ctx.globalCompositeOperation = 'lighter'
+        ctx.globalAlpha = 0.85
+        ctx.drawImage(glow, 0, 0, w, h)
+        // Once more, larger and fainter: the same light, spilling off the body.
+        const spill = 0.03 + energy * 0.03
+        ctx.globalAlpha = 0.4
+        ctx.drawImage(glow, -w * spill * 0.5, -h * spill * 0.5, w * (1 + spill), h * (1 + spill))
+        ctx.globalAlpha = 1
+      }
+
       // ---- Waves, out from the height of the band that struck --------------
-      /**
-       * Centred on the shell that fired rather than on the figure, and flattened:
-       * a note struck at the throat opens at the throat, and spreads across the
-       * frame rather than up out of it.
-       */
+      ctx.globalCompositeOperation = 'lighter'
       for (let i = waves.length - 1; i >= 0; i--) {
         const v = waves[i]
-        v.r += unit * 0.014
+        v.r += h * 0.012
         v.life -= 0.016
         if (v.life <= 0 || v.r > Math.max(w, h)) {
           waves.splice(i, 1)
           continue
         }
-        const shell = FIGURE_BOTTOM - ((v.band + 0.5) / BAND_COUNT) * FIGURE_HEIGHT
+        const shell = top + (1 - (v.band + 0.5) / BAND_COUNT) * extent
         ctx.beginPath()
-        ctx.ellipse(cx, cy + shell * unit, v.r, v.r * 0.55, 0, 0, Math.PI * 2)
+        ctx.ellipse(w / 2, shell, v.r, v.r * 0.55, 0, 0, Math.PI * 2)
         ctx.strokeStyle = `hsla(${H + v.band * 14}, 100%, 74%, ${v.life * 0.16})`
         ctx.lineWidth = 0.8 * scale
         ctx.stroke()
@@ -409,6 +359,8 @@ export function FigureField({ playing, scale = 1, className = '' }: Props) {
        * something to do. Each interval gets its own tilt, so the orbits cross
        * instead of nesting.
        */
+      const cx = w / 2
+      const cy = h / 2
       RATIOS.forEach((ratio, i) => {
         const band = bands[i]
         const reach = Math.min(w, h) * 0.44
@@ -455,7 +407,7 @@ export function FigureField({ playing, scale = 1, className = '' }: Props) {
       cancelAnimationFrame(raf)
       ro.disconnect()
     }
-  }, [playing, reducedMotion, scale])
+  }, [playing, reducedMotion, scale, figure.src])
 
   return (
     // The caller may position this itself (the stage fills the screen with it);

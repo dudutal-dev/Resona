@@ -3,32 +3,36 @@
  *
  *   node scripts/extract-figure.mjs
  *
- * The source is a 768x1408 render of a human silhouette drawn in starlight on
- * black, with concentric rings of light over the chest. Shipping that PNG would
- * work, but it would be a 530KB asset that can only ever sit still, and it would
- * be the first media file in an app whose whole build is procedural.
+ * The source is a body of light: a filled, translucent figure threaded with
+ * filaments and lit points, its colour running from red at the feet through the
+ * spectrum to violet at the crown. Shipping the PNG would work, but it would be
+ * half a megabyte that can only ever sit still, and it would be the first media
+ * file in an app whose whole build is procedural. So the pixels are read once,
+ * here, and reduced to points the app draws itself, every frame — which means it
+ * can move them.
  *
- * So the pixels are read once, here, and reduced to points: position, brightness
- * and which part of the drawing each one belongs to. At runtime the app draws
- * those points itself, every frame, which means it can move them.
+ * Which pixels to keep is the whole problem, and brightness alone is the wrong
+ * answer twice over. The figure is surrounded by a soft halo that is bright and
+ * says nothing, and filled with an interior that is dim and says a great deal:
+ * ribs, filaments, the lines down the arms. Taking the brightest pixels keeps
+ * the halo and loses the anatomy.
  *
- * Two things were learnt by measuring the artwork rather than looking at it, and
- * both shape everything below.
+ * So each pixel is scored on how much it stands out from its immediate
+ * surroundings — its own brightness minus a small blur of it — with only a
+ * little weight on brightness itself. A halo gradient scores near zero however
+ * bright it is; a filament one pixel wide scores high however faint. Points are
+ * then taken from every cell of a coarse grid rather than globally, so the legs,
+ * which the render draws much darker than the chest, are not dropped wholesale.
  *
- * The first: the rings are not decoration over a torso, they *are* the torso. A
- * radial histogram of all 59,000 lit pixels about the ring centre shows about
- * twenty-five evenly spaced peaks running from radius 30 out to 184, and nothing
- * underneath them. Deleting them, which was the obvious fix for a chest so
- * bright the body could not be seen through it, leaves a person with a hole in
- * the middle. So they are kept, labelled, and drawn compressed toward the centre
- * — the mass that was blocking the figure becomes a core that fits inside it.
+ * Two things are kept per point beyond its position:
  *
- * The second: the outermost ring is the only thing joining the arms and legs to
- * the body. Compress that one too and the limbs float. So the outer band is held
- * at full size as the torso's boundary and only the interior is compressed.
- *
- * Nothing here is a magic number typed in by eye: the centre is searched for, and
- * both radii are read off the histogram.
+ *   - Its hue. The artwork's colour is not decoration, it is the mapping: the
+ *     spectrum up the body is the same order as the intervals of the scale, so
+ *     the picture already knows which height belongs to which interval. The app
+ *     rotates all of it to follow the frequency's accent, keeping the relations.
+ *   - Whether it is a lit point rather than body. Those are found as local
+ *     maxima that stand well clear of a wider blur — the stars in the figure,
+ *     not the reflections off it — and the app flares them on their interval.
  */
 import { inflateSync, gzipSync } from 'node:zlib'
 import { readFileSync, writeFileSync } from 'node:fs'
@@ -39,22 +43,40 @@ const HERE = dirname(fileURLToPath(import.meta.url))
 const SOURCE = resolve(HERE, '../assets/figure-source.png')
 const OUT = resolve(HERE, '../src/data/figure.json')
 
-/** Pixels dimmer than this are compression noise in the render, not structure. */
-const MIN_LUMA = 24
+/** Below this a pixel is the black of the frame, or the outer edge of the halo. */
+const MIN_LUMA = 40
 /**
- * Coordinates are stored as integers, this many per image width. That is 0.75
- * source pixels, which after the ~1.3x upscale onto a 4K frame is under a pixel
- * — finer than the dots being drawn, and it keeps the file a third of the size
- * that three decimal places would.
+ * How much a pixel must stand out to be worth a point, and how the two terms are
+ * weighed. Relief has to carry it, which is not what a first guess gives: with
+ * brightness weighted at 0.3 anything over luma 87 cleared this bar on its own,
+ * so three quarters of the body qualified and the grid below returned an even
+ * dither of the whole silhouette instead of its structure.
+ *
+ * Measured across the 485,000 lit pixels of the source, relief runs p50 0, p90
+ * 11.8, p99 32. At these weights a pixel needs a relief around eight to be kept,
+ * which is the top seventh — edges, filaments and lit points, and none of the
+ * flat interior.
+ */
+const MIN_SCORE = 28
+const RELIEF_WEIGHT = 2
+const LUMA_WEIGHT = 0.08
+/** Blur applied before anything is measured, to take the render's noise out. */
+const DENOISE_RADIUS = 1
+/** Hue is averaged over this radius: colour varies slowly, noise does not. */
+const HUE_RADIUS = 10
+/** Radius of the blur the score is taken against, and of the wider one nodes must clear. */
+const DETAIL_RADIUS = 3
+const FIELD_RADIUS = 12
+/** Points to aim for. Enough that the anatomy reads; see the note on `thin`. */
+const TARGET_POINTS = 40000
+/** Grid the points are spread over, in source pixels. */
+const CELL = 3
+/**
+ * Coordinates are stored as integers, this many per image width — about 0.7
+ * source pixels, finer than the dots drawn from them, and a third of the size
+ * three decimal places would take.
  */
 const SCALE = 1024
-/**
- * The interior rings are drawn at their own resolution, which is far denser than
- * anything else in the image and denser than it needs to be once it is
- * compressed to half size. Sampled down to this, the core stays continuous and
- * stops out-weighing the body.
- */
-const CORE_POINTS = 11000
 
 // ------------------------------------------------------------- PNG decoding
 function decodePng(buffer) {
@@ -113,159 +135,213 @@ function decodePng(buffer) {
   return { width, height, channels, pixels: out }
 }
 
-// --------------------------------------------------------------- lit pixels
 const { width, height, channels, pixels } = decodePng(readFileSync(SOURCE))
+const area = width * height
 
-const lit = []
-for (let y = 0; y < height; y++) {
-  for (let x = 0; x < width; x++) {
-    const o = (y * width + x) * channels
-    const r = pixels[o]
-    const g = pixels[o + 1]
-    const b = pixels[o + 2]
-    const luma = Math.max(r, g, b)
-    if (luma < MIN_LUMA) continue
-    lit.push({ x, y, r, g, b, luma })
-  }
-}
-
-// ------------------------------------------------------------- ring centre
+// ------------------------------------------------------- brightness and hue
 /**
- * Found, not typed in. A brightness-weighted centroid gets close — the core of
- * the rings is the brightest thing in the frame — but "close" is not good enough
- * when the next step is to histogram radii: a centre off by three pixels smears
- * every ring peak into its neighbours and the separation below stops working.
+ * Everything below is read off a slightly blurred copy of the image, and that is
+ * not a detail.
  *
- * So the centroid is only a seed. The real centre is the one that makes the
- * radial histogram as peaked as it can be, which is the sum of its squared bin
- * counts; a coarse pass then a fine one finds it in about a tenth of a second.
+ * The source is a render carrying compression noise, and both things this script
+ * measures are ruined by it. Relief taken pixel by pixel is mostly noise, so the
+ * score stops preferring structure and the selection becomes an even dither over
+ * the whole body — the anatomy vanishes into speckle. Hue is worse: where the
+ * body is dark the three channels are nearly equal, so a hue taken from them is
+ * whatever the noise decided, and a figure whose colour runs cleanly from red to
+ * violet comes out as red, green and blue confetti.
+ *
+ * One pixel of blur removes both. It costs nothing that matters, because nothing
+ * here is looking for detail finer than the dots it will be drawn with.
  */
-function peakiness(cx, cy) {
-  const counts = new Int32Array(400)
-  for (const p of lit) {
-    const r = Math.hypot(p.x - cx, p.y - cy) | 0
-    if (r < 400) counts[r]++
-  }
-  let score = 0
-  for (let i = 20; i < 260; i++) score += counts[i] * counts[i]
-  return score
-}
-
-let seedX = 0
-let seedY = 0
-let mass = 0
-for (const p of lit) {
-  const weight = Math.pow(p.luma / 255, 4)
-  seedX += p.x * weight
-  seedY += p.y * weight
-  mass += weight
-}
-seedX = Math.round(seedX / mass)
-seedY = Math.round(seedY / mass)
-
-let cx = seedX
-let cy = seedY
-for (const step of [4, 1]) {
-  let best = peakiness(cx, cy)
-  const fromX = cx
-  const fromY = cy
-  for (let dy = -5 * step; dy <= 5 * step; dy += step) {
-    for (let dx = -5 * step; dx <= 5 * step; dx += step) {
-      const score = peakiness(fromX + dx, fromY + dy)
-      if (score > best) {
-        best = score
-        cx = fromX + dx
-        cy = fromY + dy
-      }
+function blurChannel(source, radius) {
+  const span = radius * 2 + 1
+  const pass = new Float32Array(area)
+  for (let y = 0; y < height; y++) {
+    const row = y * width
+    let sum = 0
+    for (let x = 0; x < radius && x < width; x++) sum += source[row + x]
+    for (let x = 0; x < width; x++) {
+      const add = x + radius
+      const drop = x - radius - 1
+      if (add < width) sum += source[row + add]
+      if (drop >= 0) sum -= source[row + drop]
+      pass[row + x] = sum / span
     }
   }
+  const out = new Float32Array(area)
+  for (let x = 0; x < width; x++) {
+    let sum = 0
+    for (let y = 0; y < radius && y < height; y++) sum += pass[y * width + x]
+    for (let y = 0; y < height; y++) {
+      const add = y + radius
+      const drop = y - radius - 1
+      if (add < height) sum += pass[add * width + x]
+      if (drop >= 0) sum -= pass[drop * width + x]
+      out[y * width + x] = sum / span
+    }
+  }
+  return out
 }
 
-// ------------------------------------------------------- reading the radii
-const counts = new Int32Array(400)
-for (const p of lit) {
-  const r = Math.hypot(p.x - cx, p.y - cy) | 0
-  if (r < 400) counts[r]++
+const raw = [new Float32Array(area), new Float32Array(area), new Float32Array(area)]
+for (let i = 0; i < area; i++) {
+  const o = i * channels
+  raw[0][i] = pixels[o]
+  raw[1][i] = pixels[o + 1]
+  raw[2][i] = pixels[o + 2]
 }
-/** Well outside the rings, so this is the body outline's own density. */
-const background = (() => {
-  const window = []
-  for (let r = 230; r < 330; r++) window.push(counts[r])
-  window.sort((a, b) => a - b)
-  return window[window.length >> 1]
-})()
 
-/** The last radius still carrying a ring, i.e. the edge of the torso. */
-let ringMax = 0
-for (let r = 20; r < 260; r++) if (counts[r] > background * 2.5) ringMax = r
-
-/**
- * The outermost band is the boundary the limbs attach to, so it is held at full
- * size. Thirteen pixels is a little under two ring spacings — enough to take the
- * whole outer stroke including the blur around it, not enough to take the ring
- * inside it as well.
- */
-const shellInner = ringMax - 13
-const coreOuter = ringMax + 2
-
-// --------------------------------------------------------------- sampling
-/** 0 body outline, 1 the torso boundary, 2 the interior rings. */
-const kindOf = (r) => (r >= coreOuter ? 0 : r >= shellInner ? 1 : 2)
-
-const groups = [[], [], []]
-for (const p of lit) {
-  const r = Math.hypot(p.x - cx, p.y - cy)
-  groups[kindOf(r)].push(p)
+const rgb = raw.map((c) => blurChannel(c, DENOISE_RADIUS))
+const luma = new Float32Array(area)
+for (let i = 0; i < area; i++) {
+  const r = rgb[0][i]
+  const g = rgb[1][i]
+  const b = rgb[2][i]
+  luma[i] = r > g ? (r > b ? r : b) : g > b ? g : b
 }
 
 /**
- * The body and the boundary are kept whole — they are thin lines, so every lit
- * pixel is detail, and throwing any of them away is what made the first attempt
- * look like dust instead of a drawing. Only the filled interior is thinned, and
- * that on a grid rather than by brightness, so the sample stays even instead of
- * collapsing onto the brightest few rings.
+ * Hue, averaged as a direction rather than as a number.
+ *
+ * Blurring the three channels and then converting does not work, and the failure
+ * is instructive: wherever the body is dark the blurred channels are still
+ * nearly equal, so the hue angle they imply swings across the whole circle on
+ * differences of one or two levels, and a figure whose colour runs cleanly from
+ * red at the feet to violet at the crown comes out as red, green and blue
+ * confetti. The average of 0° and 350° is not 175°.
+ *
+ * So each pixel becomes a chroma vector — the same plane hue is an angle in —
+ * and *those* are blurred. A vector average weighs each pixel by how much colour
+ * it actually has, so the strong local colour decides and the grey noise around
+ * it cancels instead of voting.
  */
-function thin(points, target) {
-  if (points.length <= target) return points
-  const CELL = 4
-  const cells = new Map()
-  for (const p of points) {
-    const key = `${(p.x / CELL) | 0}:${(p.y / CELL) | 0}`
+const chromaU = new Float32Array(area)
+const chromaV = new Float32Array(area)
+const ROOT3_OVER_2 = Math.sqrt(3) / 2
+for (let i = 0; i < area; i++) {
+  const r = raw[0][i]
+  const g = raw[1][i]
+  const b = raw[2][i]
+  chromaU[i] = r - (g + b) / 2
+  chromaV[i] = ROOT3_OVER_2 * (g - b)
+}
+const blurU = blurChannel(chromaU, HUE_RADIUS)
+const blurV = blurChannel(chromaV, HUE_RADIUS)
+const hue = new Uint16Array(area)
+for (let i = 0; i < area; i++) {
+  const deg = (Math.atan2(blurV[i], blurU[i]) * 180) / Math.PI
+  hue[i] = Math.round((deg + 360) % 360) % 360
+}
+
+const detail = blurChannel(luma, DETAIL_RADIUS)
+const field = blurChannel(luma, FIELD_RADIUS)
+
+// ------------------------------------------------------------- point choice
+/**
+ * A lit point rather than body: a local maximum, near white, standing well clear
+ * of the light around it. The margin is what separates a star from the bright
+ * side of a filament, which is a local maximum too.
+ */
+function isNode(x, y) {
+  const i = y * width + x
+  if (luma[i] < 235 || luma[i] < field[i] + 45) return false
+  for (let dy = -2; dy <= 2; dy++) {
+    for (let dx = -2; dx <= 2; dx++) {
+      if (luma[i + dy * width + dx] > luma[i]) return false
+    }
+  }
+  return true
+}
+
+const cells = new Map()
+let lit = 0
+let scored = 0
+for (let y = 2; y < height - 2; y++) {
+  for (let x = 2; x < width - 2; x++) {
+    const i = y * width + x
+    if (luma[i] < MIN_LUMA) continue
+    lit++
+    const relief = luma[i] - detail[i]
+    const score = luma[i] * LUMA_WEIGHT + (relief > 0 ? relief : 0) * RELIEF_WEIGHT
+    if (score < MIN_SCORE) continue
+    scored++
+    const key = ((y / CELL) | 0) * width + ((x / CELL) | 0)
+    const point = { x, y, score, luma: luma[i], hue: hue[i], node: isNode(x, y) }
     const bucket = cells.get(key)
-    if (bucket) bucket.push(p)
-    else cells.set(key, [p])
+    if (bucket) bucket.push(point)
+    else cells.set(key, [point])
   }
-  const perCell = Math.max(1, Math.round(target / cells.size))
-  const kept = []
-  for (const bucket of cells.values()) {
-    bucket.sort((a, b) => b.luma - a.luma)
-    for (let i = 0; i < Math.min(perCell, bucket.length); i++) kept.push(bucket[i])
-  }
-  return kept
 }
 
-const kept = [...groups[0], ...groups[1], ...thin(groups[2], CORE_POINTS)]
+/**
+ * Taken per cell, not globally.
+ *
+ * Sorting everything by score and keeping the top forty thousand returns the
+ * chest and the face and almost nothing below the knee, because the render draws
+ * the legs far darker. Taking the same share from every occupied cell keeps the
+ * whole body, and inside each cell the score still decides which pixels.
+ */
+const perCell = Math.max(1, Math.round(TARGET_POINTS / cells.size))
+const kept = []
+for (const bucket of cells.values()) {
+  bucket.sort((a, b) => b.score - a.score)
+  for (let i = 0; i < perCell && i < bucket.length; i++) kept.push(bucket[i])
+  // A node is worth a point wherever it falls, even if three brighter pixels in
+  // its cell were taken first.
+  for (let i = perCell; i < bucket.length; i++) if (bucket[i].node) kept.push(bucket[i])
+}
 
-let maxRadius = 0
-for (const p of kept) maxRadius = Math.max(maxRadius, Math.hypot(p.x - cx, p.y - cy))
+let top = height
+let bottom = 0
+let left = width
+let right = 0
+for (const p of kept) {
+  if (p.y < top) top = p.y
+  if (p.y > bottom) bottom = p.y
+  if (p.x < left) left = p.x
+  if (p.x > right) right = p.x
+}
+const cx = (left + right) / 2
+const cy = (top + bottom) / 2
 
 // ----------------------------------------------------------------- output
 /**
- * One flat array of integers rather than an array of arrays: same numbers, none
- * of the brackets, and it compresses better because the values run in sorted
- * order down the image. Positions are relative to the ring centre and scaled to
- * the image width, so the renderer never needs to know the source resolution.
+ * One flat array of integers: same numbers, none of the brackets, and it
+ * compresses better because the values run in order down the image. Hue and kind
+ * share a slot — the hue is stored to six bits, which is finer than the eye
+ * separates on a point one pixel across, and the kind is the bit below it.
+ *
+ * Sixty-four buckets over the full turn, not sixty-three: hue is a circle, so the
+ * last bucket has to wrap back onto the first. Dividing by 63 instead put the
+ * reddest points at 360 degrees, which is the same colour but not the same
+ * number, and anything that checks the range is right to complain.
  */
 const flat = []
+let nodes = 0
 for (const p of kept) {
-  const r = Math.hypot(p.x - cx, p.y - cy)
+  if (p.node) nodes++
   flat.push(
     Math.round(((p.x - cx) / width) * SCALE),
     Math.round(((p.y - cy) / width) * SCALE),
     Math.round((p.luma / 255) * 63),
-    kindOf(r),
+    (Math.round((p.hue / 360) * 64) % 64) * 2 + (p.node ? 1 : 0),
   )
 }
+
+/**
+ * The cloud's own average hue, as a direction — so the app can rotate the whole
+ * figure onto whatever accent the current frequency has, and keep every colour
+ * relation inside it intact rather than flattening them to one colour.
+ */
+let meanU = 0
+let meanV = 0
+for (const p of kept) {
+  const a = (p.hue * Math.PI) / 180
+  meanU += Math.cos(a)
+  meanV += Math.sin(a)
+}
+const baseHue = Math.round((((Math.atan2(meanV, meanU) * 180) / Math.PI) + 360) % 360)
 
 const payload = {
   source: 'assets/figure-source.png',
@@ -273,11 +349,12 @@ const payload = {
   width,
   height,
   scale: SCALE,
-  /** Everything below is in the same units as the coordinates. */
-  shellInner: Math.round((shellInner / width) * SCALE),
-  coreOuter: Math.round((coreOuter / width) * SCALE),
-  maxRadius: Math.round((maxRadius / width) * SCALE),
+  /** The body's own extent, in the same units, so height can be mapped to interval. */
+  top: Math.round(((top - cy) / width) * SCALE),
+  bottom: Math.round(((bottom - cy) / width) * SCALE),
   count: kept.length,
+  nodes,
+  baseHue,
   p: flat,
 }
 
@@ -285,12 +362,9 @@ writeFileSync(OUT, `${JSON.stringify(payload)}\n`)
 
 const json = JSON.stringify(payload)
 console.log(
-  `figure: centre (${cx}, ${cy}) from seed (${seedX}, ${seedY}); ` +
-    `background ${background}/radius, rings out to ${ringMax}, boundary ${shellInner}-${coreOuter}\n` +
-    `  ${lit.length} lit pixels -> ${kept.length} points ` +
-    `(${groups[0].length} body, ${groups[1].length} boundary, ` +
-    `${groups[2].length} interior thinned to ${kept.length - groups[0].length - groups[1].length})\n` +
-    `  ${(Buffer.byteLength(json) / 1024).toFixed(0)}KB, ` +
-    `${(gzipSync(json).length / 1024).toFixed(0)}KB gzipped; ` +
+  `figure: ${width}x${height}, ${lit} lit pixels, ${scored} with relief enough to score\n` +
+    `  -> ${kept.length} points (${nodes} lit points), ${cells.size} cells at ${perCell} each\n` +
+    `  body spans x ${left}-${right}, y ${top}-${bottom}; mean hue ${baseHue}deg\n` +
+    `  ${(Buffer.byteLength(json) / 1024).toFixed(0)}KB, ${(gzipSync(json).length / 1024).toFixed(0)}KB gzipped; ` +
     `source PNG is ${(readFileSync(SOURCE).length / 1024).toFixed(0)}KB`,
 )

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useRoute } from './lib/router'
 import { getFrequency } from './lib/catalog'
 import { useSession } from './store/sessionStore'
-import { useSettings } from './store/settingsStore'
+import { THEME_COLOR, useSettings } from './store/settingsStore'
 import { useT } from './lib/i18n'
 import { AuroraBackground } from './components/AuroraBackground'
 import { BottomNav } from './components/BottomNav'
@@ -36,7 +36,7 @@ export default function App() {
     const hue = getFrequency(rootId)?.hue ?? 265
     document.documentElement.style.setProperty('--h', String(hue))
     const meta = document.querySelector('meta[name="theme-color"]')
-    meta?.setAttribute('content', theme === 'light' ? '#f3f0fb' : '#05030e')
+    meta?.setAttribute('content', THEME_COLOR[theme])
   }, [rootId, theme])
 
   // The tab title and the document language are outside React's tree, so they

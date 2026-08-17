@@ -32,8 +32,11 @@ class ToneEngine {
     this.limiter = new Tone.Limiter(-1).toDestination()
     this.masterGain = new Tone.Gain(0.9).connect(this.limiter)
 
-    this.analyserNode = new Tone.Analyser('fft', 128)
-    this.analyserNode.smoothing = 0.82
+    // 1024 bins puts a bin every ~21 Hz at 44.1 kHz, which is fine enough to
+    // separate the scale's intervals — 528 and its 9/8 are 66 Hz apart. The old
+    // 128 bins were 172 Hz wide and could not tell one harmonic from another.
+    this.analyserNode = new Tone.Analyser('fft', 1024)
+    this.analyserNode.smoothing = 0.72
     this.waveformNode = new Tone.Analyser('waveform', 512)
     this.masterGain.connect(this.analyserNode)
     this.masterGain.connect(this.waveformNode)
@@ -69,6 +72,11 @@ class ToneEngine {
 
   get transport() {
     return Tone.getTransport()
+  }
+
+  /** Needed to turn an FFT bin index back into a frequency. */
+  get sampleRate() {
+    return Tone.getContext().sampleRate
   }
 
   get now() {

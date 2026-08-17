@@ -78,6 +78,8 @@ const HE: AboutSection[] = [
     title: 'איך זה בנוי',
     paragraphs: [
       'אפליקציית ווב (PWA) שרצה כולה בדפדפן. React ו-TypeScript לממשק, Tone.js למנוע האודיו, Tailwind לעיצוב. הוויזואליזציה והמסך הפותח מצוירים ב-Canvas לפי צפיפות הפיקסלים של המסך.',
+      '<b>הוויזואליזציה בנגן</b> היא אותה תמונה של מסך הפתיחה, רק שהטבעות כבר לא רק מקשטות: כל טבעת מכוונת למרווח שלה וקוראת את הספקטרום בדיוק בגובה הזה. כשהמוזיקה מנגנת קווינטה, הטבעת של <ltr>3/2</ltr> היא זו שנדלקת. במדידה מול תדרים שהונחו בכוונה מחוץ לסולם, ב-260 פריימים מתוך 260 המרווח מהסולם נקרא חזק יותר — הטיה אמיתית, לא ספקטרוגרף.',
+      '<b>ערכת "שחור"</b> אינה "כהה יותר" אלא רקע אחר: שחור אמיתי בלי גוון, בלי זיגוג — כך שקצוות נוחתים על הפיקסל במקום בתוך טשטוש — והצבעים מוגברים כי על שחור אין אור סביבה שירים אותם. הטבעות מצוירות שם בערבוב חיבורי, כך שזוהרים מצטברים לאור במקום ללכלך זה את זה.',
       'גם סאונדי הסביבה — גשם, ים, רוח, רעש — מסונתזים ואינם קבצי אודיו, ולכן אין בהם לופ.',
     ],
   },
@@ -147,6 +149,8 @@ const EN: AboutSection[] = [
     title: 'How it is built',
     paragraphs: [
       'A web app (PWA) that runs entirely in the browser. React and TypeScript for the interface, Tone.js for the audio engine, Tailwind for the design. The visualiser and the opening screen are drawn on a Canvas at the screen’s own pixel density.',
+      '<b>The player’s visualiser</b> is the opening figure again, except that the rings are no longer decorative: each one is tuned to its own interval and reads the spectrum at exactly that pitch. When the music plays a fifth, the <ltr>3/2</ltr> ring is the one that flares. Measured against probes placed deliberately off the scale, the scale interval read louder in 260 frames out of 260 — a real bias, not a spectrograph.',
+      '<b>The "Black" theme</b> is not "darker" but a different ground: true black with no hue and no frost, so edges land on the pixel instead of inside a blur, and the colours are raised because black offers no ambient light to lift them. The rings are drawn there additively, so overlapping glows sum into light rather than muddying each other.',
       'The ambience textures — rain, ocean, wind, noise — are synthesised rather than audio files, so there is no loop in them either.',
     ],
   },

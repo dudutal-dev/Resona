@@ -11,6 +11,10 @@ import { useSettings } from '../store/settingsStore'
  */
 export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
   const reducedMotion = useSettings((s) => s.reducedMotion)
+  const theme = useSettings((s) => s.theme)
+  // Noir keeps the ground black. A drifting wash is exactly what it is not for,
+  // so the blobs come down to a trace that only tints the very edges.
+  const wash = theme === 'noir' ? 0.1 : 1
 
   const stars = useMemo(
     () =>
@@ -33,7 +37,7 @@ export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(120% 80% at 50% -10%, hsl(var(--h) 70% 22% / 0.55), transparent 60%), radial-gradient(100% 60% at 50% 110%, hsl(calc(var(--h) + 45) 70% 20% / 0.4), transparent 65%)',
+            'radial-gradient(120% 80% at 50% -10%, hsl(var(--h) 70% 22% / calc(0.55 * var(--wash))), transparent 60%), radial-gradient(100% 60% at 50% 110%, hsl(calc(var(--h) + 45) 70% 20% / calc(0.4 * var(--wash))), transparent 65%)',
         }}
       />
 
@@ -43,7 +47,7 @@ export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
           reducedMotion ? '' : 'animate-aurora-drift'
         }`}
         style={{
-          background: `radial-gradient(circle, hsl(var(--h) 95% 60% / ${0.3 * intensity}), transparent 65%)`,
+          background: `radial-gradient(circle, hsl(var(--h) 95% 60% / ${0.3 * intensity * wash}), transparent 65%)`,
         }}
       />
       <div
@@ -52,7 +56,7 @@ export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
         }`}
         style={{
           animationDelay: '-9s',
-          background: `radial-gradient(circle, hsl(calc(var(--h) + 55) 95% 58% / ${0.26 * intensity}), transparent 65%)`,
+          background: `radial-gradient(circle, hsl(calc(var(--h) + 55) 95% 58% / ${0.26 * intensity * wash}), transparent 65%)`,
         }}
       />
       <div
@@ -61,7 +65,7 @@ export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
         }`}
         style={{
           animationDelay: '-17s',
-          background: `radial-gradient(circle, hsl(calc(var(--h) - 40) 95% 62% / ${0.2 * intensity}), transparent 60%)`,
+          background: `radial-gradient(circle, hsl(calc(var(--h) - 40) 95% 62% / ${0.2 * intensity * wash}), transparent 60%)`,
         }}
       />
 

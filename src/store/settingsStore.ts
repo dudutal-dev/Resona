@@ -5,7 +5,12 @@ import { STORAGE_KEYS, readJSON, removeKey, writeJSON } from '../lib/storage'
 import type { Lang } from '../lib/i18n'
 import { mediaRoute } from '../audio/MediaRoute'
 
-export type Theme = 'dark' | 'light'
+/**
+ * `noir` is a third ground, not a brightness step: true black with the frost
+ * removed and the accents raised. See the block in `index.css`.
+ */
+export const THEMES = ['dark', 'noir', 'light'] as const
+export type Theme = (typeof THEMES)[number]
 
 type Settings = {
   theme: Theme
@@ -42,7 +47,16 @@ function applyTheme(theme: Theme) {
   if (typeof document === 'undefined') return
   const root = document.documentElement
   root.classList.toggle('theme-light', theme === 'light')
-  root.style.colorScheme = theme
+  root.classList.toggle('theme-noir', theme === 'noir')
+  // `noir` is not a colour-scheme the browser knows; it is a dark one.
+  root.style.colorScheme = theme === 'light' ? 'light' : 'dark'
+}
+
+/** The page background behind the app, for the browser chrome. */
+export const THEME_COLOR: Record<Theme, string> = {
+  dark: '#05030e',
+  noir: '#000000',
+  light: '#f3f0fb',
 }
 
 /**
@@ -85,7 +99,8 @@ export const useSettings = create<SettingsState>((set, get) => {
       persist({ theme })
     },
     toggleTheme: () => {
-      const theme: Theme = get().theme === 'dark' ? 'light' : 'dark'
+      const order = THEMES
+      const theme = order[(order.indexOf(get().theme) + 1) % order.length]
       applyTheme(theme)
       persist({ theme })
     },

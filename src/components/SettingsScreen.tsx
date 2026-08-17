@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useSettings } from '../store/settingsStore'
+import { THEMES, THEME_COLOR, useSettings } from '../store/settingsStore'
 import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
-import { LANGS, LANG_LABEL, useT } from '../lib/i18n'
+import { LANGS, LANG_LABEL, useT, type StringKey } from '../lib/i18n'
 import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { ListeningMode } from './ListeningMode'
@@ -99,12 +99,38 @@ export function SettingsScreen() {
         </Card>
 
         <Card>
-          <Toggle
-            label={t('settings.dark')}
-            hint={t('settings.darkHint')}
-            checked={theme === 'dark'}
-            onChange={(v) => setTheme(v ? 'dark' : 'light')}
-          />
+          <p className="text-sm font-semibold">{t('settings.theme')}</p>
+          <p className="txt-3 mt-0.5 text-[11px] leading-relaxed">{t('settings.themeHint')}</p>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            {THEMES.map((name) => {
+              const active = theme === name
+              return (
+                <button
+                  key={name}
+                  onClick={() => setTheme(name)}
+                  aria-pressed={active}
+                  className="rounded-2xl px-2 py-3 text-xs font-semibold transition-all active:scale-95"
+                  style={{
+                    background: active ? 'var(--accent-soft)' : 'var(--card)',
+                    border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,
+                    color: active ? 'var(--accent)' : 'var(--txt-2)',
+                  }}
+                >
+                  {/* A swatch of the actual ground, so the choice is visible
+                      rather than only named. */}
+                  <span
+                    className="mx-auto mb-2 block h-7 w-7 rounded-full"
+                    style={{
+                      background: THEME_COLOR[name],
+                      border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border-strong)'}`,
+                      boxShadow: active ? '0 0 16px var(--glow)' : undefined,
+                    }}
+                  />
+                  {t(`settings.theme.${name}` as StringKey)}
+                </button>
+              )
+            })}
+          </div>
         </Card>
 
         <Card>

@@ -4,6 +4,7 @@ import spectrum from '../assets/figures/3-spectrum.webp'
 import chakras from '../assets/figures/4-chakras.webp'
 import temple from '../assets/figures/5-temple.webp'
 import cosmos from '../assets/figures/6-cosmos.webp'
+import crimson from '../assets/figures/7-crimson.webp'
 import type { StringKey } from '../lib/i18n'
 
 /**
@@ -41,6 +42,7 @@ export const FIGURES: Figure[] = [
   { id: 'starlight', kind: 'image', src: starlight, name: 'figure.starlight' },
   { id: 'temple', kind: 'image', src: temple, name: 'figure.temple' },
   { id: 'cosmos', kind: 'image', src: cosmos, name: 'figure.cosmos' },
+  { id: 'crimson', kind: 'image', src: crimson, name: 'figure.crimson' },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },
 ]
 

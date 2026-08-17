@@ -2,13 +2,15 @@ import starlight from '../assets/figures/1-starlight.webp'
 import violet from '../assets/figures/2-violet.webp'
 import spectrum from '../assets/figures/3-spectrum.webp'
 import chakras from '../assets/figures/4-chakras.webp'
+import temple from '../assets/figures/5-temple.webp'
+import cosmos from '../assets/figures/6-cosmos.webp'
 import type { StringKey } from '../lib/i18n'
 
 /**
  * The figures the television stage can show.
  *
- * Four are artwork and one is a scene, which is the only reason this is a union
- * rather than a list of image sources. The artwork is shipped as WebP and drawn
+ * All but one are artwork; the last is a scene, which is the only reason this is
+ * a union rather than a list of image sources. The artwork is shipped as WebP and drawn
  * whole: an earlier version reduced it to a point cloud and redrew that, which
  * let every point be moved individually and threw away the detail that made the
  * renders worth using. The movement they need turns out to be the kind a whole
@@ -29,11 +31,16 @@ export type Figure =
   | { id: string; kind: 'image'; src: string; name: StringKey }
   | { id: string; kind: 'scene'; name: StringKey }
 
+// The scene stays last, so the artwork reads as one run and the odd one out is
+// at the end. Inserting into the middle shifts what a saved index points at,
+// which is a tap to correct and not worth reordering the list to avoid.
 export const FIGURES: Figure[] = [
   { id: 'chakras', kind: 'image', src: chakras, name: 'figure.chakras' },
   { id: 'spectrum', kind: 'image', src: spectrum, name: 'figure.spectrum' },
   { id: 'violet', kind: 'image', src: violet, name: 'figure.violet' },
   { id: 'starlight', kind: 'image', src: starlight, name: 'figure.starlight' },
+  { id: 'temple', kind: 'image', src: temple, name: 'figure.temple' },
+  { id: 'cosmos', kind: 'image', src: cosmos, name: 'figure.cosmos' },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },
 ]
 

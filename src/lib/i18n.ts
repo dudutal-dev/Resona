@@ -84,11 +84,10 @@ const HE = {
   'mini.remaining': ' · נותרו {clock}',
 
   'tv.enter': 'מצב טלוויזיה',
-  'tv.enterHint': 'מסך מלא 16:9 עם ההדמיה בלבד — ומשם אפשר לשדר אותה למסך.',
+  'tv.enterHint': 'מסך מלא עם ההדמיה בלבד — ומשם שיקוף מסך מעביר אותה לטלוויזיה.',
   'tv.exit': 'יציאה',
-  'tv.cast': 'שדר למסך',
-  'tv.stopCast': 'הפסק שידור',
-  'tv.castFailed': 'הדפדפן לא קיבל את הווידאו לשידור. חזרתי להשמעה מהטלפון — אפשר במקום זה לשקף מסך ממרכז הבקרה, וההדמיה תעבור כמו שהיא.',
+  'tv.mirror': 'לטלוויזיה: מרכז הבקרה ← שיקוף מסך ← בחר את הטלוויזיה. גם התמונה וגם הקול עוברים יחד, ולכן כדאי שהפלט כאן יישאר על הטלפון ולא על AirPlay.',
+  'tv.rotate': 'סובב את הטלפון לרוחב — השיקוף מעביר את המסך כמו שהוא, ולרוחב הוא ימלא את הטלוויזיה.',
   'tv.hint': 'הקש כדי להציג את הפקדים · יציאה עם Esc',
 
   // ------------------------------------------------------------------- timer
@@ -396,11 +395,10 @@ const EN: Record<StringKey, string> = {
   'mini.remaining': ' · {clock} left',
 
   'tv.enter': 'TV mode',
-  'tv.enterHint': 'Full-screen 16:9 with the visualiser alone — and from there it can be cast to a screen.',
+  'tv.enterHint': 'Full screen with the visualiser alone — from there, screen mirroring puts it on the television.',
   'tv.exit': 'Exit',
-  'tv.cast': 'Cast to screen',
-  'tv.stopCast': 'Stop casting',
-  'tv.castFailed': 'The browser would not accept the video for casting. I switched back to playing from the phone — you can screen-mirror from Control Centre instead, and the visualiser goes across as it is.',
+  'tv.mirror': 'To the television: Control Centre → Screen Mirroring → pick the television. Picture and sound both go across, so leave the output here on the phone rather than on AirPlay.',
+  'tv.rotate': 'Turn the phone sideways — mirroring sends the screen as it is, and sideways it fills the television.',
   'tv.hint': 'Tap for the controls · Esc to exit',
 
   'timer.label': 'Timer',

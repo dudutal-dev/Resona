@@ -52,8 +52,6 @@ type Props = {
   /** Drives point size — a television is looked at from much further away. */
   scale?: number
   className?: string
-  /** Handed the canvas once mounted, so it can be captured for casting. */
-  onCanvas?: (canvas: HTMLCanvasElement) => void
 }
 
 /** Kinds, as `extract-figure.mjs` writes them: 0 body outline, 1 boundary. */
@@ -139,7 +137,7 @@ const POINTS: Point[] = (() => {
       // Gamma, not the raw value: the render fades the legs and the far arm
       // almost to nothing, and a straight reading draws them as a few stray
       // specks. This lifts the dim end without touching the bright end.
-      luma: Math.pow(DATA.p[i + 2] / 63, 0.7),
+      luma: Math.pow(DATA.p[i + 2] / 63, 0.82),
       kind,
       band: Math.min(BAND_COUNT - 1, Math.floor(fraction * BAND_COUNT)),
       // Deterministic, so the drift is stable across reloads.
@@ -184,7 +182,7 @@ const DUST = (() => {
   }))
 })()
 
-export function FigureField({ playing, scale = 1, className = '', onCanvas }: Props) {
+export function FigureField({ playing, scale = 1, className = '' }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
   const reducedMotion = useSettings((s) => s.reducedMotion)
@@ -193,11 +191,6 @@ export function FigureField({ playing, scale = 1, className = '', onCanvas }: Pr
   // instead of tearing down and restarting the animation.
   const rootHz = useRef(528)
   rootHz.current = getFrequency(rootId)?.hz ?? 528
-  // Callers pass this inline, and the stage re-renders once a second for the
-  // clock. In the dependency list it would tear down and restart the animation
-  // every one of those renders.
-  const onCanvasRef = useRef(onCanvas)
-  onCanvasRef.current = onCanvas
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -274,7 +267,6 @@ export function FigureField({ playing, scale = 1, className = '', onCanvas }: Pr
     resize()
     const ro = new ResizeObserver(resize)
     ro.observe(wrap)
-    onCanvasRef.current?.(canvas)
 
     const hueOf = () =>
       Number(getComputedStyle(document.documentElement).getPropertyValue('--h').trim()) || 265
@@ -361,7 +353,7 @@ export function FigureField({ playing, scale = 1, className = '', onCanvas }: Pr
         // readable as colour and not only as movement.
         let a = isCore
           ? p.luma * (0.34 + band * 0.8 + energy * 0.25)
-          : p.luma * (0.82 + band * 0.3 + energy * 0.24)
+          : p.luma * (0.9 + band * 0.3 + energy * 0.12)
         if (a > 1) a = 1
         const base = isCore ? p.band * 3 : -1
         const r = base < 0 ? bodyR * a : palette[base] * a

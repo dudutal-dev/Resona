@@ -65,10 +65,6 @@ type AirPlayElement = HTMLAudioElement & {
   webkitShowPlaybackTargetPicker?: () => void
 }
 
-type AirPlayVideo = HTMLVideoElement & {
-  webkitShowPlaybackTargetPicker?: () => void
-}
-
 class MediaRoute {
   private wakeLock: WakeLockSentinel | null = null
   private wantWakeLock = false
@@ -77,8 +73,6 @@ class MediaRoute {
   private streamDest: MediaStreamAudioDestinationNode | null = null
   private streamProbe: AnalyserNode | null = null
   private silentUrl: string | null = null
-  private video: AirPlayVideo | null = null
-  private videoCasting = false
 
   // ------------------------------------------------ the single media element
 
@@ -218,106 +212,26 @@ class MediaRoute {
   }
 
   // ------------------------------------------------------------ video route
-
-  get isCastingVideo() {
-    return this.videoCasting
-  }
-
-  /**
-   * Sends the picture as well as the sound.
-   *
-   * The audio route hands AirPlay a MediaStream carrying one audio track. A
-   * canvas can produce a video track of exactly the same kind, so the two are
-   * combined into a single stream and offered on a `<video>` element: if the
-   * receiver takes it, a television shows the live visualiser and plays the
-   * session, with no screen mirroring and the phone free.
-   *
-   * Whether Safari accepts a MediaStream on a video element for AirPlay is not
-   * something the API will answer in advance, so this is written to fail
-   * safely: the audio element is stood down first (two media elements compete
-   * for the playback session — that is what silenced casting once before), and
-   * anything short of a verified running element puts the audio route straight
-   * back.
-   */
-  async castVideo(canvas: HTMLCanvasElement): Promise<boolean> {
-    if (!engine.isStarted || !this.canPickOutputDevice()) return false
-    if (typeof canvas.captureStream !== 'function') return false
-
-    const ctx = Tone.getContext().rawContext as unknown as AudioContext
-    const limiter = engine.output
-    if (!this.streamDest) {
-      this.streamDest = ctx.createMediaStreamDestination()
-      this.streamProbe = ctx.createAnalyser()
-      this.streamProbe.fftSize = 2048
-      limiter.connect(this.streamProbe)
-    }
-    limiter.disconnect()
-    limiter.connect(this.streamDest)
-    if (this.streamProbe) limiter.connect(this.streamProbe)
-
-    // Stand the audio element down before the video one starts.
-    this.el?.pause()
-    if (this.el) this.el.srcObject = null
-
-    const video = this.videoElement()
-    let canvasStream: MediaStream
-    try {
-      canvasStream = canvas.captureStream(30)
-    } catch {
-      await this.setExternal(false)
-      return false
-    }
-    const combined = new MediaStream([
-      ...canvasStream.getVideoTracks(),
-      ...this.streamDest.stream.getAudioTracks(),
-    ])
-    video.srcObject = combined
-    video.volume = 1
-
-    if (!(await this.startAndVerify(video))) {
-      video.srcObject = null
-      limiter.disconnect()
-      limiter.toDestination()
-      this.external = false
-      this.videoCasting = false
-      await this.playSilence()
-      return false
-    }
-
-    video.webkitShowPlaybackTargetPicker?.()
-    this.external = true
-    this.videoCasting = true
-    return true
-  }
-
-  /** Back to sound from the phone, and the picture back to the phone screen. */
-  async stopVideoCast() {
-    if (!this.videoCasting) return
-    this.video?.pause()
-    if (this.video) this.video.srcObject = null
-    this.videoCasting = false
-    engine.output.disconnect()
-    engine.output.toDestination()
-    this.external = false
-    await this.playSilence()
-  }
-
-  private videoElement(): AirPlayVideo {
-    if (!this.video) {
-      const el = document.createElement('video') as AirPlayVideo
-      el.setAttribute('playsinline', '')
-      el.muted = false
-      el.style.position = 'fixed'
-      el.style.width = '1px'
-      el.style.height = '1px'
-      el.style.opacity = '0'
-      el.style.pointerEvents = 'none'
-      el.style.bottom = '0'
-      document.body.appendChild(el)
-      this.video = el
-    }
-    return this.video
-  }
+  //
+  // There isn't one, and this note is here so it is not attempted a third time.
+  //
+  // The idea was sound on paper: the audio route already hands AirPlay a
+  // MediaStream, `canvas.captureStream()` produces a video track of the same
+  // kind, so combining them on a `<video>` element should send the picture and
+  // the sound together and leave the phone free. Safari accepted the element and
+  // played it, so nothing here could tell that it had not worked.
+  //
+  // On the television it plainly had not. AirPlay took the audio track and
+  // ignored the video one, so the screen showed the Now Playing card — a square
+  // with the artwork and the title — while the music played; and disconnecting
+  // left the receiver stuck, because the canvas capture track was still running
+  // into a stream whose element had been torn out from under it.
+  //
+  // AirPlay carries a media *source*, not an arbitrary MediaStream, and no
+  // amount of arranging tracks changes that. What does put this picture on a
+  // television is Screen Mirroring, which is a system feature and needs nothing
+  // from the app beyond a full-screen canvas — so that is what TV mode now says
+  // to do.
 
   /** Opens Safari's AirPlay picker, switching to the castable route first. */
   async showOutputPicker(): Promise<boolean> {

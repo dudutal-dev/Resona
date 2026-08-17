@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Resona · chakra scene</title>
+    <!-- Empty on purpose: without it the browser asks for /favicon.ico and logs a 404. -->
+    <link rel="icon" href="data:," />
+    <!--
+      A development page for the 3D scene, served by `npm run dev` at /chakra.html.
+      Vite builds `index.html` alone, so nothing here reaches a production bundle —
+      the Three.js stack stays out of the app until something in the app imports it.
+    -->
+    <style>
+      html, body, #root { height: 100%; margin: 0; background: #000; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/three/chakra-demo.tsx"></script>
+  </body>
+</html>

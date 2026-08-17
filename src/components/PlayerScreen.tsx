@@ -10,6 +10,7 @@ import { Visualizer } from './Visualizer'
 import { MixerPanel } from './MixerPanel'
 import { TimerControl } from './TimerControl'
 import { OutputControl } from './OutputControl'
+import { TvStage } from './TvStage'
 import { InfoPanel } from './InfoPanel'
 import { FrequencyPicker } from './FrequencyPicker'
 import { Screen, Sheet, TrustBadge, formatClock } from './ui'
@@ -33,6 +34,7 @@ export function PlayerScreen() {
 
   const [infoFreq, setInfoFreq] = useState<Frequency | null>(null)
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [tvOpen, setTvOpen] = useState(false)
   const [saveOpen, setSaveOpen] = useState(false)
   const [presetName, setPresetName] = useState('')
   const [saved, setSaved] = useState(false)
@@ -154,12 +156,30 @@ export function PlayerScreen() {
         {root && <TrustBadge trust={root.trust} />}
       </div>
 
+      {/* The visualiser is the same figure the stage shows, so this reads as
+          "make that bigger" rather than as a separate feature. */}
+      <button
+        onClick={() => setTvOpen(true)}
+        className="btn mt-5 w-full rounded-2xl py-3 text-xs"
+      >
+        <span className="me-2 inline-block align-middle">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <rect x="2.5" y="4.5" width="19" height="13" rx="2" stroke="currentColor" strokeWidth="1.7" />
+            <path d="M8 20.5h8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+          </svg>
+        </span>
+        {t('tv.enter')}
+      </button>
+      <p className="txt-3 mt-2 text-center text-[11px] leading-relaxed">{t('tv.enterHint')}</p>
+
       {/* ---- Panels ---------------------------------------------------------- */}
       <div className="mt-7 space-y-5">
         <MixerPanel />
         <TimerControl />
         <OutputControl />
       </div>
+
+      {tvOpen && <TvStage onClose={() => setTvOpen(false)} />}
 
       {/* ---- Sheets ---------------------------------------------------------- */}
       <InfoPanel freq={infoFreq} open={!!infoFreq} onClose={() => setInfoFreq(null)} />

@@ -83,6 +83,14 @@ const HE = {
 
   'mini.remaining': ' · נותרו {clock}',
 
+  'tv.enter': 'מצב טלוויזיה',
+  'tv.enterHint': 'מסך מלא 16:9 עם ההדמיה בלבד — ומשם אפשר לשדר אותה למסך.',
+  'tv.exit': 'יציאה',
+  'tv.cast': 'שדר למסך',
+  'tv.stopCast': 'הפסק שידור',
+  'tv.castFailed': 'הדפדפן לא קיבל את הווידאו לשידור. חזרתי להשמעה מהטלפון — אפשר במקום זה לשקף מסך ממרכז הבקרה, וההדמיה תעבור כמו שהיא.',
+  'tv.hint': 'הקש כדי להציג את הפקדים · יציאה עם Esc',
+
   // ------------------------------------------------------------------- timer
   'timer.label': 'טיימר',
   'timer.fading': 'הדעיכה החלה — העוצמה יורדת בהדרגה עד לשקט.',
@@ -386,6 +394,14 @@ const EN: Record<StringKey, string> = {
   'player.defaultPresetName': 'Preset',
 
   'mini.remaining': ' · {clock} left',
+
+  'tv.enter': 'TV mode',
+  'tv.enterHint': 'Full-screen 16:9 with the visualiser alone — and from there it can be cast to a screen.',
+  'tv.exit': 'Exit',
+  'tv.cast': 'Cast to screen',
+  'tv.stopCast': 'Stop casting',
+  'tv.castFailed': 'The browser would not accept the video for casting. I switched back to playing from the phone — you can screen-mirror from Control Centre instead, and the visualiser goes across as it is.',
+  'tv.hint': 'Tap for the controls · Esc to exit',
 
   'timer.label': 'Timer',
   'timer.fading': 'The fade has begun — the level drops gradually into silence.',

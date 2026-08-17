@@ -25,9 +25,22 @@ execFileSync('npx', ['vite', 'build'], {
 })
 
 const assetFiles = readdirSync(ASSETS)
-const jsFile = assetFiles.find((f) => f.endsWith('.js'))
-const cssFile = assetFiles.find((f) => f.endsWith('.css'))
-if (!jsFile || !cssFile) throw new Error('expected exactly one JS and one CSS asset')
+const jsFiles = assetFiles.filter((f) => f.endsWith('.js'))
+const cssFiles = assetFiles.filter((f) => f.endsWith('.css'))
+/**
+ * Exactly one of each, and it is worth failing loudly over. This once found the
+ * first `.js` by name and inlined it: when the app started code-splitting, that
+ * was the lazy chunk rather than the entry, and the build produced a half
+ * megabyte of HTML that did nothing at all.
+ */
+if (jsFiles.length !== 1 || cssFiles.length !== 1) {
+  throw new Error(
+    `expected exactly one JS and one CSS asset, found [${jsFiles}] and [${cssFiles}] — ` +
+      'the single-file build must not code-split',
+  )
+}
+const [jsFile] = jsFiles
+const [cssFile] = cssFiles
 
 const js = readFileSync(join(ASSETS, jsFile), 'utf8')
 const css = readFileSync(join(ASSETS, cssFile), 'utf8')

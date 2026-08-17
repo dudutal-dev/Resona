@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
@@ -10,11 +10,19 @@ import { Visualizer } from './Visualizer'
 import { MixerPanel } from './MixerPanel'
 import { TimerControl } from './TimerControl'
 import { OutputControl } from './OutputControl'
-import { TvStage } from './TvStage'
 import { InfoPanel } from './InfoPanel'
 import { FrequencyPicker } from './FrequencyPicker'
 import { Screen, Sheet, TrustBadge, formatClock } from './ui'
 import { MoodPicker } from './MoodPicker'
+
+/**
+ * Split off on its own: the television stage carries the figure's point cloud,
+ * which is by a distance the largest thing in the build, and most sessions never
+ * open it. It is fetched as soon as the player is on screen rather than when the
+ * button is pressed, because it asks for fullscreen the moment it mounts and
+ * that only works while the tap is still counted as a gesture.
+ */
+const TvStage = lazy(() => import('./TvStage').then((m) => ({ default: m.TvStage })))
 
 export function PlayerScreen() {
   const { t, lang } = useT()
@@ -39,6 +47,10 @@ export function PlayerScreen() {
   const [presetName, setPresetName] = useState('')
   const [saved, setSaved] = useState(false)
   const [finishOpen, setFinishOpen] = useState(false)
+
+  useEffect(() => {
+    void import('./TvStage')
+  }, [])
 
   const root = getFrequency(config.rootId)
   const beat = config.beatId ? getFrequency(config.beatId) : null
@@ -179,7 +191,11 @@ export function PlayerScreen() {
         <OutputControl />
       </div>
 
-      {tvOpen && <TvStage onClose={() => setTvOpen(false)} />}
+      {tvOpen && (
+        <Suspense fallback={null}>
+          <TvStage onClose={() => setTvOpen(false)} />
+        </Suspense>
+      )}
 
       {/* ---- Sheets ---------------------------------------------------------- */}
       <InfoPanel freq={infoFreq} open={!!infoFreq} onClose={() => setInfoFreq(null)} />

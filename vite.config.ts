@@ -48,7 +48,17 @@ export default defineConfig({
       devOptions: { enabled: false },
       }),
   ].filter(Boolean),
-  build: singleFile ? { outDir: 'dist-single', assetsInlineLimit: 100 * 1024 * 1024 } : {},
+  build: singleFile
+    ? {
+        outDir: 'dist-single',
+        assetsInlineLimit: 100 * 1024 * 1024,
+        // One chunk, or there is nothing single about the file. The app splits
+        // the television stage out with a dynamic import, and without this the
+        // bundler emits it beside the entry — which the inliner then has to
+        // guess between, and it guessed wrong.
+        rollupOptions: { output: { inlineDynamicImports: true } },
+      }
+    : {},
   resolve: singleFile
     ? { alias: { 'virtual:pwa-register': fileURLToPath(new URL('./src/lib/pwa-noop.ts', import.meta.url)) } }
     : {},

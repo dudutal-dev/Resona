@@ -10,7 +10,8 @@
     "test": "vitest run",
     "icons": "node scripts/generate-icons.mjs",
     "build:single": "node scripts/build-single.mjs",
-    "build:pages": "vite build --outDir docs --emptyOutDir && node -e \"require('fs').writeFileSync('docs/.nojekyll','')\""
+    "build:pages": "vite build --outDir docs --emptyOutDir && node -e \"require('fs').writeFileSync('docs/.nojekyll','')\"",
+    "release": "npm run build:pages && npm run build:single"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",

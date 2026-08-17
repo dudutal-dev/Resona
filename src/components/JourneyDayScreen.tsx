@@ -39,6 +39,12 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
   const freq = getFrequency(entry.frequencyId)
   const band = bandForDay(entry, journey)
   const bandIsSubject = !!freq?.range
+  /**
+   * The rate this night will actually run at. Worth showing rather than the
+   * band's range: a sleep journey's whole content is descending through delta,
+   * and every night of it reads "0.5–4 Hz" if the range is what gets printed.
+   */
+  const beatHz = configForDay(entry, journey).beatHz
   const p = progress[journey.id]
   const isDone = p?.completedDays.includes(day) ?? false
   const mood = p?.dailyMood?.[day]
@@ -70,7 +76,7 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
               className="ltr text-2xl font-bold leading-none"
               style={{ color: `hsl(${freq?.hue ?? 265} 92% 76%)` }}
             >
-              {freq?.hz ?? freq?.range?.[0]}
+              {freq?.hz ?? beatHz}
             </div>
             <div className="txt-3 ltr mt-1 text-[10px] font-semibold">Hz</div>
           </div>
@@ -93,9 +99,7 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
             <span className="font-semibold" style={{ color: 'var(--accent)' }}>
               {shortLabel(band, lang)}
             </span>{' '}
-            <span className="ltr">
-              ({band.range?.[0]}–{band.range?.[1]} Hz)
-            </span>
+            <span className="ltr">({beatHz} Hz)</span>
             {t('day.supportingTail')}
           </p>
         )}

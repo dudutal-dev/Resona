@@ -198,6 +198,37 @@ describe('journeys', () => {
     }
   })
 
+  /**
+   * The descent is the whole treatment in a sleep journey, and until a day could
+   * name its own rate it was not expressible: every delta night in every journey
+   * ran at the band's midpoint, so seven nights of "going deeper" were seven
+   * identical nights with different titles. These two hold that open.
+   */
+  it('honours the rate a day asks for instead of the band default', () => {
+    const day = { day: 1, frequencyId: 'sol-174', durationMin: 20, note: '', noteEn: '', beatHz: 0.8 }
+    expect(configForDay(day, { purpose: 'sleep' }).beatHz).toBe(0.8)
+    // And the band is still the authority on what is possible in it.
+    const tooLow = { ...day, beatHz: 0.1 }
+    expect(configForDay(tooLow, { purpose: 'sleep' }).beatHz).toBe(0.5)
+  })
+
+  it('never lets a sleep journey that prescribes rates rise as it goes', () => {
+    const prescribing = JOURNEYS.filter(
+      (j) => j.purpose === 'sleep' && j.schedule.some((d) => d.beatHz !== undefined),
+    )
+    expect(prescribing.length, 'no sleep journey prescribes a rate').toBeGreaterThan(0)
+    for (const j of prescribing) {
+      const rates = j.schedule.map((d) => configForDay(d, j).beatHz)
+      for (let i = 1; i < rates.length; i++) {
+        expect(rates[i], `${j.id} rises ${rates[i - 1]} -> ${rates[i]} on day ${i + 1}`).toBeLessThanOrEqual(
+          rates[i - 1],
+        )
+      }
+      // And it has to actually travel, or it is a flat line wearing an arc.
+      expect(rates[0] - rates[rates.length - 1], `${j.id} barely moves`).toBeGreaterThan(0.5)
+    }
+  })
+
   it('labels and colours every purpose in use', () => {
     for (const j of JOURNEYS) {
       expect(translate('he', purposeKey(j.purpose)), `no label for ${j.purpose}`).toBeTruthy()

@@ -77,6 +77,16 @@ export type JourneyDay = {
    * that matches the journey's purpose.
    */
   beatId?: string
+  /**
+   * Rate for that band, in Hz. Omit to take the band's own default.
+   *
+   * Delta is the reason this exists: the band spans 0.5 to 4Hz, and without a
+   * per-day rate every delta night in every journey runs at its midpoint. For a
+   * sleep journey that removes the only progression that matters — descending
+   * through the band night after night — and leaves seven identical nights
+   * wearing seven different titles. Clamped into the band's range.
+   */
+  beatHz?: number
   /** Overrides the session depth for this day. */
   depth?: number
   /**

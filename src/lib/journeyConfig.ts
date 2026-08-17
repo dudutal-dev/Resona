@@ -23,6 +23,9 @@ const PRIMARY_BEAT_LEVEL = 0.4
  *
  * The supporting band comes from the day if it names one, otherwise from the
  * journey's purpose — a sleep journey leans on delta, a focus journey on beta.
+ * A day may also name the rate within that band, which is what lets a sleep
+ * journey descend through delta night after night instead of sitting at its
+ * midpoint every time.
  */
 export function configForDay(
   day: JourneyDay,
@@ -38,12 +41,19 @@ export function configForDay(
     : (day.beatId ?? PURPOSE_BAND[journey.purpose] ?? 'bb-alpha')
 
   const beat = getFrequency(beatId)
+  /** A day may name its own rate; the band's range is still the authority. */
+  const beatHz = (() => {
+    if (!beat?.range) return day.beatHz ?? base.beatHz
+    const [lo, hi] = beat.range
+    const wanted = day.beatHz ?? defaultBeatHz(beat)
+    return Math.min(hi, Math.max(lo, wanted))
+  })()
 
   return {
     ...base,
     rootId,
     beatId,
-    beatHz: beat ? defaultBeatHz(beat) : base.beatHz,
+    beatHz,
     timerMode: 'custom',
     customMinutes: day.durationMin,
     // Deliberately DEFAULT_CONFIG, not `base`: a guided day has to sound the

@@ -10,7 +10,7 @@ import {
 } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
-import { bandForDay } from '../lib/journeyConfig'
+import { bandForDay, configForDay } from '../lib/journeyConfig'
 import { useJourneys } from '../store/journeyStore'
 import { Card, Screen, TrustBadge } from './ui'
 
@@ -96,6 +96,8 @@ export function JourneyDetail({ id }: { id: string }) {
         {journey.schedule.map((day) => {
           const freq = getFrequency(day.frequencyId)
           const band = bandForDay(day, journey)
+          // The rate the night runs at, not the band's range — see JourneyDayScreen.
+          const beatHz = configForDay(day, journey).beatHz
           const isDone = p?.completedDays.includes(day.day) ?? false
           const isCurrent = !isDone && (p?.currentDay ?? 1) === day.day
           const mood = p?.dailyMood?.[day.day]
@@ -127,12 +129,15 @@ export function JourneyDetail({ id }: { id: string }) {
                   </div>
                   <p className="txt-3 mt-0.5 text-[11px]">
                     <span className="ltr">
-                      {freq?.hz ? `${freq.hz} Hz` : `${freq?.range?.[0]}–${freq?.range?.[1]} Hz`} ·{' '}
+                      {freq?.hz ? `${freq.hz} Hz` : `${beatHz} Hz`} ·{' '}
                       <span className="ltr">{day.durationMin}</span> {t('common.min')}
                     </span>{' '}
                     · {dayNote(day, lang)}
                     {band && !freq?.range && (
-                      <> · + {shortLabel(band, lang)}</>
+                      <>
+                        {' '}
+                        · + {shortLabel(band, lang)} <span className="ltr">{beatHz} Hz</span>
+                      </>
                     )}
                   </p>
                 </div>

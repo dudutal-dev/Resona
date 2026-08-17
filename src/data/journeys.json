@@ -1736,7 +1736,7 @@
         "durationMin": 90,
         "note": "פעימה יציבה ברקע",
         "pace": 0.3,
-        "depth": 0.0,
+        "depth": 0,
         "density": 0.25,
         "style": "techno",
         "noteEn": "A steady pulse in the background"
@@ -1747,7 +1747,7 @@
         "durationMin": 90,
         "note": "מעט יותר תנועה",
         "pace": 0.35,
-        "depth": 0.0,
+        "depth": 0,
         "density": 0.3,
         "style": "techno",
         "noteEn": "A little more movement"
@@ -1758,7 +1758,7 @@
         "durationMin": 90,
         "note": "בלוק עבודה ארוך",
         "pace": 0.4,
-        "depth": 0.0,
+        "depth": 0,
         "density": 0.35,
         "style": "techno",
         "noteEn": "A long working block"
@@ -2082,5 +2082,298 @@
     ],
     "titleEn": "Deep house for work",
     "descriptionEn": "The same groove, far sparser: single chords, a soft bass and nothing that asks for attention. Ninety unbroken minutes, with SMR — the range of relaxed alertness — underneath."
+  },
+  {
+    "id": "journey-sleep-descent-7",
+    "title": "הירדמות — מאלפא לדלתא",
+    "titleEn": "Falling asleep — alpha to delta",
+    "days": 7,
+    "purpose": "sleep",
+    "arc": "descending",
+    "description": "שבעה לילות שיורדים בדיוק במסלול שהמוח עושה בעצמו בדרך לשינה: אלפא, תטא, דלתא. כל לילה עוצר קצת יותר נמוך מהקודם.",
+    "descriptionEn": "Seven nights descending the way the brain does on its own on the way to sleep: alpha, theta, delta. Each night stops a little lower than the one before.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "bb-alpha",
+        "durationMin": 35,
+        "beatHz": 10,
+        "note": "רוגע ערני — עוד לא שינה, כבר לא יום",
+        "noteEn": "Calm but awake — not sleep yet, no longer the day"
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-alpha",
+        "durationMin": 35,
+        "beatHz": 8.5,
+        "note": "קצה האלפא, המקום שממנו נופלים פנימה",
+        "noteEn": "The edge of alpha, where you start to fall inward"
+      },
+      {
+        "day": 3,
+        "frequencyId": "bb-theta",
+        "durationMin": 40,
+        "beatHz": 6.5,
+        "note": "תטא — המחשבות מאבדות עניין בעצמן",
+        "noteEn": "Theta — thoughts lose interest in themselves"
+      },
+      {
+        "day": 4,
+        "frequencyId": "bb-theta",
+        "durationMin": 40,
+        "beatHz": 5,
+        "note": "תטא עמוק, ממש לפני הסף",
+        "noteEn": "Deep theta, right at the threshold"
+      },
+      {
+        "day": 5,
+        "frequencyId": "bb-delta",
+        "durationMin": 45,
+        "beatHz": 3.5,
+        "note": "הכניסה לדלתא",
+        "noteEn": "Into delta"
+      },
+      {
+        "day": 6,
+        "frequencyId": "bb-delta",
+        "durationMin": 45,
+        "beatHz": 2,
+        "note": "דלתא באמצע הטווח — שינה של ממש",
+        "noteEn": "Mid-delta — actual sleep"
+      },
+      {
+        "day": 7,
+        "frequencyId": "bb-delta",
+        "durationMin": 50,
+        "beatHz": 1,
+        "note": "הקרקעית. אין לאן לרדת מכאן",
+        "noteEn": "The floor. Nowhere lower to go"
+      }
+    ]
+  },
+  {
+    "id": "journey-sleep-20",
+    "title": "עשרים דקות ולישון",
+    "titleEn": "Twenty minutes down",
+    "days": 10,
+    "purpose": "sleep",
+    "arc": "descending",
+    "description": "עשרים דקות בדיוק, כל לילה, באותה שעה. קצר מספיק להיגמר לפני שתשים לב שהוא נגמר — והחזרה עצמה היא מה שהופכת אותו לאות שמלמד את הגוף שעכשיו נרדמים.",
+    "descriptionEn": "Exactly twenty minutes, every night, at the same hour. Short enough to end before you notice it ending — and the repetition itself is what turns it into a cue the body learns to fall asleep on.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-528",
+        "durationMin": 20,
+        "beatHz": 3.2,
+        "note": "לילה ראשון — רק להתרגל לשכב עם זה",
+        "noteEn": "First night — just get used to lying down with it",
+        "density": 0.35
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 20,
+        "beatHz": 3,
+        "note": "אותה שעה, אותו מקום",
+        "noteEn": "Same hour, same place",
+        "density": 0.35
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-417",
+        "durationMin": 20,
+        "beatHz": 2.6,
+        "note": "הצליל יורד, וגם אתה",
+        "noteEn": "The tone drops, and so do you",
+        "density": 0.3
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-417",
+        "durationMin": 20,
+        "beatHz": 2.4,
+        "note": "עוד לא נרדמת בעשרים דקות? זה בסדר. תמשיך",
+        "noteEn": "Not asleep in twenty minutes yet? That is fine. Keep going",
+        "density": 0.3
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-396",
+        "durationMin": 20,
+        "beatHz": 2,
+        "note": "אמצע הדרך — הגוף מתחיל לזהות את האות",
+        "noteEn": "Halfway — the body starts recognising the cue",
+        "density": 0.3
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-396",
+        "durationMin": 20,
+        "beatHz": 1.8,
+        "note": "פחות תווים, יותר שקט ביניהם",
+        "noteEn": "Fewer notes, more quiet between them",
+        "density": 0.25
+      },
+      {
+        "day": 7,
+        "frequencyId": "sol-285",
+        "durationMin": 20,
+        "beatHz": 1.4,
+        "note": "הצליל נמוך מספיק כדי להרגיש בחזה",
+        "noteEn": "Low enough now to feel in the chest",
+        "density": 0.25
+      },
+      {
+        "day": 8,
+        "frequencyId": "sol-285",
+        "durationMin": 20,
+        "beatHz": 1.2,
+        "note": "כמעט ולא קורה כלום. זו המטרה",
+        "noteEn": "Almost nothing is happening. That is the point",
+        "density": 0.22
+      },
+      {
+        "day": 9,
+        "frequencyId": "sol-174",
+        "durationMin": 20,
+        "beatHz": 0.9,
+        "note": "התדר הנמוך ביותר באפליקציה, בקצב הכי איטי",
+        "noteEn": "The lowest tone in the app, at the slowest rate",
+        "density": 0.22
+      },
+      {
+        "day": 10,
+        "frequencyId": "sol-174",
+        "durationMin": 20,
+        "beatHz": 0.6,
+        "note": "לילה אחרון. מכאן זה כבר הרגל",
+        "noteEn": "Last night. From here it is a habit",
+        "density": 0.2
+      }
+    ]
+  },
+  {
+    "id": "journey-sleep-broken-14",
+    "title": "לילה שבור — חזרה לישון בשלוש",
+    "titleEn": "The broken night — back to sleep at three",
+    "days": 14,
+    "purpose": "sleep",
+    "description": "לא בשביל להירדם בהתחלה — בשביל הפעם שנית. שבועיים של לילות ארוכים ונמוכים, לשים באוזניות כשנפקחות העיניים באמצע ואי אפשר לחזור.",
+    "descriptionEn": "Not for falling asleep the first time — for the second. Two weeks of long, low nights, to put on when your eyes open in the middle and will not close again.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-174",
+        "durationMin": 45,
+        "beatHz": 1.5,
+        "note": "לא לבדוק שעה. רק להניח את הראש ולהפעיל",
+        "noteEn": "Do not check the time. Just put your head down and start"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-174",
+        "durationMin": 45,
+        "beatHz": 1.4,
+        "note": "אותו דבר בדיוק. אין מה לשפר בלילה השני",
+        "noteEn": "Exactly the same. Nothing to improve on the second night"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-285",
+        "durationMin": 45,
+        "beatHz": 1.3,
+        "note": "תדר קצת גבוה יותר — לרקמה, לא לראש",
+        "noteEn": "A slightly higher tone — for the body, not the head"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-285",
+        "durationMin": 50,
+        "beatHz": 1.2,
+        "note": "חמישים דקות. ארוך מהזמן שלוקח לחזור",
+        "noteEn": "Fifty minutes. Longer than it takes to go back"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-174",
+        "durationMin": 50,
+        "beatHz": 1.1,
+        "note": "חוזרים לנמוך",
+        "noteEn": "Back to the low one"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-174",
+        "durationMin": 50,
+        "beatHz": 1,
+        "note": "הרץ הבודד — פעימה בשנייה",
+        "noteEn": "One hertz — a beat a second"
+      },
+      {
+        "day": 7,
+        "frequencyId": "bb-delta",
+        "durationMin": 55,
+        "beatHz": 0.9,
+        "note": "הפעם הפעימה עצמה היא הנושא, לא המנגינה",
+        "noteEn": "Tonight the pulse itself is the subject, not the melody"
+      },
+      {
+        "day": 8,
+        "frequencyId": "bb-delta",
+        "durationMin": 55,
+        "beatHz": 0.8,
+        "note": "עוד למטה",
+        "noteEn": "Lower still"
+      },
+      {
+        "day": 9,
+        "frequencyId": "sol-174",
+        "durationMin": 55,
+        "beatHz": 0.8,
+        "note": "המנגינה חוזרת, נמוכה כמו הפעימה",
+        "noteEn": "The melody returns, as low as the pulse"
+      },
+      {
+        "day": 10,
+        "frequencyId": "sol-174",
+        "durationMin": 60,
+        "beatHz": 0.7,
+        "note": "שעה שלמה. תיגמר בלעדיך",
+        "noteEn": "A full hour. It will end without you"
+      },
+      {
+        "day": 11,
+        "frequencyId": "bb-delta",
+        "durationMin": 60,
+        "beatHz": 0.7,
+        "note": "שעה של פעימה בלבד",
+        "noteEn": "An hour of pulse alone"
+      },
+      {
+        "day": 12,
+        "frequencyId": "sol-174",
+        "durationMin": 60,
+        "beatHz": 0.6,
+        "note": "כמעט הרצפה של הטווח",
+        "noteEn": "Almost the floor of the range"
+      },
+      {
+        "day": 13,
+        "frequencyId": "bb-delta",
+        "durationMin": 60,
+        "beatHz": 0.5,
+        "note": "חצי הרץ — הכי איטי שיש כאן",
+        "noteEn": "Half a hertz — the slowest there is here"
+      },
+      {
+        "day": 14,
+        "frequencyId": "sol-174",
+        "durationMin": 60,
+        "beatHz": 0.5,
+        "note": "הלילה האחרון. אם עבד, לא תזכור אותו",
+        "noteEn": "The last night. If it worked, you will not remember it"
+      }
+    ]
   }
 ]

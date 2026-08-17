@@ -40,7 +40,17 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json,mp3,ogg,wav}'],
+        /**
+         * `webp` and `glb` are here because they were missing, and the app is
+         * offline-first: the six figure artworks are WebP and the 3D scene's
+         * model is a GLB, so none of them were being precached. Online nobody
+         * would notice — the browser just fetches them. Offline, television mode
+         * showed the wash and the orbits around an empty middle, and the scene
+         * loaded its code and then had no model to draw. An extension list is a
+         * quiet way to break a feature: nothing errors at build time, and the
+         * only symptom is on the one device that has already gone offline.
+         */
+        globPatterns: ['**/*.{js,css,html,ico,png,webp,svg,glb,woff2,json,mp3,ogg,wav}'],
         maximumFileSizeToCacheInBytes: 12 * 1024 * 1024,
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,

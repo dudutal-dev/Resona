@@ -1,5 +1,15 @@
 import { useState } from 'react'
-import { TRUST_NOTICE, getFrequency, getJourney } from '../lib/catalog'
+import {
+  dayNote,
+  freqLabel,
+  getFrequency,
+  getJourney,
+  journeyTitle,
+  freqInfo,
+  shortLabel,
+  trustNoticeKey,
+} from '../lib/catalog'
+import { useT } from '../lib/i18n'
 import { bandForDay, configForDay } from '../lib/journeyConfig'
 import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
@@ -11,6 +21,7 @@ import { ListeningMode } from './ListeningMode'
 import { InfoPanel } from './InfoPanel'
 
 export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
+  const { t, lang } = useT()
   const journey = getJourney(id)
   const entry = journey?.schedule.find((d) => d.day === day)
   const { loadConfig, config } = useSession()
@@ -19,8 +30,8 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
 
   if (!journey || !entry) {
     return (
-      <Screen title="יום לא נמצא" onBack>
-        <p className="txt-2 text-sm">אין יום כזה במסע הזה.</p>
+      <Screen title={t('day.notFound')} onBack>
+        <p className="txt-2 text-sm">{t('day.notFoundBody')}</p>
       </Screen>
     )
   }
@@ -44,7 +55,7 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
   }
 
   return (
-    <Screen title={`יום ${day}`} subtitle={journey.title} onBack>
+    <Screen title={t('common.dayN', { n: day })} subtitle={journeyTitle(journey, lang)} onBack>
       <Card glow className="mb-5 text-center">
         <div
           className="mx-auto grid h-24 w-24 place-items-center rounded-3xl"
@@ -65,55 +76,55 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
           </div>
         </div>
 
-        <h2 className="mt-4 text-xl font-bold">{freq?.label}</h2>
-        <p className="txt-2 mt-1 text-sm">{entry.note}</p>
+        <h2 className="mt-4 text-xl font-bold">{freq ? freqLabel(freq, lang) : ''}</h2>
+        <p className="txt-2 mt-1 text-sm">{dayNote(entry, lang)}</p>
 
         <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
           <span className="chip">
-            <span className="ltr">{entry.durationMin}</span> דקות
+            {`${entry.durationMin} ${t('common.minutes')}`}
           </span>
           {freq && <TrustBadge trust={freq.trust} />}
-          {isDone && <span className="chip">הושלם ✓</span>}
+          {isDone && <span className="chip">{t('common.done')}</span>}
         </div>
 
         {band && !bandIsSubject && (
           <p className="txt-3 mt-3 text-[11px] leading-relaxed">
-            מתחת לתדר רץ גל מוחי תומך —{' '}
+            {t('day.supporting')}
             <span className="font-semibold" style={{ color: 'var(--accent)' }}>
-              {band.label.split('—')[0].trim()}
+              {shortLabel(band, lang)}
             </span>{' '}
             <span className="ltr">
               ({band.range?.[0]}–{band.range?.[1]} Hz)
             </span>
-            , בעוצמה נמוכה כדי שתדר היום יישאר במרכז.
+            {t('day.supportingTail')}
           </p>
         )}
 
-        <div className="mt-5 text-right">
+        <div className="mt-5 text-start">
           <ListeningMode compact hasBeatLayer />
         </div>
 
         <button onClick={handleStart} className="btn btn-primary mt-4 w-full">
-          {isDone ? 'האזן שוב ליום זה' : 'התחל את היום'}
+          {isDone ? t('day.again') : t('day.start')}
         </button>
         <button onClick={() => setInfoOpen(true)} className="btn btn-ghost mt-2 w-full text-xs txt-3">
-          מה מיוחס לתדר הזה?
+          {t('day.whatIsClaimed')}
         </button>
       </Card>
 
       {freq && (
         <div className="glass mb-5 rounded-3xl p-4">
-          <p className="txt-2 text-sm leading-relaxed">{freq.info}</p>
-          <p className="txt-3 mt-2 text-[11px] leading-relaxed">{TRUST_NOTICE[freq.trust]}</p>
+          <p className="txt-2 text-sm leading-relaxed">{freqInfo(freq, lang)}</p>
+          <p className="txt-3 mt-2 text-[11px] leading-relaxed">{t(trustNoticeKey(freq.trust))}</p>
         </div>
       )}
 
       <div className="glass rounded-3xl p-4">
-        <h3 className="mb-1 text-sm font-bold">איך הרגשת אחרי ההאזנה?</h3>
+        <h3 className="mb-1 text-sm font-bold">{t('day.howDidYouFeel')}</h3>
         <p className="txt-3 mb-3 text-[11px]">
           {isDone
-            ? 'אפשר לעדכן את הדירוג בכל שלב. הכול נשמר במכשיר בלבד.'
-            : 'דירוג מסמן את היום כהושלם ומעביר ליום הבא.'}
+            ? t('day.moodDone')
+            : t('day.moodNew')}
         </p>
         <MoodPicker value={mood} onPick={handleMood} />
       </div>

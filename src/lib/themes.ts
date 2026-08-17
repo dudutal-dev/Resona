@@ -1,3 +1,4 @@
+import type { StringKey } from './i18n'
 import { JOURNEYS } from './catalog'
 import type { Journey, JourneyPurpose } from './types'
 
@@ -51,27 +52,9 @@ export const THEME_ORDER: JourneyTheme[] = [
   'psychedelic',
 ]
 
-export const THEME_LABEL: Record<JourneyTheme, string> = {
-  start: 'התחלה',
-  rest: 'שינה ורוגע',
-  work: 'ריכוז ועבודה',
-  motion: 'תנועה וקצב',
-  inner: 'פנימי',
-  intimacy: 'זוגיות',
-  club: 'קלאב',
-  psychedelic: 'פסיכדלי',
-}
+export const themeKey = (t: JourneyTheme): StringKey => `theme.${t}`
 
-export const THEME_BLURB: Record<JourneyTheme, string> = {
-  start: 'הכי קצר להתחיל ממנו',
-  rest: 'להוריד הילוך, להירדם, לשחרר מתח',
-  work: 'להאזנה תוך כדי עבודה, ולהרמת אנרגיה',
-  motion: 'פעימה קבועה — להליכה, למתיחות, לעמידה',
-  inner: 'מדיטציה, התבוננות ויצירה',
-  intimacy: 'ערב לשניים, מגע וקרבה',
-  club: 'טכנו, טראנס, פסיטראנס ודיפ האוס — הקיק הוא התדר עצמו',
-  psychedelic: 'הדים ארוכים ומרווחים לא מוכרים',
-}
+export const themeBlurbKey = (t: JourneyTheme): StringKey => `theme.${t}.blurb`
 
 export const THEME_HUE: Record<JourneyTheme, number> = {
   start: 165,

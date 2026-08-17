@@ -1,4 +1,5 @@
-import { FADE_OUT_SECONDS, TIMER_LABEL } from '../audio/SessionPlayer'
+import { FADE_OUT_SECONDS } from '../audio/SessionPlayer'
+import { useT, type StringKey } from '../lib/i18n'
 import { useSession } from '../store/sessionStore'
 import type { TimerMode } from '../lib/types'
 import { formatClock } from './ui'
@@ -7,6 +8,7 @@ const MODES: TimerMode[] = ['15', '30', '60', '120', 'untilMorning', 'unlimited'
 
 export function TimerControl() {
   const { config, setTimerMode, remaining, isPlaying, isFading } = useSession()
+  const { t } = useT()
 
   return (
     <div className="glass rounded-3xl p-4">
@@ -16,7 +18,7 @@ export function TimerControl() {
             <circle cx="12" cy="13" r="8" stroke="currentColor" strokeWidth="1.8" />
             <path d="M12 9v4l2.5 2M9 2h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
           </svg>
-          טיימר
+          {t('timer.label')}
         </h3>
         {isPlaying && (
           <span className="ltr text-xs tabular-nums txt-2">
@@ -37,7 +39,7 @@ export function TimerControl() {
               color: 'var(--accent)',
             }}
           >
-            <span className="ltr">{config.customMinutes}</span> דק׳
+            <span className="ltr">{config.customMinutes}</span> {t('common.min')}
           </button>
         )}
         {MODES.map((mode) => {
@@ -54,7 +56,7 @@ export function TimerControl() {
                 color: active ? 'var(--accent)' : 'var(--txt-2)',
               }}
             >
-              {TIMER_LABEL[mode]}
+              {t(`timer.${mode}` as StringKey)}
             </button>
           )
         })}
@@ -62,8 +64,8 @@ export function TimerControl() {
 
       <p className="txt-3 mt-3 text-[11px] leading-relaxed">
         {isFading
-          ? 'הדעיכה החלה — העוצמה יורדת בהדרגה עד לשקט.'
-          : `בסיום הזמן העוצמה דועכת לאורך ${FADE_OUT_SECONDS} שניות במקום להיפסק בבת אחת.`}
+          ? t('timer.fading')
+          : t('timer.fadeNote', { seconds: FADE_OUT_SECONDS })}
       </p>
     </div>
   )

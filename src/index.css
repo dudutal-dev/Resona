@@ -65,6 +65,12 @@ html.theme-light {
   }
 
   /* Numbers and Hz readouts stay LTR inside RTL prose. */
+  /* Directional glyphs — a back chevron or a "go deeper" arrow points along the
+     reading direction, so it has to turn around with it. */
+  [dir='ltr'] .flip-ltr {
+    transform: scaleX(-1);
+  }
+
   .ltr {
     direction: ltr;
     unicode-bidi: isolate;

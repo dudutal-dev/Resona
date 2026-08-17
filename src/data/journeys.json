@@ -10,45 +10,54 @@
         "day": 1,
         "frequencyId": "sol-396",
         "durationMin": 30,
-        "note": "שחרור מתח היום"
+        "note": "שחרור מתח היום",
+        "noteEn": "Letting go of the day"
       },
       {
         "day": 2,
         "frequencyId": "bb-theta",
         "durationMin": 40,
-        "note": "מעבר לתטא לקראת שינה"
+        "note": "מעבר לתטא לקראת שינה",
+        "noteEn": "Into theta, towards sleep"
       },
       {
         "day": 3,
         "frequencyId": "sol-528",
         "durationMin": 45,
-        "note": "הרפיה עמוקה"
+        "note": "הרפיה עמוקה",
+        "noteEn": "Deep relaxation"
       },
       {
         "day": 4,
         "frequencyId": "bb-delta",
         "durationMin": 60,
-        "note": "שינה עמוקה"
+        "note": "שינה עמוקה",
+        "noteEn": "Deep sleep"
       },
       {
         "day": 5,
         "frequencyId": "sol-639",
         "durationMin": 45,
-        "note": "רוגע רגשי"
+        "note": "רוגע רגשי",
+        "noteEn": "Emotional calm"
       },
       {
         "day": 6,
         "frequencyId": "bb-delta",
         "durationMin": 90,
-        "note": "שינה מלאה"
+        "note": "שינה מלאה",
+        "noteEn": "Full night"
       },
       {
         "day": 7,
         "frequencyId": "sol-963",
         "durationMin": 30,
-        "note": "סיכום וחיבור"
+        "note": "סיכום וחיבור",
+        "noteEn": "Closing and connecting"
       }
-    ]
+    ],
+    "titleEn": "Sleep recovery",
+    "descriptionEn": "A week that takes the nervous system down a gear at a time — from releasing the day's tension to deep delta."
   },
   {
     "id": "journey-focus-5",
@@ -61,33 +70,40 @@
         "day": 1,
         "frequencyId": "bb-alpha",
         "durationMin": 25,
-        "note": "ערנות רגועה"
+        "note": "ערנות רגועה",
+        "noteEn": "Calm alertness"
       },
       {
         "day": 2,
         "frequencyId": "bb-beta",
         "durationMin": 30,
-        "note": "ריכוז פעיל"
+        "note": "ריכוז פעיל",
+        "noteEn": "Active focus"
       },
       {
         "day": 3,
         "frequencyId": "sol-741",
         "durationMin": 30,
-        "note": "בהירות מחשבתית"
+        "note": "בהירות מחשבתית",
+        "noteEn": "Mental clarity"
       },
       {
         "day": 4,
         "frequencyId": "bb-gamma",
         "durationMin": 20,
-        "note": "עוררות קוגניטיבית"
+        "note": "עוררות קוגניטיבית",
+        "noteEn": "Cognitive arousal"
       },
       {
         "day": 5,
         "frequencyId": "bb-beta",
         "durationMin": 35,
-        "note": "יום המשימה"
+        "note": "יום המשימה",
+        "noteEn": "The day of the task"
       }
-    ]
+    ],
+    "titleEn": "Ready for the task",
+    "descriptionEn": "Five days that build working alertness — from calm alpha to gamma on the day of the task itself."
   },
   {
     "id": "journey-chakra-7",
@@ -100,45 +116,54 @@
         "day": 1,
         "frequencyId": "sol-396",
         "durationMin": 20,
-        "note": "צ'אקרת היסוד"
+        "note": "צ'אקרת היסוד",
+        "noteEn": "Root chakra"
       },
       {
         "day": 2,
         "frequencyId": "sol-417",
         "durationMin": 20,
-        "note": "צ'אקרת הטבור"
+        "note": "צ'אקרת הטבור",
+        "noteEn": "Sacral chakra"
       },
       {
         "day": 3,
         "frequencyId": "sol-528",
         "durationMin": 20,
-        "note": "צ'אקרת מקלעת השמש"
+        "note": "צ'אקרת מקלעת השמש",
+        "noteEn": "Solar plexus chakra"
       },
       {
         "day": 4,
         "frequencyId": "sol-639",
         "durationMin": 20,
-        "note": "צ'אקרת הלב"
+        "note": "צ'אקרת הלב",
+        "noteEn": "Heart chakra"
       },
       {
         "day": 5,
         "frequencyId": "sol-741",
         "durationMin": 20,
-        "note": "צ'אקרת הגרון"
+        "note": "צ'אקרת הגרון",
+        "noteEn": "Throat chakra"
       },
       {
         "day": 6,
         "frequencyId": "sol-852",
         "durationMin": 20,
-        "note": "צ'אקרת המצח"
+        "note": "צ'אקרת המצח",
+        "noteEn": "Third-eye chakra"
       },
       {
         "day": 7,
         "frequencyId": "sol-963",
         "durationMin": 20,
-        "note": "צ'אקרת הכתר"
+        "note": "צ'אקרת הכתר",
+        "noteEn": "Crown chakra"
       }
-    ]
+    ],
+    "titleEn": "Chakra journey",
+    "descriptionEn": "An ordered climb through the traditional solfeggio scale — from the root chakra to the crown."
   },
   {
     "id": "journey-anxiety-10",
@@ -151,63 +176,75 @@
         "day": 1,
         "frequencyId": "bb-alpha",
         "durationMin": 20,
-        "note": "היכרות עם הכלי"
+        "note": "היכרות עם הכלי",
+        "noteEn": "Getting to know the tool"
       },
       {
         "day": 2,
         "frequencyId": "sol-396",
         "durationMin": 25,
-        "note": "שחרור פחד"
+        "note": "שחרור פחד",
+        "noteEn": "Releasing fear"
       },
       {
         "day": 3,
         "frequencyId": "bb-theta",
         "durationMin": 25,
-        "note": "הרפיה עמוקה"
+        "note": "הרפיה עמוקה",
+        "noteEn": "Deep relaxation"
       },
       {
         "day": 4,
         "frequencyId": "sol-528",
         "durationMin": 30,
-        "note": "איזון רגשי"
+        "note": "איזון רגשי",
+        "noteEn": "Emotional balance"
       },
       {
         "day": 5,
         "frequencyId": "bb-alpha",
         "durationMin": 25,
-        "note": "רוגע יומיומי"
+        "note": "רוגע יומיומי",
+        "noteEn": "Everyday calm"
       },
       {
         "day": 6,
         "frequencyId": "sol-639",
         "durationMin": 30,
-        "note": "חיבור לתמיכה"
+        "note": "חיבור לתמיכה",
+        "noteEn": "Connecting to support"
       },
       {
         "day": 7,
         "frequencyId": "bb-theta",
         "durationMin": 30,
-        "note": "העמקת ההרפיה"
+        "note": "העמקת ההרפיה",
+        "noteEn": "Deeper relaxation"
       },
       {
         "day": 8,
         "frequencyId": "sol-741",
         "durationMin": 25,
-        "note": "בהירות"
+        "note": "בהירות",
+        "noteEn": "Clarity"
       },
       {
         "day": 9,
         "frequencyId": "bb-alpha",
         "durationMin": 30,
-        "note": "יציבות"
+        "note": "יציבות",
+        "noteEn": "Steadiness"
       },
       {
         "day": 10,
         "frequencyId": "sol-963",
         "durationMin": 30,
-        "note": "סיכום המסע"
+        "note": "סיכום המסע",
+        "noteEn": "Closing the journey"
       }
-    ]
+    ],
+    "titleEn": "Easing anxiety",
+    "descriptionEn": "Ten gradual days that build steadiness — getting acquainted, releasing, deepening and closing."
   },
   {
     "id": "journey-intro-3",
@@ -220,21 +257,26 @@
         "day": 1,
         "frequencyId": "bb-alpha",
         "durationMin": 15,
-        "note": "טעימה ראשונה — ערנות רגועה"
+        "note": "טעימה ראשונה — ערנות רגועה",
+        "noteEn": "A first taste — calm alertness"
       },
       {
         "day": 2,
         "frequencyId": "sol-528",
         "durationMin": 20,
-        "note": "כך נשמעת מלודיה שנבנית מתדר יסוד"
+        "note": "כך נשמעת מלודיה שנבנית מתדר יסוד",
+        "noteEn": "This is what a melody built from a root frequency sounds like"
       },
       {
         "day": 3,
         "frequencyId": "bb-theta",
         "durationMin": 25,
-        "note": "העמקה — ובחירה לאן ממשיכים"
+        "note": "העמקה — ובחירה לאן ממשיכים",
+        "noteEn": "Going deeper — and choosing where next"
       }
-    ]
+    ],
+    "titleEn": "Three days to get acquainted",
+    "descriptionEn": "The shortest journey. Three sessions that show the difference between a brainwave band and a root frequency, so you know where to go next."
   },
   {
     "id": "journey-morning-5",
@@ -247,33 +289,40 @@
         "day": 1,
         "frequencyId": "bb-alpha",
         "durationMin": 15,
-        "note": "התעוררות רכה"
+        "note": "התעוררות רכה",
+        "noteEn": "A soft wake-up"
       },
       {
         "day": 2,
         "frequencyId": "sol-741",
         "durationMin": 20,
-        "note": "צלילות לפני היציאה"
+        "note": "צלילות לפני היציאה",
+        "noteEn": "Clarity before heading out"
       },
       {
         "day": 3,
         "frequencyId": "bb-beta",
         "durationMin": 20,
-        "note": "העלאת הילוך"
+        "note": "העלאת הילוך",
+        "noteEn": "Shifting up"
       },
       {
         "day": 4,
         "frequencyId": "sol-852",
         "durationMin": 20,
-        "note": "מיקוד וכוונה ליום"
+        "note": "מיקוד וכוונה ליום",
+        "noteEn": "Focus and intent for the day"
       },
       {
         "day": 5,
         "frequencyId": "bb-gamma",
         "durationMin": 15,
-        "note": "פתיחה ערנית"
+        "note": "פתיחה ערנית",
+        "noteEn": "An alert opening"
       }
-    ]
+    ],
+    "titleEn": "Opening the day",
+    "descriptionEn": "Five short morning sessions that shift up a gear at a time — from a soft wake-up to full alertness."
   },
   {
     "id": "journey-creative-7",
@@ -286,45 +335,54 @@
         "day": 1,
         "frequencyId": "bb-alpha",
         "durationMin": 25,
-        "note": "הרפיית הביקורת הפנימית"
+        "note": "הרפיית הביקורת הפנימית",
+        "noteEn": "Relaxing the inner critic"
       },
       {
         "day": 2,
         "frequencyId": "sol-417",
         "durationMin": 30,
-        "note": "פתיחות לשינוי"
+        "note": "פתיחות לשינוי",
+        "noteEn": "Openness to change"
       },
       {
         "day": 3,
         "frequencyId": "bb-theta",
         "durationMin": 30,
-        "note": "מצב חלימה ערה"
+        "note": "מצב חלימה ערה",
+        "noteEn": "Waking dream state"
       },
       {
         "day": 4,
         "frequencyId": "sol-528",
         "durationMin": 30,
-        "note": "אמצע המסע — זרימה"
+        "note": "אמצע המסע — זרימה",
+        "noteEn": "Midpoint — flow"
       },
       {
         "day": 5,
         "frequencyId": "bb-alpha",
         "durationMin": 25,
-        "note": "עבודה רגועה"
+        "note": "עבודה רגועה",
+        "noteEn": "Calm working"
       },
       {
         "day": 6,
         "frequencyId": "sol-741",
         "durationMin": 30,
-        "note": "ניסוח ובהירות"
+        "note": "ניסוח ובהירות",
+        "noteEn": "Wording and clarity"
       },
       {
         "day": 7,
         "frequencyId": "bb-gamma",
         "durationMin": 20,
-        "note": "חיבור הקצוות"
+        "note": "חיבור הקצוות",
+        "noteEn": "Tying the ends together"
       }
-    ]
+    ],
+    "titleEn": "Creative flow",
+    "descriptionEn": "A week that moves between relaxation and sharpness — theta for raw ideas, alpha for calm work, clarity for putting it into words."
   },
   {
     "id": "journey-body-7",
@@ -337,45 +395,54 @@
         "day": 1,
         "frequencyId": "sol-174",
         "durationMin": 25,
-        "note": "נחיתה בגוף"
+        "note": "נחיתה בגוף",
+        "noteEn": "Landing in the body"
       },
       {
         "day": 2,
         "frequencyId": "sol-285",
         "durationMin": 25,
-        "note": "תשומת לב לתחושה"
+        "note": "תשומת לב לתחושה",
+        "noteEn": "Attention to sensation"
       },
       {
         "day": 3,
         "frequencyId": "bb-theta",
         "durationMin": 30,
-        "note": "שחרור עמוק"
+        "note": "שחרור עמוק",
+        "noteEn": "Deep release"
       },
       {
         "day": 4,
         "frequencyId": "sol-396",
         "durationMin": 30,
-        "note": "הרפיית מתח מצטבר"
+        "note": "הרפיית מתח מצטבר",
+        "noteEn": "Releasing accumulated tension"
       },
       {
         "day": 5,
         "frequencyId": "bb-delta",
         "durationMin": 45,
-        "note": "מנוחה עמוקה"
+        "note": "מנוחה עמוקה",
+        "noteEn": "Deep rest"
       },
       {
         "day": 6,
         "frequencyId": "sol-174",
         "durationMin": 30,
-        "note": "יסוד ויציבות"
+        "note": "יסוד ויציבות",
+        "noteEn": "Grounding and steadiness"
       },
       {
         "day": 7,
         "frequencyId": "bb-theta",
         "durationMin": 30,
-        "note": "סיכום — גוף רגוע"
+        "note": "סיכום — גוף רגוע",
+        "noteEn": "Closing — a calm body"
       }
-    ]
+    ],
+    "titleEn": "Physical calm",
+    "descriptionEn": "A week of long, quiet sessions for releasing accumulated physical tension. A relaxation journey — not a treatment."
   },
   {
     "id": "journey-meditation-14",
@@ -388,87 +455,103 @@
         "day": 1,
         "frequencyId": "bb-alpha",
         "durationMin": 10,
-        "note": "ישיבה קצרה"
+        "note": "ישיבה קצרה",
+        "noteEn": "A short sit"
       },
       {
         "day": 2,
         "frequencyId": "bb-alpha",
         "durationMin": 15,
-        "note": "התארכות ראשונה"
+        "note": "התארכות ראשונה",
+        "noteEn": "First lengthening"
       },
       {
         "day": 3,
         "frequencyId": "sol-432",
         "durationMin": 20,
-        "note": "כוונון"
+        "note": "כוונון",
+        "noteEn": "Tuning"
       },
       {
         "day": 4,
         "frequencyId": "bb-theta",
         "durationMin": 20,
-        "note": "כניסה לתטא"
+        "note": "כניסה לתטא",
+        "noteEn": "Entering theta"
       },
       {
         "day": 5,
         "frequencyId": "bb-theta",
         "durationMin": 25,
-        "note": "שהייה"
+        "note": "שהייה",
+        "noteEn": "Staying"
       },
       {
         "day": 6,
         "frequencyId": "sol-528",
         "durationMin": 25,
-        "note": "מרכז רגשי"
+        "note": "מרכז רגשי",
+        "noteEn": "Emotional centre"
       },
       {
         "day": 7,
         "frequencyId": "bb-theta",
         "durationMin": 30,
-        "note": "אמצע הדרך"
+        "note": "אמצע הדרך",
+        "noteEn": "Halfway"
       },
       {
         "day": 8,
         "frequencyId": "sol-639",
         "durationMin": 30,
-        "note": "פתיחות"
+        "note": "פתיחות",
+        "noteEn": "Openness"
       },
       {
         "day": 9,
         "frequencyId": "bb-theta",
         "durationMin": 30,
-        "note": "יציבות בתטא"
+        "note": "יציבות בתטא",
+        "noteEn": "Steady in theta"
       },
       {
         "day": 10,
         "frequencyId": "sol-852",
         "durationMin": 30,
-        "note": "אינטואיציה"
+        "note": "אינטואיציה",
+        "noteEn": "Intuition"
       },
       {
         "day": 11,
         "frequencyId": "bb-theta",
         "durationMin": 35,
-        "note": "עומק"
+        "note": "עומק",
+        "noteEn": "Depth"
       },
       {
         "day": 12,
         "frequencyId": "sol-963",
         "durationMin": 35,
-        "note": "מרחב"
+        "note": "מרחב",
+        "noteEn": "Space"
       },
       {
         "day": 13,
         "frequencyId": "bb-delta",
         "durationMin": 40,
-        "note": "שקט"
+        "note": "שקט",
+        "noteEn": "Quiet"
       },
       {
         "day": 14,
         "frequencyId": "sol-963",
         "durationMin": 30,
-        "note": "סיכום המסע"
+        "note": "סיכום המסע",
+        "noteEn": "Closing the journey"
       }
-    ]
+    ],
+    "titleEn": "Deepening meditation",
+    "descriptionEn": "The longest journey. It starts at ten minutes and lengthens gradually to forty, to build a steady sit rather than jump into one."
   },
   {
     "id": "journey-ascend-9",
@@ -483,65 +566,76 @@
         "frequencyId": "sol-174",
         "durationMin": 20,
         "note": "המדרגה הראשונה — נמוך ויציב",
-        "pace": 0.5
+        "pace": 0.5,
+        "noteEn": "The first step — low and steady"
       },
       {
         "day": 2,
         "frequencyId": "sol-285",
         "durationMin": 20,
         "note": "צעד למעלה",
-        "pace": 0.52
+        "pace": 0.52,
+        "noteEn": "A step up"
       },
       {
         "day": 3,
         "frequencyId": "sol-396",
         "durationMin": 20,
         "note": "הקצב מתייצב",
-        "pace": 0.56
+        "pace": 0.56,
+        "noteEn": "The pulse settles"
       },
       {
         "day": 4,
         "frequencyId": "sol-417",
         "durationMin": 25,
         "note": "תנועה",
-        "pace": 0.6
+        "pace": 0.6,
+        "noteEn": "Movement"
       },
       {
         "day": 5,
         "frequencyId": "sol-528",
         "durationMin": 25,
         "note": "אמצע הסולם",
-        "pace": 0.64
+        "pace": 0.64,
+        "noteEn": "Middle of the scale"
       },
       {
         "day": 6,
         "frequencyId": "sol-639",
         "durationMin": 25,
         "note": "פתיחה",
-        "pace": 0.68
+        "pace": 0.68,
+        "noteEn": "Opening"
       },
       {
         "day": 7,
         "frequencyId": "sol-741",
         "durationMin": 25,
         "note": "בהירות בקצב",
-        "pace": 0.72
+        "pace": 0.72,
+        "noteEn": "Clarity in rhythm"
       },
       {
         "day": 8,
         "frequencyId": "sol-852",
         "durationMin": 25,
         "note": "כמעט למעלה",
-        "pace": 0.76
+        "pace": 0.76,
+        "noteEn": "Almost at the top"
       },
       {
         "day": 9,
         "frequencyId": "sol-963",
         "durationMin": 30,
         "note": "המדרגה העליונה",
-        "pace": 0.8
+        "pace": 0.8,
+        "noteEn": "The top step"
       }
-    ]
+    ],
+    "titleEn": "Climbing the scale",
+    "descriptionEn": "A day for each tone in the solfeggio scale, from 174 up to 963 — one step up each day, at a pulsing pace rather than a still one."
   },
   {
     "id": "journey-pulse-5",
@@ -556,37 +650,44 @@
         "frequencyId": "sol-396",
         "durationMin": 15,
         "note": "התנעה",
-        "pace": 0.55
+        "pace": 0.55,
+        "noteEn": "Starting up"
       },
       {
         "day": 2,
         "frequencyId": "sol-417",
         "durationMin": 15,
         "note": "תנועה קדימה",
-        "pace": 0.65
+        "pace": 0.65,
+        "noteEn": "Moving forward"
       },
       {
         "day": 3,
         "frequencyId": "sol-528",
         "durationMin": 20,
         "note": "קצב מלא",
-        "pace": 0.75
+        "pace": 0.75,
+        "noteEn": "Full pace"
       },
       {
         "day": 4,
         "frequencyId": "sol-741",
         "durationMin": 20,
         "note": "חדות",
-        "pace": 0.85
+        "pace": 0.85,
+        "noteEn": "Sharpness"
       },
       {
         "day": 5,
         "frequencyId": "sol-852",
         "durationMin": 20,
         "note": "שיא הבוקר",
-        "pace": 0.92
+        "pace": 0.92,
+        "noteEn": "Peak of the morning"
       }
-    ]
+    ],
+    "titleEn": "Morning pulse",
+    "descriptionEn": "Five short, rhythmic sessions to start the day — climbing the scale and lifting the pace along with it."
   },
   {
     "id": "journey-move-7",
@@ -601,51 +702,60 @@
         "frequencyId": "sol-417",
         "durationMin": 20,
         "note": "יציאה לדרך",
-        "pace": 0.6
+        "pace": 0.6,
+        "noteEn": "Setting out"
       },
       {
         "day": 2,
         "frequencyId": "sol-528",
         "durationMin": 25,
         "note": "מציאת הקצב",
-        "pace": 0.66
+        "pace": 0.66,
+        "noteEn": "Finding the pace"
       },
       {
         "day": 3,
         "frequencyId": "sol-639",
         "durationMin": 25,
         "note": "אמצע המסע",
-        "pace": 0.7
+        "pace": 0.7,
+        "noteEn": "Halfway"
       },
       {
         "day": 4,
         "frequencyId": "bb-beta",
         "durationMin": 25,
         "note": "ערנות בתנועה",
-        "pace": 0.74
+        "pace": 0.74,
+        "noteEn": "Alert in motion"
       },
       {
         "day": 5,
         "frequencyId": "sol-741",
         "durationMin": 30,
         "note": "קצב מתמשך",
-        "pace": 0.78
+        "pace": 0.78,
+        "noteEn": "Sustained rhythm"
       },
       {
         "day": 6,
         "frequencyId": "bb-gamma",
         "durationMin": 20,
         "note": "פרץ קצר",
-        "pace": 0.88
+        "pace": 0.88,
+        "noteEn": "A short burst"
       },
       {
         "day": 7,
         "frequencyId": "sol-852",
         "durationMin": 30,
         "note": "סיום גבוה",
-        "pace": 0.8
+        "pace": 0.8,
+        "noteEn": "Finishing high"
       }
-    ]
+    ],
+    "titleEn": "Movement",
+    "descriptionEn": "A journey for walking, stretching or working on your feet. A steady pulse throughout, with a constant climb through the scale."
   },
   {
     "id": "journey-dissolve-3",
@@ -659,23 +769,28 @@
         "frequencyId": "sol-417",
         "durationMin": 25,
         "note": "הקצוות מתחילים להתרכך",
-        "depth": 0.45
+        "depth": 0.45,
+        "noteEn": "The edges start to soften"
       },
       {
         "day": 2,
         "frequencyId": "bb-theta",
         "durationMin": 35,
         "note": "הסולם משתנה",
-        "depth": 0.7
+        "depth": 0.7,
+        "noteEn": "The scale changes"
       },
       {
         "day": 3,
         "frequencyId": "sol-639",
         "durationMin": 40,
         "note": "התמוססות מלאה",
-        "depth": 0.92
+        "depth": 0.92,
+        "noteEn": "Full dissolve"
       }
-    ]
+    ],
+    "titleEn": "Dissolving",
+    "descriptionEn": "Three sessions that ease you into the psychedelic texture — long echoes, movement between the ears, and intervals you never hear on a piano."
   },
   {
     "id": "journey-kaleido-7",
@@ -690,7 +805,8 @@
         "durationMin": 30,
         "note": "הדפוס הראשון",
         "depth": 0.6,
-        "pace": 0.3
+        "pace": 0.3,
+        "noteEn": "The first pattern"
       },
       {
         "day": 2,
@@ -698,7 +814,8 @@
         "durationMin": 30,
         "note": "הסיבוב מתחיל",
         "depth": 0.7,
-        "pace": 0.34
+        "pace": 0.34,
+        "noteEn": "The turning starts"
       },
       {
         "day": 3,
@@ -706,7 +823,8 @@
         "durationMin": 40,
         "note": "אמצע הדפוס",
         "depth": 0.8,
-        "pace": 0.3
+        "pace": 0.3,
+        "noteEn": "Middle of the pattern"
       },
       {
         "day": 4,
@@ -714,7 +832,8 @@
         "durationMin": 35,
         "note": "השתקפויות",
         "depth": 0.85,
-        "pace": 0.4
+        "pace": 0.4,
+        "noteEn": "Reflections"
       },
       {
         "day": 5,
@@ -722,7 +841,8 @@
         "durationMin": 35,
         "note": "צבע חדש",
         "depth": 0.9,
-        "pace": 0.36
+        "pace": 0.36,
+        "noteEn": "A new colour"
       },
       {
         "day": 6,
@@ -730,7 +850,8 @@
         "durationMin": 25,
         "note": "הבזק",
         "depth": 0.95,
-        "pace": 0.5
+        "pace": 0.5,
+        "noteEn": "A flash"
       },
       {
         "day": 7,
@@ -738,9 +859,12 @@
         "durationMin": 40,
         "note": "הדפוס נסגר",
         "depth": 1,
-        "pace": 0.28
+        "pace": 0.28,
+        "noteEn": "The pattern closes"
       }
-    ]
+    ],
+    "titleEn": "Kaleidoscope",
+    "descriptionEn": "A week where the sound turns and folds in on itself. High depth throughout, with just enough movement to stop the picture freezing."
   },
   {
     "id": "journey-void-5",
@@ -755,7 +879,8 @@
         "durationMin": 40,
         "note": "הקרקע נעלמת",
         "depth": 0.75,
-        "pace": 0.08
+        "pace": 0.08,
+        "noteEn": "The ground disappears"
       },
       {
         "day": 2,
@@ -763,7 +888,8 @@
         "durationMin": 60,
         "note": "שקיעה איטית",
         "depth": 0.85,
-        "pace": 0.05
+        "pace": 0.05,
+        "noteEn": "A slow descent"
       },
       {
         "day": 3,
@@ -771,7 +897,8 @@
         "durationMin": 45,
         "note": "מרחב",
         "depth": 0.9,
-        "pace": 0.08
+        "pace": 0.08,
+        "noteEn": "Space"
       },
       {
         "day": 4,
@@ -779,7 +906,8 @@
         "durationMin": 60,
         "note": "בלי כיוון",
         "depth": 0.96,
-        "pace": 0.05
+        "pace": 0.05,
+        "noteEn": "No direction"
       },
       {
         "day": 5,
@@ -787,9 +915,12 @@
         "durationMin": 45,
         "note": "חזרה מלמעלה",
         "depth": 1,
-        "pace": 0.12
+        "pace": 0.12,
+        "noteEn": "Coming back from above"
       }
-    ]
+    ],
+    "titleEn": "Open space",
+    "descriptionEn": "Unusually long, slow sessions at full depth and almost without movement — the closest this app gets to empty space."
   },
   {
     "id": "journey-spin-6",
@@ -805,7 +936,8 @@
         "durationMin": 25,
         "note": "הסיבוב מתחיל",
         "depth": 0.65,
-        "pace": 0.6
+        "pace": 0.6,
+        "noteEn": "The spin begins"
       },
       {
         "day": 2,
@@ -813,7 +945,8 @@
         "durationMin": 30,
         "note": "תופס מהירות",
         "depth": 0.75,
-        "pace": 0.68
+        "pace": 0.68,
+        "noteEn": "Picking up speed"
       },
       {
         "day": 3,
@@ -821,7 +954,8 @@
         "durationMin": 30,
         "note": "ערנות בתוך הסחרור",
         "depth": 0.82,
-        "pace": 0.72
+        "pace": 0.72,
+        "noteEn": "Alert inside the spin"
       },
       {
         "day": 4,
@@ -829,7 +963,8 @@
         "durationMin": 30,
         "note": "חדות בתוך התנועה",
         "depth": 0.88,
-        "pace": 0.78
+        "pace": 0.78,
+        "noteEn": "Sharpness inside the movement"
       },
       {
         "day": 5,
@@ -837,7 +972,8 @@
         "durationMin": 25,
         "note": "המהיר ביותר",
         "depth": 0.95,
-        "pace": 0.85
+        "pace": 0.85,
+        "noteEn": "The fastest"
       },
       {
         "day": 6,
@@ -845,9 +981,12 @@
         "durationMin": 35,
         "note": "הסחרור מתרחב",
         "depth": 1,
-        "pace": 0.7
+        "pace": 0.7,
+        "noteEn": "The spin widens"
       }
-    ]
+    ],
+    "titleEn": "Spin",
+    "descriptionEn": "The corner where both dials go up at once — full depth together with a fast pulse. The furthest from ambient the app reaches."
   },
   {
     "id": "journey-descent-7",
@@ -863,7 +1002,8 @@
         "durationMin": 30,
         "note": "מלמעלה",
         "depth": 0.6,
-        "pace": 0.18
+        "pace": 0.18,
+        "noteEn": "From the top"
       },
       {
         "day": 2,
@@ -871,7 +1011,8 @@
         "durationMin": 35,
         "note": "מדרגה למטה",
         "depth": 0.7,
-        "pace": 0.16
+        "pace": 0.16,
+        "noteEn": "A step down"
       },
       {
         "day": 3,
@@ -879,7 +1020,8 @@
         "durationMin": 35,
         "note": "ממשיכים לרדת",
         "depth": 0.78,
-        "pace": 0.14
+        "pace": 0.14,
+        "noteEn": "Still descending"
       },
       {
         "day": 4,
@@ -887,7 +1029,8 @@
         "durationMin": 40,
         "note": "אמצע הירידה",
         "depth": 0.85,
-        "pace": 0.12
+        "pace": 0.12,
+        "noteEn": "Middle of the descent"
       },
       {
         "day": 5,
@@ -895,7 +1038,8 @@
         "durationMin": 40,
         "note": "מתחת לאמצע",
         "depth": 0.9,
-        "pace": 0.1
+        "pace": 0.1,
+        "noteEn": "Below the middle"
       },
       {
         "day": 6,
@@ -903,7 +1047,8 @@
         "durationMin": 45,
         "note": "כבד יותר",
         "depth": 0.95,
-        "pace": 0.08
+        "pace": 0.08,
+        "noteEn": "Heavier"
       },
       {
         "day": 7,
@@ -911,9 +1056,12 @@
         "durationMin": 50,
         "note": "התחתית",
         "depth": 1,
-        "pace": 0.06
+        "pace": 0.06,
+        "noteEn": "The bottom"
       }
-    ]
+    ],
+    "titleEn": "Descent",
+    "descriptionEn": "The mirror of \"Climbing the scale\" — down from 963 to 174, day by day, with the sessions lengthening and the depth growing as you go."
   },
   {
     "id": "journey-aurora-5",
@@ -929,7 +1077,8 @@
         "durationMin": 25,
         "note": "האור הראשון",
         "depth": 0.7,
-        "pace": 0.3
+        "pace": 0.3,
+        "noteEn": "First light"
       },
       {
         "day": 2,
@@ -937,7 +1086,8 @@
         "durationMin": 20,
         "note": "הבהוב",
         "depth": 0.8,
-        "pace": 0.45
+        "pace": 0.45,
+        "noteEn": "A flicker"
       },
       {
         "day": 3,
@@ -945,7 +1095,8 @@
         "durationMin": 30,
         "note": "התרחבות",
         "depth": 0.88,
-        "pace": 0.35
+        "pace": 0.35,
+        "noteEn": "Expanding"
       },
       {
         "day": 4,
@@ -953,7 +1104,8 @@
         "durationMin": 25,
         "note": "שיא הבהירות",
         "depth": 0.94,
-        "pace": 0.5
+        "pace": 0.5,
+        "noteEn": "Peak brightness"
       },
       {
         "day": 5,
@@ -961,9 +1113,12 @@
         "durationMin": 30,
         "note": "זוהר מלא",
         "depth": 1,
-        "pace": 0.4
+        "pace": 0.4,
+        "noteEn": "Full aurora"
       }
-    ]
+    ],
+    "titleEn": "Aurora",
+    "descriptionEn": "The bright edge of the psychedelic shelf — high frequencies and gamma, awake and glittering rather than heavy and deep."
   },
   {
     "id": "journey-deepwork-5",
@@ -980,7 +1135,8 @@
         "note": "בלוק ראשון — כניסה לעבודה",
         "density": 0.3,
         "pace": 0.12,
-        "depth": 0
+        "depth": 0,
+        "noteEn": "First block — settling into work"
       },
       {
         "day": 2,
@@ -989,7 +1145,8 @@
         "note": "שעה וחצי רצופה",
         "density": 0.28,
         "pace": 0.12,
-        "depth": 0
+        "depth": 0,
+        "noteEn": "Ninety unbroken minutes"
       },
       {
         "day": 3,
@@ -998,7 +1155,8 @@
         "note": "ריכוז מתמשך",
         "density": 0.25,
         "pace": 0.15,
-        "depth": 0
+        "depth": 0,
+        "noteEn": "Sustained concentration"
       },
       {
         "day": 4,
@@ -1007,7 +1165,8 @@
         "note": "הבלוק הארוך ביותר",
         "density": 0.22,
         "pace": 0.1,
-        "depth": 0
+        "depth": 0,
+        "noteEn": "The longest block"
       },
       {
         "day": 5,
@@ -1016,9 +1175,12 @@
         "note": "סגירת השבוע",
         "density": 0.3,
         "pace": 0.14,
-        "depth": 0
+        "depth": 0,
+        "noteEn": "Closing the week"
       }
-    ]
+    ],
+    "titleEn": "Deep work",
+    "descriptionEn": "Five long blocks for listening while you work. Low density and no depth — music you can think over, not music that pulls at the ear."
   },
   {
     "id": "journey-workday-4",
@@ -1034,7 +1196,8 @@
         "note": "בוקר — התארגנות לפני שמתחילים",
         "density": 0.35,
         "pace": 0.25,
-        "depth": 0
+        "depth": 0,
+        "noteEn": "Morning — settling in before you start"
       },
       {
         "day": 2,
@@ -1043,7 +1206,8 @@
         "note": "הבלוק העמוק של היום",
         "density": 0.22,
         "pace": 0.12,
-        "depth": 0
+        "depth": 0,
+        "noteEn": "The deep block of the day"
       },
       {
         "day": 3,
@@ -1052,7 +1216,8 @@
         "note": "צהריים — התאוששות קצרה",
         "density": 0.3,
         "pace": 0.08,
-        "depth": 0
+        "depth": 0,
+        "noteEn": "Afternoon — a short recovery"
       },
       {
         "day": 4,
@@ -1061,9 +1226,12 @@
         "note": "סגירת יום — מורידים הילוך",
         "density": 0.28,
         "pace": 0.06,
-        "depth": 0
+        "depth": 0,
+        "noteEn": "End of day — shifting down"
       }
-    ]
+    ],
+    "titleEn": "The rhythm of a working day",
+    "descriptionEn": "Four parts of a single working day — settling in, the deep block, the afternoon recovery and the wind-down. Meant to be repeated day after day rather than finished."
   },
   {
     "id": "journey-charge-5",
@@ -1078,7 +1246,8 @@
         "durationMin": 15,
         "note": "טעינה ראשונה",
         "pace": 0.6,
-        "density": 0.6
+        "density": 0.6,
+        "noteEn": "First charge"
       },
       {
         "day": 2,
@@ -1086,7 +1255,8 @@
         "durationMin": 12,
         "note": "קצר וחד",
         "pace": 0.7,
-        "density": 0.65
+        "density": 0.65,
+        "noteEn": "Short and sharp"
       },
       {
         "day": 3,
@@ -1094,7 +1264,8 @@
         "durationMin": 10,
         "note": "הקצר והמהיר ביותר",
         "pace": 0.85,
-        "density": 0.7
+        "density": 0.7,
+        "noteEn": "The shortest and fastest"
       },
       {
         "day": 4,
@@ -1102,7 +1273,8 @@
         "durationMin": 15,
         "note": "גובה",
         "pace": 0.75,
-        "density": 0.6
+        "density": 0.6,
+        "noteEn": "Height"
       },
       {
         "day": 5,
@@ -1110,9 +1282,12 @@
         "durationMin": 12,
         "note": "טעינה מלאה",
         "pace": 0.9,
-        "density": 0.75
+        "density": 0.75,
+        "noteEn": "Full charge"
       }
-    ]
+    ],
+    "titleEn": "Charge",
+    "descriptionEn": "Short, intense sessions for lifting energy mid-day — ten to twenty minutes, high pace, beta and gamma."
   },
   {
     "id": "journey-closeness-5",
@@ -1128,7 +1303,8 @@
         "note": "להיות באותו חדר",
         "density": 0.4,
         "pace": 0.22,
-        "depth": 0.3
+        "depth": 0.3,
+        "noteEn": "Being in the same room"
       },
       {
         "day": 2,
@@ -1137,7 +1313,8 @@
         "note": "נשימה משותפת",
         "density": 0.45,
         "pace": 0.25,
-        "depth": 0.35
+        "depth": 0.35,
+        "noteEn": "Breathing together"
       },
       {
         "day": 3,
@@ -1146,7 +1323,8 @@
         "note": "קצב משותף",
         "density": 0.45,
         "pace": 0.3,
-        "depth": 0.4
+        "depth": 0.4,
+        "noteEn": "A shared rhythm"
       },
       {
         "day": 4,
@@ -1155,7 +1333,8 @@
         "note": "בלי מילים",
         "density": 0.5,
         "pace": 0.28,
-        "depth": 0.42
+        "depth": 0.42,
+        "noteEn": "Without words"
       },
       {
         "day": 5,
@@ -1164,9 +1343,12 @@
         "note": "השקט שאחרי",
         "density": 0.42,
         "pace": 0.24,
-        "depth": 0.45
+        "depth": 0.45,
+        "noteEn": "The quiet afterwards"
       }
-    ]
+    ],
+    "titleEn": "Closeness",
+    "descriptionEn": "Five evenings around 639Hz — the tone tradition associates with harmony between people. Warm and slow, familiar intervals only, with nothing that draws attention to itself."
   },
   {
     "id": "journey-touch-4",
@@ -1183,7 +1365,8 @@
         "beatId": "bb-theta",
         "density": 0.35,
         "pace": 0.15,
-        "depth": 0.3
+        "depth": 0.3,
+        "noteEn": "Warm hands"
       },
       {
         "day": 2,
@@ -1193,7 +1376,8 @@
         "beatId": "bb-theta",
         "density": 0.38,
         "pace": 0.14,
-        "depth": 0.35
+        "depth": 0.35,
+        "noteEn": "Slowly"
       },
       {
         "day": 3,
@@ -1203,7 +1387,8 @@
         "beatId": "bb-theta",
         "density": 0.4,
         "pace": 0.18,
-        "depth": 0.4
+        "depth": 0.4,
+        "noteEn": "Tuning to the body"
       },
       {
         "day": 4,
@@ -1213,9 +1398,12 @@
         "beatId": "bb-theta",
         "density": 0.42,
         "pace": 0.16,
-        "depth": 0.45
+        "depth": 0.45,
+        "noteEn": "A long ending"
       }
-    ]
+    ],
+    "titleEn": "Touch",
+    "descriptionEn": "Long, very slow sessions for touch and massage — low frequencies, notes far apart, and theta underneath."
   },
   {
     "id": "journey-evening-3",
@@ -1231,7 +1419,8 @@
         "note": "פעימה איטית",
         "density": 0.45,
         "pace": 0.5,
-        "depth": 0.4
+        "depth": 0.4,
+        "noteEn": "A slow pulse"
       },
       {
         "day": 2,
@@ -1240,7 +1429,8 @@
         "note": "מתחמם",
         "density": 0.5,
         "pace": 0.55,
-        "depth": 0.45
+        "depth": 0.45,
+        "noteEn": "Warming"
       },
       {
         "day": 3,
@@ -1249,9 +1439,12 @@
         "note": "לילה ארוך",
         "density": 0.48,
         "pace": 0.45,
-        "depth": 0.48
+        "depth": 0.48,
+        "noteEn": "A long night"
       }
-    ]
+    ],
+    "titleEn": "An evening for two",
+    "descriptionEn": "Three long evenings, an hour and more. A slow bass pulse around thirty a minute — a resting rate, not a dancing one."
   },
   {
     "id": "journey-techno-5",
@@ -1269,7 +1462,8 @@
         "pace": 0.4,
         "depth": 0.1,
         "density": 0.5,
-        "style": "techno"
+        "style": "techno",
+        "noteEn": "Minimal — kick, bass and hats"
       },
       {
         "day": 2,
@@ -1279,7 +1473,8 @@
         "pace": 0.5,
         "depth": 0.12,
         "density": 0.6,
-        "style": "techno"
+        "style": "techno",
+        "noteEn": "The groove closes up"
       },
       {
         "day": 3,
@@ -1289,7 +1484,8 @@
         "pace": 0.6,
         "depth": 0.15,
         "density": 0.68,
-        "style": "techno"
+        "style": "techno",
+        "noteEn": "The arpeggio enters"
       },
       {
         "day": 4,
@@ -1299,7 +1495,8 @@
         "pace": 0.72,
         "depth": 0.2,
         "density": 0.75,
-        "style": "techno"
+        "style": "techno",
+        "noteEn": "Full pressure"
       },
       {
         "day": 5,
@@ -1310,9 +1507,12 @@
         "depth": 0.25,
         "density": 0.8,
         "style": "techno",
-        "beatId": "bb-gamma"
+        "beatId": "bb-gamma",
+        "noteEn": "Peak of the week"
       }
-    ]
+    ],
+    "titleEn": "Techno — five evenings",
+    "descriptionEn": "A techno set built on the frequency itself: the kick is the target frequency folded down by octaves, the bass sits under it, and the arpeggio is drawn from the same scale. Five evenings climbing in intensity from 396Hz to 852Hz."
   },
   {
     "id": "journey-trance-6",
@@ -1330,7 +1530,8 @@
         "pace": 0.5,
         "depth": 0.25,
         "density": 0.6,
-        "style": "trance"
+        "style": "trance",
+        "noteEn": "A soft entry"
       },
       {
         "day": 2,
@@ -1340,7 +1541,8 @@
         "pace": 0.55,
         "depth": 0.28,
         "density": 0.65,
-        "style": "trance"
+        "style": "trance",
+        "noteEn": "The arpeggio settles in"
       },
       {
         "day": 3,
@@ -1350,7 +1552,8 @@
         "pace": 0.6,
         "depth": 0.32,
         "density": 0.7,
-        "style": "trance"
+        "style": "trance",
+        "noteEn": "A long breakdown"
       },
       {
         "day": 4,
@@ -1360,7 +1563,8 @@
         "pace": 0.66,
         "depth": 0.36,
         "density": 0.74,
-        "style": "trance"
+        "style": "trance",
+        "noteEn": "The build lengthens"
       },
       {
         "day": 5,
@@ -1371,7 +1575,8 @@
         "depth": 0.4,
         "density": 0.78,
         "style": "trance",
-        "beatId": "bb-gamma"
+        "beatId": "bb-gamma",
+        "noteEn": "A high night"
       },
       {
         "day": 6,
@@ -1382,9 +1587,12 @@
         "depth": 0.45,
         "density": 0.8,
         "style": "trance",
-        "beatId": "bb-gamma"
+        "beatId": "bb-gamma",
+        "noteEn": "The full set"
       }
-    ]
+    ],
+    "titleEn": "Night trance — six nights",
+    "descriptionEn": "Full trance with the classic structure — sixteen bars of drive, a breakdown where the kick disappears and the room opens, a build with a rising filter, and a drop. The bass sits between the beats, and every sound derives from the night's frequency."
   },
   {
     "id": "journey-techno-run-4",
@@ -1402,7 +1610,8 @@
         "pace": 0.8,
         "depth": 0.05,
         "density": 0.68,
-        "style": "techno"
+        "style": "techno",
+        "noteEn": "Warming up at full pace"
       },
       {
         "day": 2,
@@ -1412,7 +1621,8 @@
         "pace": 0.86,
         "depth": 0.05,
         "density": 0.72,
-        "style": "techno"
+        "style": "techno",
+        "noteEn": "A constant rhythm"
       },
       {
         "day": 3,
@@ -1423,7 +1633,8 @@
         "depth": 0.08,
         "density": 0.75,
         "style": "techno",
-        "beatId": "bb-gamma"
+        "beatId": "bb-gamma",
+        "noteEn": "Pushing"
       },
       {
         "day": 4,
@@ -1434,9 +1645,12 @@
         "depth": 0.1,
         "density": 0.78,
         "style": "techno",
-        "beatId": "bb-gamma"
+        "beatId": "bb-gamma",
+        "noteEn": "The long workout"
       }
-    ]
+    ],
+    "titleEn": "Techno for movement — four workouts",
+    "descriptionEn": "Four workouts at a high, constant pace — for running, cycling or the gym. The pulse never changes mid-session, and beta runs underneath every one."
   },
   {
     "id": "journey-trance-psy-5",
@@ -1454,7 +1668,8 @@
         "depth": 0.55,
         "density": 0.62,
         "style": "trance",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "The scale changes"
       },
       {
         "day": 2,
@@ -1465,7 +1680,8 @@
         "depth": 0.62,
         "density": 0.66,
         "style": "trance",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "Long echoes"
       },
       {
         "day": 3,
@@ -1476,7 +1692,8 @@
         "depth": 0.7,
         "density": 0.7,
         "style": "trance",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "A deep breakdown"
       },
       {
         "day": 4,
@@ -1487,7 +1704,8 @@
         "depth": 0.78,
         "density": 0.74,
         "style": "trance",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "Everything opens"
       },
       {
         "day": 5,
@@ -1498,9 +1716,12 @@
         "depth": 0.85,
         "density": 0.76,
         "style": "trance",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "The long set"
       }
-    ]
+    ],
+    "titleEn": "Psychedelic trance — five sets",
+    "descriptionEn": "Trance built on the upper harmonic series — the 7/4, 11/8 and 13/8 intervals that have no equivalent on a piano. The same breakdown-and-drop structure, but the arpeggio sounds unfamiliar. Theta underneath."
   },
   {
     "id": "journey-techno-min-3",
@@ -1517,7 +1738,8 @@
         "pace": 0.3,
         "depth": 0.0,
         "density": 0.25,
-        "style": "techno"
+        "style": "techno",
+        "noteEn": "A steady pulse in the background"
       },
       {
         "day": 2,
@@ -1527,7 +1749,8 @@
         "pace": 0.35,
         "depth": 0.0,
         "density": 0.3,
-        "style": "techno"
+        "style": "techno",
+        "noteEn": "A little more movement"
       },
       {
         "day": 3,
@@ -1537,9 +1760,12 @@
         "pace": 0.4,
         "depth": 0.0,
         "density": 0.35,
-        "style": "techno"
+        "style": "techno",
+        "noteEn": "A long working block"
       }
-    ]
+    ],
+    "titleEn": "Minimal techno for work",
+    "descriptionEn": "Quiet, sparse techno for listening while you work — a steady pulse with no dense arpeggios and no drops. Ninety unbroken minutes, slow for the genre, with beta underneath."
   },
   {
     "id": "journey-psy-6",
@@ -1557,7 +1783,8 @@
         "pace": 0.45,
         "depth": 0.3,
         "density": 0.62,
-        "style": "psytrance"
+        "style": "psytrance",
+        "noteEn": "The roll comes in"
       },
       {
         "day": 2,
@@ -1567,7 +1794,8 @@
         "pace": 0.52,
         "depth": 0.4,
         "density": 0.66,
-        "style": "psytrance"
+        "style": "psytrance",
+        "noteEn": "The filter opens"
       },
       {
         "day": 3,
@@ -1577,7 +1805,8 @@
         "pace": 0.6,
         "depth": 0.5,
         "density": 0.7,
-        "style": "psytrance"
+        "style": "psytrance",
+        "noteEn": "Acid"
       },
       {
         "day": 4,
@@ -1587,7 +1816,8 @@
         "pace": 0.68,
         "depth": 0.62,
         "density": 0.74,
-        "style": "psytrance"
+        "style": "psytrance",
+        "noteEn": "The scale changes"
       },
       {
         "day": 5,
@@ -1598,7 +1828,8 @@
         "depth": 0.72,
         "density": 0.78,
         "style": "psytrance",
-        "beatId": "bb-gamma"
+        "beatId": "bb-gamma",
+        "noteEn": "A long breakdown"
       },
       {
         "day": 6,
@@ -1609,9 +1840,12 @@
         "depth": 0.82,
         "density": 0.8,
         "style": "psytrance",
-        "beatId": "bb-gamma40"
+        "beatId": "bb-gamma40",
+        "noteEn": "The full set"
       }
-    ]
+    ],
+    "titleEn": "Psytrance — six sets",
+    "descriptionEn": "144 BPM and a rolling bass: the kick takes the beat and the bass fills the three 16ths after it. A breakdown where the roll stops completely, and then returns. The scale climbs across the week from 417Hz to 963Hz."
   },
   {
     "id": "journey-psy-night-4",
@@ -1629,7 +1863,8 @@
         "depth": 0.6,
         "density": 0.6,
         "style": "psytrance",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "OM as the root"
       },
       {
         "day": 2,
@@ -1640,7 +1875,8 @@
         "depth": 0.7,
         "density": 0.64,
         "style": "psytrance",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "Deeper"
       },
       {
         "day": 3,
@@ -1651,7 +1887,8 @@
         "depth": 0.78,
         "density": 0.62,
         "style": "psytrance",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "The Moon"
       },
       {
         "day": 4,
@@ -1662,9 +1899,12 @@
         "depth": 0.88,
         "density": 0.68,
         "style": "psytrance",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "The long night"
       }
-    ]
+    ],
+    "titleEn": "Night psy — four nights",
+    "descriptionEn": "Slower and deeper psytrance, on the upper harmonic series — intervals of 11/8 and 7/4 with no equivalent on a piano. Four long nights, with theta underneath."
   },
   {
     "id": "journey-house-5",
@@ -1682,7 +1922,8 @@
         "depth": 0.15,
         "density": 0.55,
         "style": "deephouse",
-        "beatId": "bb-alpha"
+        "beatId": "bb-alpha",
+        "noteEn": "The groove settles"
       },
       {
         "day": 2,
@@ -1693,7 +1934,8 @@
         "depth": 0.2,
         "density": 0.6,
         "style": "deephouse",
-        "beatId": "bb-alpha"
+        "beatId": "bb-alpha",
+        "noteEn": "The chords widen"
       },
       {
         "day": 3,
@@ -1704,7 +1946,8 @@
         "depth": 0.25,
         "density": 0.64,
         "style": "deephouse",
-        "beatId": "bb-alpha"
+        "beatId": "bb-alpha",
+        "noteEn": "A long evening"
       },
       {
         "day": 4,
@@ -1715,7 +1958,8 @@
         "depth": 0.3,
         "density": 0.62,
         "style": "deephouse",
-        "beatId": "bb-alpha"
+        "beatId": "bb-alpha",
+        "noteEn": "The Earth day as the root"
       },
       {
         "day": 5,
@@ -1726,9 +1970,12 @@
         "depth": 0.35,
         "density": 0.68,
         "style": "deephouse",
-        "beatId": "bb-smr"
+        "beatId": "bb-smr",
+        "noteEn": "The full set"
       }
-    ]
+    ],
+    "titleEn": "Deep house — five evenings",
+    "descriptionEn": "122 BPM with a shuffle: the groove swings, the kick is soft, the open hat lands on the offbeat eighth, and the chords fall between the beats. No drops and no breakdowns — it simply rolls."
   },
   {
     "id": "journey-house-psy-4",
@@ -1746,7 +1993,8 @@
         "depth": 0.55,
         "density": 0.6,
         "style": "deephouse",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "The chord bends"
       },
       {
         "day": 2,
@@ -1757,7 +2005,8 @@
         "depth": 0.65,
         "density": 0.62,
         "style": "deephouse",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "OM under the groove"
       },
       {
         "day": 3,
@@ -1768,7 +2017,8 @@
         "depth": 0.75,
         "density": 0.65,
         "style": "deephouse",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "Wider"
       },
       {
         "day": 4,
@@ -1779,9 +2029,12 @@
         "depth": 0.85,
         "density": 0.66,
         "style": "deephouse",
-        "beatId": "bb-theta"
+        "beatId": "bb-theta",
+        "noteEn": "The long evening"
       }
-    ]
+    ],
+    "titleEn": "Psychedelic deep house",
+    "descriptionEn": "The same shuffled groove, but the chords are built from the upper harmonic series — 11/8, 13/8 and 7/4. Chords that sound familiar and unfamiliar at once, over a soft, quiet bass. Four long evenings."
   },
   {
     "id": "journey-house-work-3",
@@ -1799,7 +2052,8 @@
         "depth": 0.1,
         "density": 0.28,
         "style": "deephouse",
-        "beatId": "bb-smr"
+        "beatId": "bb-smr",
+        "noteEn": "A steady background"
       },
       {
         "day": 2,
@@ -1810,7 +2064,8 @@
         "depth": 0.12,
         "density": 0.32,
         "style": "deephouse",
-        "beatId": "bb-smr"
+        "beatId": "bb-smr",
+        "noteEn": "A little more movement"
       },
       {
         "day": 3,
@@ -1821,8 +2076,11 @@
         "depth": 0.1,
         "density": 0.3,
         "style": "deephouse",
-        "beatId": "bb-smr"
+        "beatId": "bb-smr",
+        "noteEn": "A long block"
       }
-    ]
+    ],
+    "titleEn": "Deep house for work",
+    "descriptionEn": "The same groove, far sparser: single chords, a soft bass and nothing that asks for attention. Ninety unbroken minutes, with SMR — the range of relaxed alertness — underneath."
   }
 ]

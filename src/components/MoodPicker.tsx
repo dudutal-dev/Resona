@@ -1,11 +1,12 @@
+import { useT, type StringKey } from '../lib/i18n'
 import type { MoodScore } from '../lib/types'
 
-const MOODS: { score: MoodScore; label: string; face: string }[] = [
-  { score: 1, label: 'קשה', face: '😣' },
-  { score: 2, label: 'לא משהו', face: '😕' },
-  { score: 3, label: 'בסדר', face: '😐' },
-  { score: 4, label: 'טוב', face: '🙂' },
-  { score: 5, label: 'מצוין', face: '😌' },
+const MOODS: { score: MoodScore; face: string }[] = [
+  { score: 1, face: '😣' },
+  { score: 2, face: '😕' },
+  { score: 3, face: '😐' },
+  { score: 4, face: '🙂' },
+  { score: 5, face: '😌' },
 ]
 
 /** The 1-5 daily mood log from §6.4. Optional by design — never blocks progress. */
@@ -16,6 +17,7 @@ export function MoodPicker({
   value?: MoodScore
   onPick: (score: MoodScore) => void
 }) {
+  const { t } = useT()
   return (
     <div className="grid grid-cols-5 gap-2">
       {MOODS.map((m) => {
@@ -32,7 +34,7 @@ export function MoodPicker({
             }}
           >
             <span className="block text-2xl leading-none">{m.face}</span>
-            <span className="txt-3 mt-1.5 block text-[10px] font-medium">{m.label}</span>
+            <span className="txt-3 mt-1.5 block text-[10px] font-medium">{t(`mood.${m.score}` as StringKey)}</span>
           </button>
         )
       })}

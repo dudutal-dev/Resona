@@ -23,8 +23,11 @@ export type Frequency = {
    */
   defaultHz?: number
   label: string
+  /** English label. Required — see `catalog.test.ts`. */
+  labelEn: string
   trust: TrustLevel
   info: string
+  infoEn: string
   /** Base hue (0-360) used to tint the UI when this frequency is selected. */
   hue: number
 }
@@ -66,6 +69,7 @@ export type JourneyDay = {
   frequencyId: string
   durationMin: number
   note: string
+  noteEn: string
   /** Overrides the session pace for this day. Omit to keep the user's setting. */
   pace?: number
   /**
@@ -87,9 +91,11 @@ export type JourneyDay = {
 export type Journey = {
   id: string
   title: string
+  titleEn: string
   days: number
   purpose: JourneyPurpose
   description: string
+  descriptionEn: string
   /**
    * Declares that the journey's roots move in one direction across its days.
    * Tested when present, so a schedule edit cannot silently break the arc.

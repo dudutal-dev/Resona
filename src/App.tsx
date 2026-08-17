@@ -3,6 +3,7 @@ import { useRoute } from './lib/router'
 import { getFrequency } from './lib/catalog'
 import { useSession } from './store/sessionStore'
 import { useSettings } from './store/settingsStore'
+import { useT } from './lib/i18n'
 import { AuroraBackground } from './components/AuroraBackground'
 import { BottomNav } from './components/BottomNav'
 import { MiniPlayer } from './components/MiniPlayer'
@@ -28,6 +29,7 @@ export default function App() {
   const isPlaying = useSession((s) => s.isPlaying)
   const tick = useSession((s) => s.tick)
   const theme = useSettings((s) => s.theme)
+  const { t, lang } = useT()
 
   // Re-tint the whole interface from the selected frequency.
   useEffect(() => {
@@ -36,6 +38,12 @@ export default function App() {
     const meta = document.querySelector('meta[name="theme-color"]')
     meta?.setAttribute('content', theme === 'light' ? '#f3f0fb' : '#05030e')
   }, [rootId, theme])
+
+  // The tab title and the document language are outside React's tree, so they
+  // have to be written by hand when the language changes.
+  useEffect(() => {
+    document.title = `Resona — ${t('app.tagline')}`
+  }, [lang, t])
 
   // Lock-screen controls and the return-from-background path, wired once.
   useEffect(() => {

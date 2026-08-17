@@ -1,4 +1,5 @@
 import { Tone } from './ToneEngine'
+import type { StringKey } from '../lib/i18n'
 import type { AmbienceId } from '../lib/types'
 
 /**
@@ -14,16 +15,27 @@ import type { AmbienceId } from '../lib/types'
  * (`loop: true` plus fades) and appears next to the synthesised options.
  */
 
-export type AmbienceOption = { id: AmbienceId; label: string; kind: 'synth' | 'file'; url?: string }
+/**
+ * A built-in names itself through the dictionary, so it follows the interface
+ * language. A file from the manifest carries whatever label its author wrote,
+ * which the app is in no position to translate.
+ */
+export type AmbienceOption = {
+  id: AmbienceId
+  kind: 'synth' | 'file'
+  labelKey?: StringKey
+  label?: string
+  url?: string
+}
 
 export const BUILTIN_AMBIENCE: AmbienceOption[] = [
-  { id: 'none', label: 'ללא', kind: 'synth' },
-  { id: 'rain', label: 'גשם', kind: 'synth' },
-  { id: 'ocean', label: 'ים', kind: 'synth' },
-  { id: 'wind', label: 'רוח', kind: 'synth' },
-  { id: 'brown', label: 'רעש חום', kind: 'synth' },
-  { id: 'pink', label: 'רעש ורוד', kind: 'synth' },
-  { id: 'white', label: 'רעש לבן', kind: 'synth' },
+  { id: 'none', labelKey: 'ambience.none', kind: 'synth' },
+  { id: 'rain', labelKey: 'ambience.rain', kind: 'synth' },
+  { id: 'ocean', labelKey: 'ambience.ocean', kind: 'synth' },
+  { id: 'wind', labelKey: 'ambience.wind', kind: 'synth' },
+  { id: 'brown', labelKey: 'ambience.brown', kind: 'synth' },
+  { id: 'pink', labelKey: 'ambience.pink', kind: 'synth' },
+  { id: 'white', labelKey: 'ambience.white', kind: 'synth' },
 ]
 
 type Voice = { nodes: { dispose: () => void }[]; start: () => void }

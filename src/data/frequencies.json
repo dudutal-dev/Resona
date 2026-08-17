@@ -6,7 +6,9 @@
     "label": "יסוד ובטיחות",
     "trust": "traditional",
     "info": "מקושר מסורתית להפחתת כאב ותחושת ביטחון. אין מחקר קליני ישיר.",
-    "hue": 8
+    "hue": 8,
+    "labelEn": "Grounding & safety",
+    "infoEn": "Traditionally linked to easing pain and to a sense of safety. No direct clinical research."
   },
   {
     "id": "sol-285",
@@ -15,7 +17,9 @@
     "label": "ריפוי רקמות",
     "trust": "traditional",
     "info": "מסורתית משויך לריפוי גופני. ללא ביסוס מדעי מוכח.",
-    "hue": 26
+    "hue": 26,
+    "labelEn": "Tissue repair",
+    "infoEn": "Traditionally associated with physical healing. No proven scientific basis."
   },
   {
     "id": "sol-396",
@@ -24,7 +28,9 @@
     "label": "שחרור פחד ואשמה",
     "trust": "traditional",
     "info": "תדר צ'אקרת היסוד במסורת. חוויתי בעיקרו.",
-    "hue": 355
+    "hue": 355,
+    "labelEn": "Releasing fear and guilt",
+    "infoEn": "The root-chakra tone in tradition. Experiential in nature."
   },
   {
     "id": "sol-417",
@@ -33,7 +39,9 @@
     "label": "שינוי ותמורה",
     "trust": "traditional",
     "info": "מקושר מסורתית לשחרור דפוסים ישנים.",
-    "hue": 32
+    "hue": 32,
+    "labelEn": "Change and transition",
+    "infoEn": "Traditionally linked to breaking out of old patterns."
   },
   {
     "id": "sol-432",
@@ -42,7 +50,9 @@
     "label": "כוונון חלופי",
     "trust": "traditional",
     "info": "כוונון מוזיקלי חלופי ל-440Hz הסטנדרטי. ההשפעה הנטענת עליו אנקדוטלית.",
-    "hue": 172
+    "hue": 172,
+    "labelEn": "Alternative tuning",
+    "infoEn": "A musical tuning offered as an alternative to the 440Hz standard. The effects attributed to it are anecdotal."
   },
   {
     "id": "sol-528",
@@ -51,7 +61,9 @@
     "label": "שינוי וטרנספורמציה",
     "trust": "traditional",
     "info": "התדר הפופולרי ביותר במסורת הסולפג'יו. אין הוכחה מדעית לטענות פיזיולוגיות עליו (כולל טענות 'תיקון DNA' שאינן נתמכות מחקרית).",
-    "hue": 132
+    "hue": 132,
+    "labelEn": "Change and transformation",
+    "infoEn": "The most popular tone in the solfeggio tradition. There is no scientific proof for the physiological claims made about it, including 'DNA repair' claims, which research does not support."
   },
   {
     "id": "sol-639",
@@ -60,7 +72,9 @@
     "label": "חיבור ויחסים",
     "trust": "traditional",
     "info": "מקושר מסורתית להרמוניה בין-אישית.",
-    "hue": 330
+    "hue": 330,
+    "labelEn": "Connection and relationships",
+    "infoEn": "Traditionally linked to harmony between people."
   },
   {
     "id": "sol-741",
@@ -69,7 +83,9 @@
     "label": "ביטוי ופתרון בעיות",
     "trust": "traditional",
     "info": "משויך מסורתית לצלילות מחשבתית.",
-    "hue": 196
+    "hue": 196,
+    "labelEn": "Expression and problem-solving",
+    "infoEn": "Traditionally associated with mental clarity."
   },
   {
     "id": "sol-852",
@@ -78,7 +94,9 @@
     "label": "חזרה לסדר רוחני",
     "trust": "traditional",
     "info": "משויך מסורתית להתעוררות אינטואיטיבית.",
-    "hue": 250
+    "hue": 250,
+    "labelEn": "Return to spiritual order",
+    "infoEn": "Traditionally associated with intuitive awakening."
   },
   {
     "id": "sol-963",
@@ -87,7 +105,9 @@
     "label": "חיבור וחזון",
     "trust": "traditional",
     "info": "התדר הגבוה ביותר בסולם המסורתי, משויך לתובנה.",
-    "hue": 278
+    "hue": 278,
+    "labelEn": "Connection and vision",
+    "infoEn": "The highest tone in the traditional scale, associated with insight."
   },
   {
     "id": "tun-440",
@@ -96,7 +116,9 @@
     "label": "כוונון תקני",
     "trust": "reference",
     "info": "A=440Hz הוא תקן הכוונון הבינלאומי מאז 1955, ולפיו מכוונת כמעט כל המוזיקה המוקלטת. הוא נמצא כאן ככוונון ייחוס — כדי שתוכל לשמוע את אותה מלודיה ב-440 ומיד אחר כך ב-432 ולהחליט בעצמך אם אתה שומע הבדל. אין לו טענת השפעה כלשהי.",
-    "hue": 208
+    "hue": 208,
+    "labelEn": "Standard tuning",
+    "infoEn": "A=440Hz has been the international tuning standard since 1955, and nearly all recorded music is tuned to it. It is here as a reference — so you can hear the same melody at 440 and then immediately at 432, and decide for yourself whether you hear a difference. It carries no claim of any effect."
   },
   {
     "id": "tun-444",
@@ -105,7 +127,9 @@
     "label": "כוונון C=528",
     "trust": "traditional",
     "info": "כוונון שבו לָה נמצא ב-444Hz, ואז דו יוצא בדיוק 528Hz — התדר המרכזי בסולם הסולפג׳יו. מקובל בקהילות שעובדות עם 528 ורוצות שכל הסולם, ולא רק תו אחד, יתיישר לפיו. מבוסס מסורת ואמונה תרבותית.",
-    "hue": 118
+    "hue": 118,
+    "labelEn": "C=528 tuning",
+    "infoEn": "A tuning where A sits at 444Hz, which puts C at exactly 528Hz — the central tone of the solfeggio scale. Used in communities that work with 528 and want the whole scale, not just one note, to line up with it. Based on tradition and cultural belief."
   },
   {
     "id": "tun-256",
@@ -114,7 +138,9 @@
     "label": "כוונון מדעי",
     "trust": "traditional",
     "info": "דו=256Hz, כלומר חזקה מדויקת של שתיים (2^8). כוונון שהוצע במאה ה-19 בשם 'הכוונון המדעי' בזכות היחס הפשוט הזה, וקרוב מאוד למשפחת 432. הטענה היא לפשטות מתמטית — לא לראיות קליניות.",
-    "hue": 44
+    "hue": 44,
+    "labelEn": "Scientific pitch",
+    "infoEn": "C=256Hz, an exact power of two (2^8). Proposed in the 19th century as 'scientific pitch' on the strength of that simple ratio, and very close to the 432 family. The claim is mathematical simplicity, not clinical evidence."
   },
   {
     "id": "tun-128",
@@ -123,7 +149,9 @@
     "label": "קולן טיפולי",
     "trust": "traditional",
     "info": "דו=128Hz — התדר של קולן העצם המשמש בעבודת מגע וברפואה משלימה, מונח על העצם כדי להעביר רטט מורגש ולא רק צליל. נמוך מספיק להרגשה פיזית בגוף. מבוסס מסורת ואמונה תרבותית.",
-    "hue": 22
+    "hue": 22,
+    "labelEn": "Therapy tuning fork",
+    "infoEn": "C=128Hz — the pitch of the weighted tuning fork used in bodywork and complementary practice, placed on bone so the vibration is felt and not only heard. Low enough to register physically in the body. Based on tradition and cultural belief."
   },
   {
     "id": "cos-111",
@@ -132,7 +160,9 @@
     "label": "היפוגאום — תהודת אבן",
     "trust": "traditional",
     "info": "111Hz היא התהודה שנמדדה בחדרי ההיפוגאום בחל סאפליאני שבמלטה, מבנה תת-קרקעי בן כ-5,000 שנה. המדידה עצמה אמיתית; מה שמיוחס לה — שינוי במצב התודעה — הוא פרשנות מסורתית ללא ביסוס קליני.",
-    "hue": 288
+    "hue": 288,
+    "labelEn": "Hypogeum — stone resonance",
+    "infoEn": "111Hz is the resonance measured in the chambers of the Hypogeum at Ħal Saflieni in Malta, an underground structure roughly 5,000 years old. The measurement itself is real; what is attributed to it — a shift in state of consciousness — is a traditional interpretation with no clinical basis."
   },
   {
     "id": "cos-126",
@@ -141,7 +171,9 @@
     "label": "השמש",
     "trust": "traditional",
     "info": "מתוך 'האוקטבה הקוסמית' של הנס קוסטו: מחזור אסטרונומי מוכפל באוקטבות עד שהוא נכנס לתחום השמיעה. כאן מחזור הסיבוב של השמש. החישוב מדויק; הייחוס לתחושה מבוסס מסורת ואמונה תרבותית.",
-    "hue": 40
+    "hue": 40,
+    "labelEn": "The Sun",
+    "infoEn": "From Hans Cousto's 'Cosmic Octave': an astronomical cycle doubled by octaves until it enters hearing range. Here, the Sun's rotation. The arithmetic is exact; what it is said to evoke rests on tradition and cultural belief."
   },
   {
     "id": "cos-136",
@@ -150,7 +182,9 @@
     "label": "OM — שנת כדור הארץ",
     "trust": "traditional",
     "info": "שנת ההקפה של כדור הארץ סביב השמש, מוכפלת באוקטבות עד לתחום השמיעה. זהו הצליל שמכוונים אליו טמפורות ומזמורי OM במסורת ההודית, ונחשב שם לתדר הבסיס. מבוסס מסורת ואמונה תרבותית.",
-    "hue": 34
+    "hue": 34,
+    "labelEn": "OM — the Earth year",
+    "infoEn": "Earth's orbit around the Sun, doubled by octaves into hearing range. This is the pitch tanpuras and OM chanting are tuned to in the Indian tradition, where it is treated as the base tone. Based on tradition and cultural belief."
   },
   {
     "id": "cos-172",
@@ -159,7 +193,9 @@
     "label": "שנת פלטון",
     "trust": "traditional",
     "info": "מחזור הנקיפה של ציר כדור הארץ — כ-25,920 שנה — מוכפל באוקטבות. התדר הגבוה במשפחה הזו ומיוחס לו אופי בהיר. מבוסס מסורת ואמונה תרבותית.",
-    "hue": 268
+    "hue": 268,
+    "labelEn": "The Platonic year",
+    "infoEn": "The precession of Earth's axis — about 25,920 years — doubled by octaves. The highest tone in this family, and said to have a bright character. Based on tradition and cultural belief."
   },
   {
     "id": "cos-194",
@@ -168,7 +204,9 @@
     "label": "יום כדור הארץ",
     "trust": "traditional",
     "info": "יממה אחת של כדור הארץ, מוכפלת באוקטבות עד שהיא נשמעת. מיוחסת לה תחושת עֵרוּת וקרקוע. מבוסס מסורת ואמונה תרבותית.",
-    "hue": 14
+    "hue": 14,
+    "labelEn": "The Earth day",
+    "infoEn": "A single rotation of the Earth, doubled by octaves until it can be heard. Said to evoke wakefulness and grounding. Based on tradition and cultural belief."
   },
   {
     "id": "cos-210",
@@ -177,7 +215,9 @@
     "label": "החודש הסינודי — ירח",
     "trust": "traditional",
     "info": "מחזור הירח ממולד למולד, כ-29.5 ימים, מוכפל באוקטבות. מיוחס לו אופי רך ופנימי. מבוסס מסורת ואמונה תרבותית.",
-    "hue": 240
+    "hue": 240,
+    "labelEn": "The synodic month — Moon",
+    "infoEn": "The Moon's cycle from new moon to new moon, about 29.5 days, doubled by octaves. Said to have a soft, inward character. Based on tradition and cultural belief."
   },
   {
     "id": "bb-delta",
@@ -189,7 +229,9 @@
     "label": "דלתא — שינה עמוקה",
     "trust": "research_backed_partial",
     "info": "ביינאורל ביטס הראו אפקט קטן-עד-בינוני על איכות שינה במחקרים מסוימים, עם רמת ודאות נמוכה-בינונית.",
-    "hue": 258
+    "hue": 258,
+    "labelEn": "Delta — deep sleep",
+    "infoEn": "Binaural beats have shown a small-to-moderate effect on sleep quality in some studies, at low-to-moderate certainty."
   },
   {
     "id": "bb-theta",
@@ -201,7 +243,9 @@
     "label": "תטא — הרפיה עמוקה ומדיטציה",
     "trust": "research_backed_partial",
     "info": "נחקר בהקשר מדיטציה והרפיה, תוצאות משתנות בין מחקרים.",
-    "hue": 232
+    "hue": 232,
+    "labelEn": "Theta — deep relaxation and meditation",
+    "infoEn": "Studied in the context of meditation and relaxation; results vary between studies."
   },
   {
     "id": "bb-schumann",
@@ -214,7 +258,9 @@
     "trust": "traditional",
     "info": "תהודת שומאן היא תופעה פיזיקלית אמיתית: החלל שבין פני כדור הארץ ליונוספרה מתנדנד סביב 7.83Hz. מה שאינו מבוסס הוא הקישור בינה לבין השפעה על גוף או תודעה — זו פרשנות מסורתית, לא ממצא קליני. התדר יושב בגבול תטא-אלפא.",
     "hue": 150,
-    "defaultHz": 7.83
+    "defaultHz": 7.83,
+    "labelEn": "Schumann — 7.83Hz",
+    "infoEn": "The Schumann resonance is a real physical phenomenon: the cavity between the Earth's surface and the ionosphere oscillates around 7.83Hz. What is not established is any link between it and an effect on body or mind — that is a traditional interpretation, not a clinical finding. The rate sits on the theta-alpha border."
   },
   {
     "id": "bb-alpha",
@@ -226,7 +272,9 @@
     "label": "אלפא — רוגע ערני",
     "trust": "research_backed_partial",
     "info": "משויך למצב ערנות רגועה, ראיות חלקיות.",
-    "hue": 190
+    "hue": 190,
+    "labelEn": "Alpha — calm alertness",
+    "infoEn": "Associated with a state of relaxed wakefulness; partial evidence."
   },
   {
     "id": "bb-smr",
@@ -239,7 +287,9 @@
     "trust": "research_backed_partial",
     "info": "מקצב סנסורי-מוטורי, הטווח שבין אלפא לביתא. נחקר בעיקר בהקשר של נוירופידבק, וקושר לערנות רגועה — קשב בלי דריכות, ולכן מתאים לעבודה שדורשת שקט. הממצאים חלקיים ולא עקביים.",
     "hue": 168,
-    "defaultHz": 13.5
+    "defaultHz": 13.5,
+    "labelEn": "SMR — quiet focus",
+    "infoEn": "The sensorimotor rhythm, the range between alpha and beta. Studied mainly in neurofeedback and linked to relaxed alertness — attention without tension, which suits work that needs quiet. The findings are partial and inconsistent."
   },
   {
     "id": "bb-beta",
@@ -251,7 +301,9 @@
     "label": "בטא — ריכוז ופוקוס",
     "trust": "research_backed_partial",
     "info": "נחקר בהקשר ריכוז וערנות קוגניטיבית, ראיות מוגבלות.",
-    "hue": 44
+    "hue": 44,
+    "labelEn": "Beta — focus and concentration",
+    "infoEn": "Studied in the context of concentration and cognitive alertness; limited evidence."
   },
   {
     "id": "bb-gamma",
@@ -263,7 +315,9 @@
     "label": "גמא — עוררות קוגניטיבית",
     "trust": "research_backed_partial",
     "info": "מחקרים מסוימים בדקו קשר לתפקוד קוגניטיבי; ממצאים לא עקביים.",
-    "hue": 12
+    "hue": 12,
+    "labelEn": "Gamma — cognitive arousal",
+    "infoEn": "Some studies have examined a link to cognitive function; findings are inconsistent."
   },
   {
     "id": "bb-gamma40",
@@ -276,6 +330,8 @@
     "trust": "research_backed_partial",
     "info": "טווח צר סביב 40Hz. גירוי קצבי בתדר הזה נחקר בשנים האחרונות בהקשר של פעילות מוחית וזיכרון, בעיקר במודלים של בעלי חיים ובניסויים מוקדמים בבני אדם. מדובר במחקר בעיצומו, לא בשיטה מוכחת.",
     "hue": 4,
-    "defaultHz": 40.0
+    "defaultHz": 40.0,
+    "labelEn": "Gamma 40Hz",
+    "infoEn": "A narrow range around 40Hz. Rhythmic stimulation at this rate has been studied in recent years in relation to brain activity and memory, mostly in animal models and early human trials. This is research in progress, not an established method."
   }
 ]

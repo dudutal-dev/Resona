@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
-import { getFrequency, getJourney } from '../lib/catalog'
+import { freqLabel, getFrequency, getJourney, journeyTitle, shortLabel } from '../lib/catalog'
+import { useT } from '../lib/i18n'
 import type { Frequency, MoodScore } from '../lib/types'
 import { navigate } from '../lib/router'
 import { Visualizer } from './Visualizer'
@@ -15,6 +16,7 @@ import { Screen, Sheet, TrustBadge, formatClock } from './ui'
 import { MoodPicker } from './MoodPicker'
 
 export function PlayerScreen() {
+  const { t, lang } = useT()
   const {
     config,
     isPlaying,
@@ -41,7 +43,11 @@ export function PlayerScreen() {
   const journey = activeJourney ? getJourney(activeJourney.journeyId) : null
 
   const handleSave = () => {
-    savePreset(presetName || `${root?.label ?? 'פריסט'} · ${new Date().toLocaleDateString('he-IL')}`, config)
+    savePreset(
+      presetName ||
+        `${root ? freqLabel(root, lang) : t('player.defaultPresetName')} · ${new Date().toLocaleDateString(lang === 'he' ? 'he-IL' : 'en-GB')}`,
+      config,
+    )
     setSaved(true)
     setPresetName('')
     setSaveOpen(false)
@@ -57,14 +63,18 @@ export function PlayerScreen() {
 
   return (
     <Screen
-      title="נגן"
-      subtitle={journey ? `${journey.title} · יום ${activeJourney?.day}` : 'התדר, המלודיה והשכבות'}
+      title={t('player.title')}
+      subtitle={
+        journey
+          ? `${journeyTitle(journey, lang)} · ${t('common.dayN', { n: activeJourney?.day ?? 0 })}`
+          : t('player.subtitle')
+      }
       onBack
       action={
         <button
           onClick={() => root && setInfoFreq(root)}
           className="btn h-10 w-10 rounded-full p-0"
-          aria-label="מידע על התדר"
+          aria-label={t('player.infoAria')}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
             <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
@@ -82,7 +92,7 @@ export function PlayerScreen() {
             </div>
             <div className="txt-3 ltr -mt-1 text-sm font-medium">Hz</div>
             <div className="mt-2 max-w-[10rem] text-[13px] font-medium leading-tight txt-2">
-              {root?.label}
+              {root ? freqLabel(root, lang) : ''}
             </div>
             {isPlaying && (
               <div className="ltr mt-2 text-xs tabular-nums txt-3">{formatClock(elapsed)}</div>
@@ -94,13 +104,13 @@ export function PlayerScreen() {
       {/* ---- Transport ------------------------------------------------------ */}
       <div className="mt-6 flex items-center justify-center gap-3">
         <button onClick={() => setPickerOpen(true)} className="btn h-12 rounded-2xl px-4 text-xs">
-          החלף תדר
+          {t('player.change')}
         </button>
 
         <button
           onClick={() => void toggle()}
           className="btn btn-primary relative h-20 w-20 rounded-full p-0"
-          aria-label={isPlaying ? 'עצירה' : 'נגינה'}
+          aria-label={t(isPlaying ? 'common.stop' : 'common.play')}
         >
           {isPlaying && (
             <span
@@ -125,7 +135,7 @@ export function PlayerScreen() {
           onClick={() => (activeJourney ? setFinishOpen(true) : setSaveOpen(true))}
           className="btn h-12 rounded-2xl px-4 text-xs"
         >
-          {activeJourney ? 'סיים יום' : saved ? 'נשמר ✓' : 'שמור פריסט'}
+          {activeJourney ? t('player.finishDay') : saved ? t('player.saved') : t('player.savePreset')}
         </button>
       </div>
 
@@ -133,12 +143,12 @@ export function PlayerScreen() {
       <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
         {root && (
           <button onClick={() => setInfoFreq(root)} className="chip">
-            <span className="ltr">{root.hz} Hz</span> · {root.label}
+            <span className="ltr">{root.hz} Hz</span> · {freqLabel(root, lang)}
           </button>
         )}
         {beat && (
           <button onClick={() => setInfoFreq(beat)} className="chip">
-            <span className="ltr">{config.beatHz} Hz</span> · {beat.label.split('—')[0].trim()}
+            <span className="ltr">{config.beatHz} Hz</span> · {shortLabel(beat, lang)}
           </button>
         )}
         {root && <TrustBadge trust={root.trust} />}
@@ -154,7 +164,7 @@ export function PlayerScreen() {
       {/* ---- Sheets ---------------------------------------------------------- */}
       <InfoPanel freq={infoFreq} open={!!infoFreq} onClose={() => setInfoFreq(null)} />
 
-      <Sheet open={pickerOpen} onClose={() => setPickerOpen(false)} title="בחירת תדר">
+      <Sheet open={pickerOpen} onClose={() => setPickerOpen(false)} title={t('player.pickerTitle')}>
         <FrequencyPicker
           selectedRoot={config.rootId}
           selectedBeat={config.beatId}
@@ -170,32 +180,31 @@ export function PlayerScreen() {
         />
       </Sheet>
 
-      <Sheet open={saveOpen} onClose={() => setSaveOpen(false)} title="שמירת פריסט">
+      <Sheet open={saveOpen} onClose={() => setSaveOpen(false)} title={t('player.saveTitle')}>
         <label className="block text-sm font-medium" htmlFor="preset-name">
-          שם הפריסט
+          {t('player.presetName')}
         </label>
         <input
           id="preset-name"
           value={presetName}
           onChange={(e) => setPresetName(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-          placeholder={`${root?.label ?? ''} להירדם`}
+          placeholder={t('player.presetPlaceholder', { root: root ? freqLabel(root, lang) : '' })}
           className="glass mt-2 w-full rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2"
           style={{ color: 'var(--txt)' }}
           autoFocus
         />
         <p className="txt-3 mt-3 text-[11px] leading-relaxed">
-          נשמרים: תדר היסוד, הגל המוחי וקצב הפעימה, אופן ההשמעה, סאונד הסביבה, עוצמת כל שכבה, צפיפות
-          הנגינה והטיימר.
+          {t('player.saveNote')}
         </p>
         <button onClick={handleSave} className="btn btn-primary mt-4 w-full">
-          שמור
+          {t('common.save')}
         </button>
       </Sheet>
 
-      <Sheet open={finishOpen} onClose={() => setFinishOpen(false)} title="איך מרגיש עכשיו?">
+      <Sheet open={finishOpen} onClose={() => setFinishOpen(false)} title={t('player.finishTitle')}>
         <p className="txt-2 mb-4 text-sm">
-          סימון היום כהושלם. הדירוג נשמר מקומית ומופיע בסיכום המסע.
+          {t('player.finishNote')}
         </p>
         <MoodPicker onPick={handleFinishDay} />
       </Sheet>

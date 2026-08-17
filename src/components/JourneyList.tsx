@@ -1,18 +1,14 @@
 import { useState } from 'react'
-import { PURPOSE_LABEL, getFrequency } from '../lib/catalog'
+import { freqLabel, getFrequency, journeyDescription, journeyTitle, purposeKey } from '../lib/catalog'
+import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
-import {
-  THEME_BLURB,
-  THEME_HUE,
-  THEME_LABEL,
-  journeysByTheme,
-  type JourneyTheme,
-} from '../lib/themes'
+import { THEME_HUE, journeysByTheme, themeBlurbKey, themeKey, type JourneyTheme } from '../lib/themes'
 import type { Journey } from '../lib/types'
 import { useJourneys } from '../store/journeyStore'
 import { Card, Screen } from './ui'
 
 function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
+  const { t, lang } = useT()
   const progress = useJourneys((s) => s.progress)
   const p = progress[journey.id]
   const done = p?.completedDays.length ?? 0
@@ -35,7 +31,7 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-base font-bold">{journey.title}</h3>
+            <h3 className="text-base font-bold">{journeyTitle(journey, lang)}</h3>
             <span
               className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
               style={{
@@ -44,16 +40,16 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
                 border: `1px solid hsl(${hue} 85% 65% / 0.32)`,
               }}
             >
-              {PURPOSE_LABEL[journey.purpose]}
+              {t(purposeKey(journey.purpose))}
             </span>
             {journey.arc && (
-              <span className="txt-3 text-[10px]" title={journey.arc === 'ascending' ? 'עולה בסולם' : 'יורד בסולם'}>
+              <span className="txt-3 text-[10px]" title={t(journey.arc === 'ascending' ? 'journeys.ascending' : 'journeys.descending')}>
                 {journey.arc === 'ascending' ? '↑' : '↓'}
               </span>
             )}
-            {complete && <span className="chip">הושלם ✓</span>}
+            {complete && <span className="chip">{t('common.done')}</span>}
           </div>
-          <p className="txt-2 mt-1 text-xs leading-relaxed">{journey.description}</p>
+          <p className="txt-2 mt-1 text-xs leading-relaxed">{journeyDescription(journey, lang)}</p>
 
           {p ? (
             <div className="mt-3 flex items-center gap-2">
@@ -73,9 +69,12 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
             </div>
           ) : (
             <p className="txt-3 mt-2 text-[11px]">
-              מתחיל ב־
-              {getFrequency(journey.schedule[0].frequencyId)?.label ?? '—'} ·{' '}
-              <span className="ltr">{journey.schedule[0].durationMin} דק׳</span>
+              {t('journeys.startsWith')}
+              {(() => {
+                const first = getFrequency(journey.schedule[0].frequencyId)
+                return first ? freqLabel(first, lang) : '—'
+              })()}{' '}
+              · <span className="ltr">{journey.schedule[0].durationMin}</span> {t('common.min')}
             </p>
           )}
         </div>
@@ -85,13 +84,14 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
 }
 
 export function JourneyList() {
+  const { t, rich } = useT()
   const [filter, setFilter] = useState<JourneyTheme | 'all'>('all')
   const groups = journeysByTheme()
   const shown = filter === 'all' ? groups : groups.filter((g) => g.theme === filter)
   const total = groups.reduce((n, g) => n + g.journeys.length, 0)
 
   return (
-    <Screen title="מסעות" subtitle={`${total} תוכניות, מקובצות לפי נושא`} onBack>
+    <Screen title={t('journeys.title')} subtitle={t('journeys.subtitle', { n: total })} onBack>
       {/* The shelves are few and fixed, so they sit in the open as a scroll
           strip — a dropdown would hide the whole taxonomy behind a tap. */}
       <div className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1">
@@ -126,7 +126,7 @@ export function JourneyList() {
                   : 'var(--txt-2)',
               }}
             >
-              {isAll ? 'הכול' : THEME_LABEL[g.theme]} · <span className="ltr">{count}</span>
+              {isAll ? t('journeys.all') : t(themeKey(g.theme))} · <span className="ltr">{count}</span>
             </button>
           )
         })}
@@ -144,8 +144,8 @@ export function JourneyList() {
                 }}
                 aria-hidden
               />
-              <h2 className="text-sm font-bold">{THEME_LABEL[group.theme]}</h2>
-              <span className="txt-3 truncate text-[11px]">{THEME_BLURB[group.theme]}</span>
+              <h2 className="text-sm font-bold">{t(themeKey(group.theme))}</h2>
+              <span className="txt-3 truncate text-[11px]">{t(themeBlurbKey(group.theme))}</span>
             </div>
             <div className="space-y-2">
               {group.journeys.map((journey) => (
@@ -157,8 +157,7 @@ export function JourneyList() {
       </div>
 
       <p className="txt-3 mt-6 px-1 text-[11px] leading-relaxed">
-        המסעות הם מבנה האזנה מוצע, לא פרוטוקול טיפולי. אפשר לדלג בין ימים בכל שלב, ואפשר להוסיף
-        מסעות משלך בקובץ <span className="ltr">src/data/journeys.json</span>.
+        {rich('journeys.footer')}
       </p>
     </Screen>
   )

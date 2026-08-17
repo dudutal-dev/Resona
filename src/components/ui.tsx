@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from 'react'
-import { TRUST_NOTICE, TRUST_SHORT } from '../lib/catalog'
+import { trustNoticeKey, trustShortKey } from '../lib/catalog'
+import { useT } from '../lib/i18n'
 import type { TrustLevel } from '../lib/types'
 import { back } from '../lib/router'
 
@@ -17,6 +18,7 @@ export function Screen({
   action?: ReactNode
   children: ReactNode
 }) {
+  const { t } = useT()
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pb-28 safe-top">
       <header className="mb-6 flex items-start justify-between gap-3 pt-2">
@@ -25,10 +27,12 @@ export function Screen({
             {onBack && (
               <button
                 onClick={back}
-                aria-label="חזרה"
-                className="btn btn-ghost -mr-2 h-9 w-9 rounded-full p-0"
+                aria-label={t('common.back')}
+                className="btn btn-ghost -ms-2 h-9 w-9 rounded-full p-0"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                {/* The chevron points the way back, which is the opposite of
+                    the reading direction — so it has to flip with it. */}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden className="flip-ltr">
                   <path
                     d="M9 6l6 6-6 6"
                     stroke="currentColor"
@@ -65,7 +69,7 @@ export function Card({
   return (
     <Tag
       onClick={onClick}
-      className={`glass ${glow ? 'rim' : ''} w-full rounded-3xl p-4 text-right transition-all duration-200 ${
+      className={`glass ${glow ? 'rim' : ''} w-full rounded-3xl p-4 text-start transition-all duration-200 ${
         onClick ? 'hover:-translate-y-0.5 active:scale-[0.99]' : ''
       } ${className}`}
       style={glow ? { boxShadow: '0 18px 50px -22px var(--glow)' } : undefined}
@@ -87,6 +91,7 @@ const TRUST_TINT: Record<TrustLevel, [number, number, number]> = {
  * sentence being one tap away — the short label alone would be misleading.
  */
 export function TrustBadge({ trust, full = false }: { trust: TrustLevel; full?: boolean }) {
+  const { t } = useT()
   const [h, s, l] = TRUST_TINT[trust]
   return (
     <span
@@ -101,7 +106,7 @@ export function TrustBadge({ trust, full = false }: { trust: TrustLevel; full?: 
         <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
         <path d="M12 8h.01M11 12h1v4h1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       </svg>
-      {full ? TRUST_NOTICE[trust] : TRUST_SHORT[trust]}
+      {full ? t(trustNoticeKey(trust)) : t(trustShortKey(trust))}
     </span>
   )
 }
@@ -162,6 +167,7 @@ export function Sheet({
   title: string
   children: ReactNode
 }) {
+  const { t } = useT()
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -193,7 +199,7 @@ export function Sheet({
       >
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-lg font-bold">{title}</h2>
-          <button onClick={onClose} aria-label="סגירה" className="btn btn-ghost h-9 w-9 rounded-full p-0">
+          <button onClick={onClose} aria-label={t('common.close')} className="btn btn-ghost h-9 w-9 rounded-full p-0">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
               <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>

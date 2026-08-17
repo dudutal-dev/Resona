@@ -1,3 +1,4 @@
+import { useT } from '../lib/i18n'
 import { useSettings } from '../store/settingsStore'
 import { useSession } from '../store/sessionStore'
 import { Sheet } from './ui'
@@ -11,6 +12,7 @@ import { Sheet } from './ui'
  * matter, letting the listener make the call.
  */
 export function HeadphoneNotice() {
+  const { t } = useT()
   const { headphoneNoticeSeen, dismissHeadphoneNotice } = useSettings()
   const setBeatMode = useSession((s) => s.setBeatMode)
 
@@ -18,31 +20,29 @@ export function HeadphoneNotice() {
     <Sheet
       open={!headphoneNoticeSeen}
       onClose={dismissHeadphoneNotice}
-      title="לפני שמתחילים"
+      title={t('notice.title')}
     >
       <div className="space-y-4">
         <p className="txt-2 text-sm leading-relaxed">
-          שכבת הגלים המוחיים יכולה לפעול בשני אופנים:
+          {t('notice.intro')}
         </p>
 
         <div className="glass rounded-2xl p-4">
-          <p className="text-sm font-bold">איזוכרוני — ברירת המחדל</p>
+          <p className="text-sm font-bold">{t('notice.isoTitle')}</p>
           <p className="txt-2 mt-1 text-[12px] leading-relaxed">
-            צליל בודד שנפעם בקצב הנבחר. עובד ברמקולים, באוזניות, בכל דבר.
+            {t('notice.isoBody')}
           </p>
         </div>
 
         <div className="glass rounded-2xl p-4">
-          <p className="text-sm font-bold">ביינאורל — מחייב אוזניות</p>
+          <p className="text-sm font-bold">{t('notice.binTitle')}</p>
           <p className="txt-2 mt-1 text-[12px] leading-relaxed">
-            כל אוזן מקבלת תדר מעט שונה, והמוח משלים את ההפרש. ברמקולים שני הצלילים מתערבבים באוויר
-            והאפקט פשוט לא נוצר — לכן זו אינה ברירת המחדל.
+            {t('notice.binBody')}
           </p>
         </div>
 
         <p className="txt-3 text-[11px] leading-relaxed">
-          הדפדפן אינו יכול לזהות אם חיברת אוזניות, ולכן הבחירה נשארת אצלך. אפשר להחליף בכל רגע
-          במיקסר. אם יש לך אפילפסיה או רגישות לגירוי קצבי — היוועץ ברופא לפני שימוש בשכבה הזו.
+          {t('notice.footer')}
         </p>
 
         <div className="flex gap-2">
@@ -53,7 +53,7 @@ export function HeadphoneNotice() {
             }}
             className="btn flex-1 text-xs"
           >
-            יש לי אוזניות — ביינאורל
+            {t('notice.chooseBinaural')}
           </button>
           <button
             onClick={() => {
@@ -62,7 +62,7 @@ export function HeadphoneNotice() {
             }}
             className="btn btn-primary flex-1 text-xs"
           >
-            המשך באיזוכרוני
+            {t('notice.chooseIso')}
           </button>
         </div>
       </div>

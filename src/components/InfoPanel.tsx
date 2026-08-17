@@ -1,13 +1,7 @@
-import { TRUST_NOTICE } from '../lib/catalog'
-import type { Frequency, FrequencyType } from '../lib/types'
+import { freqInfo, freqLabel, trustNoticeKey, typeKey } from '../lib/catalog'
+import { useT } from '../lib/i18n'
+import type { Frequency } from '../lib/types'
 import { Sheet, TrustBadge } from './ui'
-
-const TYPE_LABEL: Record<FrequencyType, string> = {
-  solfeggio: 'סולם סולפג׳יו מסורתי',
-  tuning: 'כוונון מוזיקלי',
-  cosmic: 'מחזור מדוד, מוכפל באוקטבות',
-  binaural: 'טווח גלי מוח',
-}
 
 /**
  * The transparency layer (§6.6). Every claim in the app is reachable from here,
@@ -23,11 +17,12 @@ export function InfoPanel({
   open: boolean
   onClose: () => void
 }) {
+  const { t, rich, lang } = useT()
   if (!freq) return null
   const hzText = freq.hz ? `${freq.hz} Hz` : `${freq.range?.[0]}–${freq.range?.[1]} Hz`
 
   return (
-    <Sheet open={open} onClose={onClose} title={freq.label}>
+    <Sheet open={open} onClose={onClose} title={freqLabel(freq, lang)}>
       <div className="space-y-5">
         <div className="flex items-center gap-3">
           <div
@@ -44,14 +39,14 @@ export function InfoPanel({
           <div className="min-w-0">
             <p className="ltr text-sm font-semibold">{hzText}</p>
             <p className="txt-3 mt-0.5 text-xs">
-              {TYPE_LABEL[freq.type]}
+              {t(typeKey(freq.type))}
             </p>
           </div>
         </div>
 
         <div>
-          <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider txt-3">מה מיוחס לתדר</h3>
-          <p className="txt-2 text-sm leading-relaxed">{freq.info}</p>
+          <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider txt-3">{t('info.claimed')}</h3>
+          <p className="txt-2 text-sm leading-relaxed">{freqInfo(freq, lang)}</p>
         </div>
 
         <div
@@ -65,27 +60,22 @@ export function InfoPanel({
           }}
         >
           <TrustBadge trust={freq.trust} />
-          <p className="mt-2 text-sm font-medium leading-relaxed">{TRUST_NOTICE[freq.trust]}</p>
+          <p className="mt-2 text-sm font-medium leading-relaxed">{t(trustNoticeKey(freq.trust))}</p>
         </div>
 
         {freq.hz && (
           <div>
             <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider txt-3">
-              איך התדר נשמע כאן
+              {t('info.howItSounds')}
             </h3>
             <p className="txt-2 text-sm leading-relaxed">
-              התדר אינו מונח ברקע כטון נפרד. הוא משמש כתדר היסוד של הסולם — כל תו במלודיה הוא מכפלה
-              של <span className="ltr font-semibold">{freq.hz} Hz</span> ביחס הרמוני טהור (כמו{' '}
-              <span className="ltr">3/2</span> או <span className="ltr">5/4</span>), כך שהמוזיקה עצמה
-              בנויה מהתדר ולא רק לצידו.
+              {rich('info.howItSoundsBody', { hz: freq.hz ?? 0 })}
             </p>
           </div>
         )}
 
         <p className="txt-3 border-t pt-4 text-[11px] leading-relaxed" style={{ borderColor: 'var(--border)' }}>
-          Resona הוא כלי להרפיה והאזנה. אינו מכשיר רפואי, אינו מאבחן ואינו מטפל במצב בריאותי כלשהו,
-          ואינו תחליף לייעוץ מקצועי. אם יש לך אפילפסיה, רגישות לגירוי קצבי, או מצב נוירולוגי — היוועץ
-          ברופא לפני שימוש בשכבת הגלים המוחיים.
+          {t('info.disclaimer')}
         </p>
       </div>
     </Sheet>

@@ -1,3 +1,4 @@
+import { useT } from '../lib/i18n'
 import { useEffect, useRef, useState } from 'react'
 import { JUST_MAJOR } from '../audio/scale'
 import { engine } from '../audio/ToneEngine'
@@ -31,6 +32,7 @@ const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t))
 const clamp01 = (t: number) => Math.min(1, Math.max(0, t))
 
 export function SplashScreen({ onDone }: { onDone: () => void }) {
+  const { t } = useT()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
   const reducedMotion = useSettings((s) => s.reducedMotion)
@@ -180,7 +182,7 @@ export function SplashScreen({ onDone }: { onDone: () => void }) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="מסך פתיחה"
+      aria-label={t('splash.aria')}
       onClick={dismiss}
       className="fixed inset-0 z-[60] flex cursor-pointer flex-col items-center justify-center px-6"
       style={{
@@ -209,7 +211,7 @@ export function SplashScreen({ onDone }: { onDone: () => void }) {
             animation: reducedMotion ? undefined : 'fade-up 900ms cubic-bezier(0.16,1,0.3,1) 1150ms both',
           }}
         >
-          כל טבעת היא מרווח הרמוני של אותו תדר יסוד — וכך גם כל תו שתשמע.
+          {t('splash.tagline')}
         </p>
       </div>
 
@@ -223,14 +225,14 @@ export function SplashScreen({ onDone }: { onDone: () => void }) {
           animation: reducedMotion ? undefined : 'fade-up 800ms cubic-bezier(0.16,1,0.3,1) 1500ms both',
         }}
       >
-        התחל
+        {t('splash.start')}
       </button>
 
       <p
         className="txt-3 mt-4 text-[11px]"
         style={{ animation: reducedMotion ? undefined : 'fade-up 800ms ease 1900ms both' }}
       >
-        אפשר להקיש בכל מקום
+        {t('splash.tapAnywhere')}
       </p>
     </div>
   )

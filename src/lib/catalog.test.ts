@@ -4,16 +4,21 @@ import {
   BEAT_FREQUENCIES,
   FREQUENCIES,
   JOURNEYS,
-  PURPOSE_LABEL,
   ROOT_FREQUENCIES,
-  TRUST_NOTICE,
   defaultBeatHz,
   getFrequency,
+  purposeKey,
+  styleKey,
+  trustNoticeKey,
+  trustShortKey,
+  typeKey,
 } from './catalog'
+import { ABOUT } from './aboutContent'
+import { LANGS, STRINGS, translate, type Lang } from './i18n'
 import { configForDay } from './journeyConfig'
-import { THEME_OF, journeysByTheme } from './themes'
+import { THEME_OF, THEME_ORDER, journeysByTheme, themeBlurbKey, themeKey } from './themes'
 import { ROOT_GROUPS } from './catalog'
-import { CLUB_STYLES } from './types'
+import { CLUB_STYLES, MELODY_STYLES } from './types'
 import { DEFAULT_CONFIG } from '../store/sessionStore'
 import { resolveTimerMinutes } from '../audio/SessionPlayer'
 
@@ -40,7 +45,7 @@ describe('frequency catalog', () => {
       ids.add(f.id)
       expect(f.label.length).toBeGreaterThan(0)
       expect(f.info.length).toBeGreaterThan(0)
-      expect(TRUST_NOTICE[f.trust]).toBeTruthy()
+      expect(translate('he', trustNoticeKey(f.trust))).toBeTruthy()
     }
   })
 
@@ -195,7 +200,7 @@ describe('journeys', () => {
 
   it('labels and colours every purpose in use', () => {
     for (const j of JOURNEYS) {
-      expect(PURPOSE_LABEL[j.purpose], `no label for purpose ${j.purpose}`).toBeTruthy()
+      expect(translate('he', purposeKey(j.purpose)), `no label for ${j.purpose}`).toBeTruthy()
     }
   })
 
@@ -220,7 +225,7 @@ describe('journeys', () => {
 
 describe('configForDay', () => {
   it('keeps a solfeggio day as the root and adds a supporting band under it', () => {
-    const day = { day: 1, frequencyId: 'sol-396', durationMin: 30, note: '' }
+    const day = { day: 1, frequencyId: 'sol-396', durationMin: 30, note: '', noteEn: '' }
     const config = configForDay(day, { purpose: 'sleep' })
     expect(config.rootId).toBe('sol-396')
     // A sleep journey leans on delta, and the support stays quieter than the
@@ -230,7 +235,7 @@ describe('configForDay', () => {
   })
 
   it('lets a day name its own supporting band', () => {
-    const day = { day: 1, frequencyId: 'sol-396', durationMin: 30, note: '', beatId: 'bb-gamma' }
+    const day = { day: 1, frequencyId: 'sol-396', durationMin: 30, note: '', noteEn: '', beatId: 'bb-gamma' }
     expect(configForDay(day, { purpose: 'sleep' }).beatId).toBe('bb-gamma')
   })
 
@@ -249,7 +254,7 @@ describe('configForDay', () => {
   })
 
   it('turns a band day into a beat plus a pitched root', () => {
-    const day = { day: 4, frequencyId: 'bb-delta', durationMin: 60, note: '' }
+    const day = { day: 4, frequencyId: 'bb-delta', durationMin: 60, note: '', noteEn: '' }
     const config = configForDay(day, { purpose: 'sleep' })
     expect(config.beatId).toBe('bb-delta')
     expect(getFrequency(config.rootId)?.hz).toBeTypeOf('number')
@@ -276,11 +281,12 @@ describe('journey day isolation', () => {
       frequencyId: 'sol-639',
       durationMin: 30,
       note: '',
+      noteEn: '',
       depth: 1,
       pace: 0.9,
       style: 'techno' as const,
     }
-    const plain = { day: 1, frequencyId: 'sol-528', durationMin: 20, note: '' }
+    const plain = { day: 1, frequencyId: 'sol-528', durationMin: 20, note: '', noteEn: '' }
 
     // Play a deep, fast day, then start a day that specifies neither.
     const after = configForDay(psychedelic, { purpose: 'psychedelic' })
@@ -313,5 +319,98 @@ describe('grouping', () => {
   it('orders the solfeggio group by pitch', () => {
     const hz = ROOT_GROUPS.find((g) => g.id === 'solfeggio')!.items.map((f) => f.hz!)
     expect(hz).toEqual([...hz].sort((a, b) => a - b))
+  })
+})
+
+
+describe('interface language', () => {
+  it('translates every key into every language', () => {
+    // The English table is typed as a total record over the Hebrew keys, so a
+    // missing key cannot compile. What a type cannot catch is an entry left as
+    // an empty string, or a key that was copied across untranslated.
+    const he = STRINGS.he
+    const en = STRINGS.en
+    expect(Object.keys(en).sort()).toEqual(Object.keys(he).sort())
+    for (const key of Object.keys(he) as (keyof typeof he)[]) {
+      for (const lang of LANGS) {
+        expect(STRINGS[lang][key].trim().length, `${lang} ${key} is empty`).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('keeps every placeholder in both languages', () => {
+    // Word order differs between the two, so a translator can easily drop a
+    // {n}. The string still renders — with a hole where the number should be.
+    const holes = (text: string) => [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort()
+    for (const key of Object.keys(STRINGS.he) as (keyof typeof STRINGS.he)[]) {
+      expect(holes(STRINGS.en[key]), `placeholders differ in ${key}`).toEqual(
+        holes(STRINGS.he[key]),
+      )
+    }
+  })
+
+  it('names every catalogue entry in both languages', () => {
+    for (const f of FREQUENCIES) {
+      expect(f.labelEn.trim().length, `${f.id} labelEn`).toBeGreaterThan(0)
+      expect(f.infoEn.trim().length, `${f.id} infoEn`).toBeGreaterThan(0)
+      // A copy-paste of the Hebrew into the English field would pass a
+      // "non-empty" check and fail a reader.
+      expect(f.labelEn, `${f.id} labelEn is still Hebrew`).not.toBe(f.label)
+    }
+    for (const j of JOURNEYS) {
+      expect(j.titleEn.trim().length, `${j.id} titleEn`).toBeGreaterThan(0)
+      expect(j.descriptionEn.trim().length, `${j.id} descriptionEn`).toBeGreaterThan(0)
+      expect(j.titleEn, `${j.id} titleEn is still Hebrew`).not.toBe(j.title)
+      for (const day of j.schedule) {
+        expect(day.noteEn.trim().length, `${j.id} day ${day.day} noteEn`).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('leaves no Hebrew in the English side', () => {
+    const hebrew = /[\u0590-\u05FF]/
+    for (const key of Object.keys(STRINGS.he) as (keyof typeof STRINGS.he)[]) {
+      expect(hebrew.test(STRINGS.en[key]), `${key} still contains Hebrew`).toBe(false)
+    }
+    for (const f of FREQUENCIES) expect(hebrew.test(f.labelEn + f.infoEn), f.id).toBe(false)
+    for (const j of JOURNEYS) {
+      expect(hebrew.test(j.titleEn + j.descriptionEn), j.id).toBe(false)
+      for (const day of j.schedule) expect(hebrew.test(day.noteEn), `${j.id}/${day.day}`).toBe(false)
+    }
+    for (const section of ABOUT.en) {
+      expect(hebrew.test(section.title + section.paragraphs.join('')), section.title).toBe(false)
+    }
+  })
+
+  it('gives every label a key that resolves', () => {
+    const check = (key: Parameters<typeof translate>[1], what: string) => {
+      for (const lang of LANGS) {
+        expect(translate(lang as Lang, key).trim().length, `${what} in ${lang}`).toBeGreaterThan(0)
+      }
+    }
+    for (const theme of THEME_ORDER) {
+      check(themeKey(theme), `theme ${theme}`)
+      check(themeBlurbKey(theme), `theme blurb ${theme}`)
+    }
+    for (const j of JOURNEYS) check(purposeKey(j.purpose), `purpose ${j.purpose}`)
+    for (const style of MELODY_STYLES) check(styleKey(style), `style ${style}`)
+    for (const f of FREQUENCIES) {
+      check(typeKey(f.type), `type ${f.type}`)
+      check(trustShortKey(f.trust), `trust ${f.trust}`)
+      check(trustNoticeKey(f.trust), `notice ${f.trust}`)
+    }
+    for (const g of ROOT_GROUPS) {
+      check(g.titleKey, `group ${g.id}`)
+      check(g.noteKey, `group note ${g.id}`)
+    }
+  })
+
+  it('writes the About screen with the same shape in both languages', () => {
+    expect(ABOUT.en).toHaveLength(ABOUT.he.length)
+    ABOUT.he.forEach((section, i) => {
+      expect(ABOUT.en[i].paragraphs, `section ${i} paragraph count`).toHaveLength(
+        section.paragraphs.length,
+      )
+    })
   })
 })

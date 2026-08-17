@@ -2,19 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { BUILTIN_AMBIENCE, type AmbienceOption } from '../audio/Ambience'
 import { clubBpm } from '../audio/ClubGroove'
 import { player } from '../audio/SessionPlayer'
-import { STYLE_LABEL, getFrequency } from '../lib/catalog'
+import { getFrequency, shortLabel, styleKey, styleNoteKey } from '../lib/catalog'
+import { useT } from '../lib/i18n'
 import { MELODY_STYLES, type ClubStyle } from '../lib/types'
 import { useSession } from '../store/sessionStore'
 import { ListeningMode } from './ListeningMode'
 import { Slider } from './ui'
-
-/** One line per club style, describing what it actually does to the groove. */
-const STYLE_NOTE: Record<ClubStyle, string> = {
-  techno: 'קיק על כל פעימה, בס מתחתיו, האט בין הפעימות וארפג׳ שמתחלף כל ארבע תיבות. הקיק כמעט אף פעם לא עוזב.',
-  trance: 'שש עשרה תיבות נהיגה, ברייקדאון שבו הקיק נעלם, בילד עם פילטר עולה ודרופ. הבס יושב בין הפעימות.',
-  psytrance: 'בס מתגלגל — הקיק לוקח את הפעימה והבס ממלא את שלושת השמיניות-עשרה שאחריה. 144 פעימות, האטים צפופים ופילטר עם רזוננס.',
-  deephouse: 'גרוב מתנדנד (שאפל), קיק רך, האט פתוח על השמינית המוקדמת, ואקורדים שנופלים בין הפעימות. בלי דרופים — זה מתגלגל.',
-}
 
 const WaveIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -52,6 +45,7 @@ const CloudIcon = () => (
 export function MixerPanel() {
   const { config, setLevel, setAmbience, setBeatHz, setDensity, setPace, setDepth, setStyle } =
     useSession()
+  const { t, rich, lang } = useT()
   const [ambienceOptions, setAmbienceOptions] = useState<AmbienceOption[]>(BUILTIN_AMBIENCE)
   const styleRow = useRef<HTMLDivElement | null>(null)
   const activeChip = useRef<HTMLButtonElement | null>(null)
@@ -87,7 +81,7 @@ export function MixerPanel() {
       {/* Melody layer */}
       <div className="glass rounded-3xl p-4">
         <Slider
-          label="מלודיה ותדר יסוד"
+          label={t('mixer.melody')}
           icon={<WaveIcon />}
           value={config.levels.melody}
           onChange={(v) => setLevel('melody', v)}
@@ -97,7 +91,7 @@ export function MixerPanel() {
               session, so it needs a control here — otherwise a techno day would
               quietly follow the listener into every session after it. */}
           <div>
-            <span className="txt-2 text-xs font-semibold">אופי המלודיה</span>
+            <span className="txt-2 text-xs font-semibold">{t('mixer.styleTitle')}</span>
             <div
               ref={styleRow}
               className="no-scrollbar -mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1"
@@ -117,72 +111,72 @@ export function MixerPanel() {
                       color: active ? 'var(--accent)' : 'var(--txt-2)',
                     }}
                   >
-                    {STYLE_LABEL[id]}
+                    {t(styleKey(id))}
                   </button>
                 )
               })}
             </div>
           </div>
           <Slider
-            label="צפיפות נגינה"
+            label={t('mixer.density')}
             value={config.density}
             onChange={setDensity}
-            display={config.density < 0.33 ? 'דלילה' : config.density < 0.7 ? 'מאוזנת' : 'זורמת'}
+            display={t(
+              config.density < 0.33
+                ? 'mixer.density.sparse'
+                : config.density < 0.7
+                  ? 'mixer.density.balanced'
+                  : 'mixer.density.flowing',
+            )}
           />
           <Slider
-            label="קצב"
+            label={t('mixer.pace')}
             value={config.pace}
             onChange={setPace}
             display={
               club
                 ? `${Math.round(clubBpm(style as ClubStyle, config.pace))} BPM`
-                : config.pace < 0.25
-                  ? 'נייח'
-                  : config.pace < 0.45
-                    ? 'זורם'
-                    : config.pace < 0.7
-                      ? 'פועם'
-                      : 'קצבי'
+                : t(
+                    config.pace < 0.25
+                      ? 'mixer.pace.still'
+                      : config.pace < 0.45
+                        ? 'mixer.pace.drifting'
+                        : config.pace < 0.7
+                          ? 'mixer.pace.pulsing'
+                          : 'mixer.pace.rhythmic',
+                  )
             }
           />
           <Slider
-            label="עומק"
+            label={t('mixer.depth')}
             value={config.depth}
             onChange={setDepth}
             display={
-              config.depth < 0.2
-                ? 'נקי'
-                : config.depth < 0.5
-                  ? 'מרחף'
-                  : config.depth < 0.8
-                    ? 'פסיכדלי'
-                    : 'עמוק'
+              t(
+                config.depth < 0.2
+                  ? 'mixer.depth.clean'
+                  : config.depth < 0.5
+                    ? 'mixer.depth.floating'
+                    : config.depth < 0.8
+                      ? 'mixer.depth.psychedelic'
+                      : 'mixer.depth.deep',
+              )
             }
           />
           {config.depth >= 0.5 && (
             <p className="txt-3 text-[11px] leading-relaxed">
-              מעל חצי הסולם עובר לסדרת ההרמוניות העליונה — מרווחים של{' '}
-              <span className="ltr">7/4</span> ו-<span className="ltr">11/8</span> שאין להם מקבילה
-              בפסנתר. עדיין יחסים שלמים מדויקים של תדר היסוד.
+              {rich('mixer.depthNote')}
             </p>
           )}
           {club ? (
             <p className="txt-3 text-[11px] leading-relaxed">
-              {STYLE_NOTE[style as ClubStyle]} הקיק עצמו הוא{' '}
-              {root?.hz ? (
-                <>
-                  <span className="ltr">{root.hz} Hz</span> מקופל אוקטבות מטה
-                </>
-              ) : (
-                'תדר היסוד מקופל אוקטבות מטה'
-              )}
-              , כך שגם הצליל החזק ביותר במיקס הוא התדר שבחרת.
+              {t(styleNoteKey(style as ClubStyle))}
+              {root?.hz ? rich('mixer.kickNote', { hz: root.hz }) : t('mixer.kickNoteNoHz')}
             </p>
           ) : (
             config.pace >= 0.45 && (
               <p className="txt-3 text-[11px] leading-relaxed">
-                מעל "פועם" נכנסת פעימת בס על תדר היסוד, התווים מתקצרים והנגיעה נעשית נקישה במקום
-                התנפחות.
+                {t('mixer.pulseNote')}
               </p>
             )
           )}
@@ -192,7 +186,7 @@ export function MixerPanel() {
       {/* Brainwave layer */}
       <div className="glass rounded-3xl p-4">
         <Slider
-          label="גל מוחי"
+          label={t('mixer.beat')}
           icon={<BrainIcon />}
           value={config.levels.beat}
           onChange={(v) => setLevel('beat', v)}
@@ -200,7 +194,7 @@ export function MixerPanel() {
         {beat ? (
           <div className="mt-3 space-y-3 border-t pt-3" style={{ borderColor: 'var(--border)' }}>
             <Slider
-              label={`קצב פעימה — ${beat.label.split('—')[0].trim()}`}
+              label={t('mixer.beatRate', { band: shortLabel(beat, lang) })}
               min={range[0]}
               max={range[1]}
               // A half-Hz step across a two-Hz band leaves four positions and
@@ -213,7 +207,7 @@ export function MixerPanel() {
           </div>
         ) : (
           <p className="txt-3 mt-2 text-[11px]">
-            שכבת הגל המוחי כבויה בהאזנה הזו. אפשר להוסיף טווח במסך התדרים.
+            {t('mixer.noBeat')}
           </p>
         )}
       </div>
@@ -224,7 +218,7 @@ export function MixerPanel() {
       {/* Ambience layer */}
       <div className="glass rounded-3xl p-4">
         <Slider
-          label="סאונד סביבה"
+          label={t('mixer.ambience')}
           icon={<CloudIcon />}
           value={config.levels.ambience}
           onChange={(v) => setLevel('ambience', v)}
@@ -244,7 +238,7 @@ export function MixerPanel() {
                   color: active ? 'var(--accent)' : 'var(--txt-2)',
                 }}
               >
-                {opt.label}
+                {opt.labelKey ? t(opt.labelKey) : (opt.label ?? String(opt.id))}
               </button>
             )
           })}
@@ -254,7 +248,7 @@ export function MixerPanel() {
       {/* Master */}
       <div className="glass rounded-3xl p-4">
         <Slider
-          label="עוצמה כללית"
+          label={t('mixer.master')}
           value={config.levels.master}
           onChange={(v) => setLevel('master', v)}
         />

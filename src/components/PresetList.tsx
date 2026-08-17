@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TIMER_LABEL } from '../audio/SessionPlayer'
+import { useT, type StringKey } from '../lib/i18n'
 import { BUILTIN_AMBIENCE } from '../audio/Ambience'
 import { getFrequency } from '../lib/catalog'
 import { navigate } from '../lib/router'
@@ -8,21 +8,21 @@ import { usePresets } from '../store/presetsStore'
 import type { Preset } from '../lib/types'
 import { Card, EmptyState, Screen, Sheet } from './ui'
 
-function describe(preset: Preset): string {
+function describe(preset: Preset, t: (k: StringKey, v?: Record<string, string | number>) => string) {
   const root = getFrequency(preset.config.rootId)
   const beat = preset.config.beatId ? getFrequency(preset.config.beatId) : null
   const amb = BUILTIN_AMBIENCE.find((a) => a.id === preset.config.ambience)
   const parts = [root ? `${root.hz} Hz` : null, beat ? `${preset.config.beatHz} Hz` : null]
   const timer =
     preset.config.timerMode === 'custom'
-      ? `${preset.config.customMinutes} דק׳`
-      : TIMER_LABEL[preset.config.timerMode]
-  return [parts.filter(Boolean).join(' + '), amb?.label ?? preset.ambienceTrack, timer]
-    .filter(Boolean)
-    .join(' · ')
+      ? `${preset.config.customMinutes} ${t('common.min')}`
+      : t(`timer.${preset.config.timerMode}` as StringKey)
+  const ambience = amb?.labelKey ? t(amb.labelKey) : preset.ambienceTrack
+  return [parts.filter(Boolean).join(' + '), ambience, timer].filter(Boolean).join(' · ')
 }
 
 export function PresetList() {
+  const { t } = useT()
   const { presets, remove, rename, update } = usePresets()
   const { config, loadConfig, toggle } = useSession()
   const [editing, setEditing] = useState<Preset | null>(null)
@@ -37,14 +37,14 @@ export function PresetList() {
   }
 
   return (
-    <Screen title="הפריסטים שלי" subtitle="שילובים שמורים, נטענים בדיוק כפי שנשמרו" onBack>
+    <Screen title={t('presets.title')} subtitle={t('presets.subtitle')} onBack>
       {presets.length === 0 ? (
         <EmptyState
-          title="עדיין אין פריסטים"
-          body="בנה שילוב במסך הנגן — תדר, שכבות, עוצמות וטיימר — ושמור אותו בשם."
+          title={t('presets.emptyTitle')}
+          body={t('presets.emptyBody')}
           action={
             <button onClick={() => navigate('/player')} className="btn btn-primary">
-              למסך הנגן
+              {t('presets.toPlayer')}
             </button>
           }
         />
@@ -57,7 +57,7 @@ export function PresetList() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => void handlePlay(preset)}
-                    aria-label={`נגן את ${preset.name}`}
+                    aria-label={t('presets.playAria', { name: preset.name })}
                     className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl transition-transform active:scale-95"
                     style={{
                       background: `hsl(${root?.hue ?? 265} 85% 62% / 0.16)`,
@@ -70,9 +70,9 @@ export function PresetList() {
                     </svg>
                   </button>
 
-                  <button onClick={() => void handlePlay(preset)} className="min-w-0 flex-1 text-right">
+                  <button onClick={() => void handlePlay(preset)} className="min-w-0 flex-1 text-start">
                     <p className="truncate text-sm font-semibold">{preset.name}</p>
-                    <p className="txt-3 ltr mt-0.5 truncate text-[11px]">{describe(preset)}</p>
+                    <p className="txt-3 ltr mt-0.5 truncate text-[11px]">{describe(preset, t)}</p>
                   </button>
 
                   <div className="flex shrink-0 gap-1">
@@ -81,7 +81,7 @@ export function PresetList() {
                         setEditing(preset)
                         setName(preset.name)
                       }}
-                      aria-label={`עריכת ${preset.name}`}
+                      aria-label={t('presets.editAria', { name: preset.name })}
                       className="btn btn-ghost h-9 w-9 rounded-full p-0"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -95,9 +95,9 @@ export function PresetList() {
                     </button>
                     <button
                       onClick={() => {
-                        if (confirm(`למחוק את "${preset.name}"?`)) remove(preset.id)
+                        if (confirm(t('presets.deleteConfirm', { name: preset.name }))) remove(preset.id)
                       }}
-                      aria-label={`מחיקת ${preset.name}`}
+                      aria-label={t('presets.deleteAria', { name: preset.name })}
                       className="btn btn-ghost h-9 w-9 rounded-full p-0 txt-3"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -118,9 +118,9 @@ export function PresetList() {
         </div>
       )}
 
-      <Sheet open={!!editing} onClose={() => setEditing(null)} title="עריכת פריסט">
+      <Sheet open={!!editing} onClose={() => setEditing(null)} title={t('presets.editTitle')}>
         <label className="block text-sm font-medium" htmlFor="rename">
-          שם
+          {t('presets.name')}
         </label>
         <input
           id="rename"
@@ -136,7 +136,7 @@ export function PresetList() {
           }}
           className="btn btn-primary mt-4 w-full"
         >
-          שמור שם
+          {t('presets.saveName')}
         </button>
         <button
           onClick={() => {
@@ -145,7 +145,7 @@ export function PresetList() {
           }}
           className="btn mt-2 w-full text-xs"
         >
-          עדכן להגדרות הנוכחיות במיקסר
+          {t('presets.updateToCurrent')}
         </button>
       </Sheet>
     </Screen>

@@ -5,7 +5,9 @@ import { BinauralGenerator } from './BinauralGenerator'
 import { Ambience, BUILTIN_AMBIENCE, type AmbienceOption } from './Ambience'
 import { mediaRoute } from './MediaRoute'
 import { coverArtwork } from './artwork'
-import { getFrequency, getJourney } from '../lib/catalog'
+import { freqLabel, getFrequency, getJourney, journeyTitle, shortLabel } from '../lib/catalog'
+import { translate } from '../lib/i18n'
+import { useSettings } from '../store/settingsStore'
 import { THEME_HUE, themeOf } from '../lib/themes'
 import type { SessionConfig, TimerMode } from '../lib/types'
 
@@ -25,15 +27,7 @@ export function resolveTimerMinutes(config: SessionConfig): number | null {
   return TIMER_MINUTES[config.timerMode]
 }
 
-export const TIMER_LABEL: Record<TimerMode, string> = {
-  '15': '15 דקות',
-  '30': '30 דקות',
-  '60': 'שעה',
-  '120': 'שעתיים',
-  untilMorning: 'עד הבוקר',
-  unlimited: 'ללא הגבלה',
-  custom: 'מותאם',
-}
+
 
 /** Length of the closing fade (§4.6) — long enough to never jolt a sleeper. */
 export const FADE_OUT_SECONDS = 18
@@ -167,17 +161,22 @@ class SessionPlayer {
    * line rather than disappearing. The cover is drawn to match — see `artwork`.
    */
   private publishNowPlaying(config: SessionConfig) {
+    // The lock screen and any cast target follow the interface language too —
+    // a device showing this card is showing it to the same person.
+    const lang = useSettings.getState().lang
     const root = getFrequency(config.rootId)
     const beat = config.beatId ? getFrequency(config.beatId) : null
     const journey = this.journey ? getJourney(this.journey.journeyId) : null
     const day = this.journey?.day ?? 0
-    const beatName = beat ? beat.label.split('—')[0].trim() : null
-    const beatLine = beatName ? `${config.beatHz} Hz · ${beatName}` : 'תדר יסוד'
+    const beatName = beat ? shortLabel(beat, lang) : null
+    const beatLine = beatName
+      ? `${config.beatHz} Hz · ${beatName}`
+      : translate(lang, 'freq.rootTitle')
 
     const title = journey
-      ? `${journey.title} · יום ${day}`
+      ? `${journeyTitle(journey, lang)} · ${translate(lang, 'common.dayN', { n: day })}`
       : root
-        ? `${root.hz} Hz · ${root.label}`
+        ? `${root.hz} Hz · ${freqLabel(root, lang)}`
         : 'Resona'
     const subtitle = journey && root ? `${root.hz} Hz · ${beatLine}` : beatLine
 
@@ -189,8 +188,10 @@ class SessionPlayer {
         accentHue: journey ? THEME_HUE[themeOf(journey)] : (beat?.hue ?? root?.hue ?? 265),
         headline: root?.hz ? String(root.hz) : 'Resona',
         unit: root?.hz ? 'Hz' : undefined,
-        caption: journey ? journey.title : (root?.label ?? 'Resona'),
-        footnote: journey ? `יום ${day} מתוך ${journey.days}` : (beatName ?? undefined),
+        caption: journey ? journeyTitle(journey, lang) : (root ? freqLabel(root, lang) : 'Resona'),
+        footnote: journey
+          ? translate(lang, 'common.dayOf', { n: day, total: journey.days })
+          : (beatName ?? undefined),
       }),
     )
   }
@@ -315,6 +316,15 @@ class SessionPlayer {
 
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') void mediaRoute.resumeIfNeeded(this.playing)
+    })
+
+    // The lock-screen card is written once per config change, so switching
+    // language mid-session would otherwise leave the old language showing on a
+    // phone or a speaker until something else happened to touch the config.
+    useSettings.subscribe((state, prev) => {
+      if (state.lang !== prev.lang && this.playing && this.config) {
+        this.publishNowPlaying(this.config)
+      }
     })
   }
 }

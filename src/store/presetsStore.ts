@@ -1,4 +1,6 @@
 import { create } from 'zustand'
+import { translate } from '../lib/i18n'
+import { useSettings } from './settingsStore'
 import type { Preset, SessionConfig } from '../lib/types'
 import { STORAGE_KEYS, makeId, readJSON, writeJSON } from '../lib/storage'
 
@@ -32,7 +34,7 @@ export const usePresets = create<PresetsState>((set, get) => ({
   save: (name, config) => {
     const preset: Preset = {
       id: makeId(),
-      name: name.trim() || 'פריסט ללא שם',
+      name: name.trim() || translate(useSettings.getState().lang, 'presets.unnamed'),
       layers: toLayers(config),
       ambienceTrack: config.ambience === 'none' ? undefined : String(config.ambience),
       timerMode: config.timerMode,

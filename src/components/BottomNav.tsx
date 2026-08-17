@@ -1,11 +1,12 @@
 import { navigate, type Route } from '../lib/router'
+import { useT, type StringKey } from '../lib/i18n'
 import { useSession } from '../store/sessionStore'
 
-const ITEMS: { route: Route['name']; href: string; label: string; icon: JSX.Element }[] = [
+const ITEMS: { route: Route['name']; href: string; label: StringKey; icon: JSX.Element }[] = [
   {
     route: 'home',
     href: '/',
-    label: 'בית',
+    label: 'nav.home',
     icon: (
       <path
         d="M4 11l8-6 8 6v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8z"
@@ -18,7 +19,7 @@ const ITEMS: { route: Route['name']; href: string; label: string; icon: JSX.Elem
   {
     route: 'journeys',
     href: '/journeys',
-    label: 'מסעות',
+    label: 'nav.journeys',
     icon: (
       <>
         <path d="M4 7h16M4 12h9M4 17h13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -29,7 +30,7 @@ const ITEMS: { route: Route['name']; href: string; label: string; icon: JSX.Elem
   {
     route: 'frequencies',
     href: '/frequencies',
-    label: 'תדרים',
+    label: 'nav.frequencies',
     icon: (
       <path
         d="M3 12h2l2-7 3 14 3-17 3 13 2-3h3"
@@ -43,7 +44,7 @@ const ITEMS: { route: Route['name']; href: string; label: string; icon: JSX.Elem
   {
     route: 'presets',
     href: '/presets',
-    label: 'פריסטים',
+    label: 'nav.presets',
     icon: (
       <>
         <path d="M6 4v16M12 4v16M18 4v16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -56,7 +57,7 @@ const ITEMS: { route: Route['name']; href: string; label: string; icon: JSX.Elem
   {
     route: 'settings',
     href: '/settings',
-    label: 'הגדרות',
+    label: 'nav.settings',
     icon: (
       <>
         <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
@@ -73,12 +74,13 @@ const ITEMS: { route: Route['name']; href: string; label: string; icon: JSX.Elem
 
 export function BottomNav({ current }: { current: Route['name'] }) {
   const isPlaying = useSession((s) => s.isPlaying)
+  const { t } = useT()
 
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-40 safe-bottom"
       style={{ paddingInline: '0.75rem' }}
-      aria-label="ניווט ראשי"
+      aria-label={t('nav.aria')}
     >
       {/* Scrim: the bar floats over scrolling content, and without this the text
           underneath reads straight through the frosted panel. */}
@@ -110,10 +112,10 @@ export function BottomNav({ current }: { current: Route['name'] }) {
               <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden>
                 {item.icon}
               </svg>
-              <span className="text-[10px] font-semibold leading-none">{item.label}</span>
+              <span className="text-[10px] font-semibold leading-none">{t(item.label)}</span>
               {item.route === 'frequencies' && isPlaying && (
                 <span
-                  className="absolute right-1/2 top-1 h-1.5 w-1.5 translate-x-3 rounded-full"
+                  className="absolute end-1/2 top-1 h-1.5 w-1.5 translate-x-3 rounded-full"
                   style={{ background: 'var(--accent)', boxShadow: '0 0 8px var(--glow)' }}
                   aria-hidden
                 />

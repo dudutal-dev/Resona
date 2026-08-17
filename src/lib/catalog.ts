@@ -1,11 +1,43 @@
 import frequenciesRaw from '../data/frequencies.json'
 import journeysRaw from '../data/journeys.json'
-import type { Frequency, Journey, JourneyPurpose, MelodyStyle, TrustLevel } from './types'
+import type {
+  ClubStyle,
+  Frequency,
+  FrequencyType,
+  Journey,
+  JourneyDay,
+  JourneyPurpose,
+  MelodyStyle,
+  TrustLevel,
+} from './types'
+import type { Lang, StringKey } from './i18n'
 
 export const FREQUENCIES = frequenciesRaw as Frequency[]
 export const JOURNEYS = journeysRaw as Journey[]
 
 const BY_ID = new Map(FREQUENCIES.map((f) => [f.id, f]))
+
+/**
+ * Catalogue text in the current language.
+ *
+ * The English fields sit alongside the Hebrew ones in the same JSON entry
+ * rather than in a parallel file. A parallel file drifts: someone adds a
+ * journey to one and not the other, and the app half-translates itself. Here a
+ * new entry cannot compile without both.
+ */
+export const freqLabel = (f: Frequency, lang: Lang) => (lang === 'en' ? f.labelEn : f.label)
+export const freqInfo = (f: Frequency, lang: Lang) => (lang === 'en' ? f.infoEn : f.info)
+export const journeyTitle = (j: Journey, lang: Lang) => (lang === 'en' ? j.titleEn : j.title)
+export const journeyDescription = (j: Journey, lang: Lang) =>
+  lang === 'en' ? j.descriptionEn : j.description
+export const dayNote = (d: JourneyDay, lang: Lang) => (lang === 'en' ? d.noteEn : d.note)
+
+/**
+ * A band's short name, for places that show it inline — "Theta", not
+ * "Theta — deep relaxation and meditation". Both languages use an em dash to
+ * separate the name from its description.
+ */
+export const shortLabel = (f: Frequency, lang: Lang) => freqLabel(f, lang).split('—')[0].trim()
 
 export function getFrequency(id: string): Frequency | undefined {
   return BY_ID.get(id)
@@ -20,23 +52,28 @@ export const ROOT_FREQUENCIES = FREQUENCIES.filter(
  * Root frequencies split by what they are, not by pitch. The solfeggio set and
  * the 432 tuning carry different stories and shouldn't read as one list.
  */
-export const ROOT_GROUPS: { id: string; title: string; note: string; items: Frequency[] }[] = [
+export const ROOT_GROUPS: {
+  id: string
+  titleKey: StringKey
+  noteKey: StringKey
+  items: Frequency[]
+}[] = [
   {
     id: 'solfeggio',
-    title: 'סולם הסולפג׳יו',
-    note: 'תשעה תדרים מהמסורת, מהנמוך לגבוה',
+    titleKey: 'freq.group.solfeggio',
+    noteKey: 'freq.group.solfeggioNote',
     items: FREQUENCIES.filter((f) => f.type === 'solfeggio'),
   },
   {
     id: 'tuning',
-    title: 'כוונונים',
-    note: 'תקנים מוזיקליים — כולל 440Hz עצמו, להשוואה',
+    titleKey: 'freq.group.tuning',
+    noteKey: 'freq.group.tuningNote',
     items: FREQUENCIES.filter((f) => f.type === 'tuning'),
   },
   {
     id: 'cosmic',
-    title: 'האוקטבה הקוסמית',
-    note: 'מחזורים ותהודות מדודים, מוכפלים באוקטבות עד לשמיעה',
+    titleKey: 'freq.group.cosmic',
+    noteKey: 'freq.group.cosmicNote',
     items: FREQUENCIES.filter((f) => f.type === 'cosmic'),
   },
 ]
@@ -51,44 +88,17 @@ export function getJourney(id: string): Journey | undefined {
 }
 
 /**
- * The transparency notice mandated by §5.1 of the spec. Every frequency shown in
- * the UI carries the sentence matching its `trust` level — no exceptions.
+ * §5.1 requires every frequency to carry the sentence matching its trust level
+ * wherever it appears. These build dictionary keys rather than holding the text,
+ * so the sentence follows the interface language and a missing translation is a
+ * compile error rather than a Hebrew line on an English screen.
  */
-export const TRUST_NOTICE: Record<TrustLevel, string> = {
-  traditional: 'מבוסס מסורת ואמונה תרבותית ואינו נתמך בראיות מדעיות קליניות.',
-  research_backed_partial: 'קיימות ראיות מחקריות חלקיות ולא עקביות.',
-  reference: 'כוונון ייחוס בשימוש כללי. אינו נושא טענת השפעה כלשהי.',
-}
-
-export const TRUST_SHORT: Record<TrustLevel, string> = {
-  traditional: 'מסורתי',
-  research_backed_partial: 'ראיות חלקיות',
-  reference: 'ייחוס',
-}
-
-export const STYLE_LABEL: Record<MelodyStyle, string> = {
-  ambient: 'אמביינט',
-  techno: 'טכנו',
-  trance: 'טראנס',
-  psytrance: 'פסיטראנס',
-  deephouse: 'דיפ האוס',
-}
-
-export const PURPOSE_LABEL: Record<JourneyPurpose, string> = {
-  sleep: 'שינה',
-  focus: 'ריכוז',
-  spiritual: 'רוחני',
-  anxiety: 'חרדה',
-  intro: 'התחלה',
-  energy: 'אנרגיה',
-  creativity: 'יצירתיות',
-  body: 'גוף',
-  rhythm: 'קצבי',
-  psychedelic: 'פסיכדלי',
-  work: 'עבודה',
-  intimacy: 'זוגיות',
-  club: 'קלאב',
-}
+export const trustNoticeKey = (t: TrustLevel): StringKey => `trust.${t}.notice`
+export const trustShortKey = (t: TrustLevel): StringKey => `trust.${t}`
+export const styleKey = (s: MelodyStyle): StringKey => `style.${s}`
+export const styleNoteKey = (s: ClubStyle): StringKey => `style.${s}.note`
+export const purposeKey = (p: JourneyPurpose): StringKey => `purpose.${p}`
+export const typeKey = (t: FrequencyType): StringKey => `type.${t}`
 
 /**
  * A journey day resolves to a root + optional beat. Binaural days still need a

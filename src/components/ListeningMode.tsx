@@ -1,3 +1,4 @@
+import { useT } from '../lib/i18n'
 import { useSession } from '../store/sessionStore'
 
 const HeadphonesIcon = () => (
@@ -39,20 +40,21 @@ export function ListeningMode({
   hasBeatLayer: boolean
   compact?: boolean
 }) {
+  const { t } = useT()
   const mode = useSession((s) => s.config.beatMode)
   const setBeatMode = useSession((s) => s.setBeatMode)
 
   const options = [
     {
       id: 'binaural' as const,
-      label: 'אוזניות',
-      hint: 'ביינאורל — כל אוזן מקבלת תדר מעט שונה',
+      label: t('listen.headphones'),
+      hint: t('listen.headphonesHint'),
       icon: <HeadphonesIcon />,
     },
     {
       id: 'isochronic' as const,
-      label: 'רמקולים',
-      hint: 'איזוכרוני — צליל אחד שנפעם, עובד בכל השמעה',
+      label: t('listen.speakers'),
+      hint: t('listen.speakersHint'),
       icon: <SpeakerIcon />,
     },
   ]
@@ -60,11 +62,11 @@ export function ListeningMode({
   return (
     <div className={compact ? '' : 'glass rounded-3xl p-4'}>
       <div className="mb-2 flex items-baseline justify-between">
-        <h3 className="text-sm font-bold">איך אתה מאזין?</h3>
-        {!hasBeatLayer && <span className="txt-3 text-[11px]">נשמר להמשך</span>}
+        <h3 className="text-sm font-bold">{t('listen.question')}</h3>
+        {!hasBeatLayer && <span className="txt-3 text-[11px]">{t('listen.savedForLater')}</span>}
       </div>
 
-      <div className="flex gap-2" role="group" aria-label="אופן ההאזנה">
+      <div className="flex gap-2" role="group" aria-label={t('listen.groupAria')}>
         {options.map((opt) => {
           const active = mode === opt.id
           return (
@@ -72,7 +74,7 @@ export function ListeningMode({
               key={opt.id}
               onClick={() => setBeatMode(opt.id)}
               aria-pressed={active}
-              className={`flex-1 rounded-2xl px-3 py-3 text-right transition-all active:scale-[0.98] ${
+              className={`flex-1 rounded-2xl px-3 py-3 text-start transition-all active:scale-[0.98] ${
                 active ? 'rim' : ''
               }`}
               style={{
@@ -103,14 +105,12 @@ export function ListeningMode({
               color: '#ffd166',
             }}
           >
-            ביינאורל נוצר מההפרש בין האוזניים. ברמקולים שני הצלילים מתערבבים באוויר והאפקט לא נוצר
-            — חבר אוזניות, או בחר רמקולים.
+            {t('listen.binauralWarning')}
           </p>
         )
       ) : (
         <p className="txt-3 mt-2 text-[11px] leading-relaxed">
-          בהאזנה הזו אין שכבת גלים מוחיים, ולכן הבחירה לא משנה את מה שתשמע כרגע — המלודיה זהה
-          באוזניות וברמקולים. הבחירה נשמרת ותחול על כל האזנה שכן כוללת גל מוחי.
+          {t('listen.noBeatNote')}
         </p>
       )}
     </div>

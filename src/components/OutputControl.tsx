@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { mediaRoute } from '../audio/MediaRoute'
+import { useT } from '../lib/i18n'
 import { useSettings } from '../store/settingsStore'
 import { useSession } from '../store/sessionStore'
 
@@ -24,6 +25,7 @@ const ScreenIcon = () => (
 
 /** Playback destination and screen behaviour. */
 export function OutputControl() {
+  const { t, rich } = useT()
   const { keepScreenAwake, setKeepScreenAwake } = useSettings()
   const isPlaying = useSession((s) => s.isPlaying)
   /** null = not attempted yet, false = asked for and refused. */
@@ -68,7 +70,7 @@ export function OutputControl() {
     <div className="glass rounded-3xl p-4">
       <h3 className="mb-3 flex items-center gap-2 text-sm font-bold">
         <CastIcon />
-        השמעה ומכשירים
+        {t('output.title')}
       </h3>
 
       {canPick ? (
@@ -79,29 +81,30 @@ export function OutputControl() {
             className={`btn w-full text-xs ${external ? '' : 'btn-primary'}`}
             style={!isPlaying || busy ? { opacity: 0.5 } : undefined}
           >
-            {busy ? 'מחבר…' : external ? 'החלף מכשיר' : 'השמע למכשיר בסביבה'}
+            {busy ? t('output.connecting') : external ? t('output.switchDevice') : t('output.castTo')}
           </button>
 
           {external && (
             <button onClick={() => void backToPhone()} disabled={busy} className="btn mt-2 w-full text-xs">
-              חזור להשמעה מהטלפון
+              {t('output.backToPhone')}
             </button>
           )}
 
           <p className="txt-3 mt-2 text-[11px] leading-relaxed">
-            {!isPlaying
-              ? 'התחל נגינה כדי לבחור מכשיר.'
-              : castFailed
-                ? 'לא הצלחתי להעביר את הצליל — חזרתי להשמעה מהטלפון כדי שלא תישאר בלי סאונד. אפשר לנסות גם ממרכז הבקרה.'
-                : external
-                  ? 'משדר למכשיר חיצוני. שם הפריט והתדר הנוכחי מוצגים במכשיר.'
-                  : 'שולח את ההאזנה לרמקול, לטלוויזיה או לרכב, עם שם התדר על המסך שלהם.'}
+            {t(
+              !isPlaying
+                ? 'output.needPlaying'
+                : castFailed
+                  ? 'output.castFailed'
+                  : external
+                    ? 'output.casting'
+                    : 'output.castIdle',
+            )}
           </p>
         </>
       ) : (
         <p className="txt-2 text-[12px] leading-relaxed">
-          הדפדפן הזה לא חושף בורר מכשירים לדף עצמו. אפשר לנתב את הצליל דרך בקרת השמע של המכשיר —
-          <span className="font-semibold"> מרכז הבקרה</span> בטלפון, או בורר פלט השמע במחשב.
+          {rich('output.noPicker')}
         </p>
       )}
 
@@ -110,23 +113,25 @@ export function OutputControl() {
           onClick={() => setKeepScreenAwake(!keepScreenAwake)}
           role="switch"
           aria-checked={keepScreenAwake}
-          className="flex w-full items-center gap-3 text-right"
+          className="flex w-full items-center gap-3 text-start"
         >
           <span className="txt-3 shrink-0">
             <ScreenIcon />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-sm font-semibold">השאר את המסך דלוק</span>
+            <span className="block text-sm font-semibold">{t('output.keepAwake')}</span>
             <span className="txt-3 mt-0.5 block text-[11px] leading-relaxed">
-              {!mediaRoute.supportsWakeLock
-                ? 'הדפדפן הזה לא תומך בנעילת מסך. אפשר להאריך את זמן הכיבוי בהגדרות המכשיר.'
-                : keepScreenAwake && !isPlaying
-                  ? 'יופעל כשתתחיל נגינה.'
-                  : wakeHeld === false
-                    ? 'הבקשה נדחתה על ידי הדפדפן. בדרך כלל זה קורה כשהדף לא בחזית.'
-                    : wakeHeld
-                      ? 'פעיל — המסך לא ייכבה בזמן ההאזנה.'
-                      : 'מונע מהמסך לכבות באמצע האזנה. אינו מאפשר נגינה אחרי מעבר לאפליקציה אחרת.'}
+              {t(
+                !mediaRoute.supportsWakeLock
+                  ? 'output.wakeUnsupported'
+                  : keepScreenAwake && !isPlaying
+                    ? 'output.wakeWillStart'
+                    : wakeHeld === false
+                      ? 'output.wakeDenied'
+                      : wakeHeld
+                        ? 'output.wakeHeld'
+                        : 'output.wakeIdle',
+              )}
             </span>
           </span>
           <span

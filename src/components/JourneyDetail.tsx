@@ -1,4 +1,14 @@
-import { PURPOSE_LABEL, getFrequency, getJourney } from '../lib/catalog'
+import {
+  dayNote,
+  freqLabel,
+  getFrequency,
+  getJourney,
+  journeyDescription,
+  journeyTitle,
+  purposeKey,
+  shortLabel,
+} from '../lib/catalog'
+import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
 import { bandForDay } from '../lib/journeyConfig'
 import { useJourneys } from '../store/journeyStore'
@@ -7,13 +17,14 @@ import { Card, Screen, TrustBadge } from './ui'
 const MOOD_FACE: Record<number, string> = { 1: '😣', 2: '😕', 3: '😐', 4: '🙂', 5: '😌' }
 
 export function JourneyDetail({ id }: { id: string }) {
+  const { t, lang } = useT()
   const journey = getJourney(id)
   const { progress, start, reset } = useJourneys()
 
   if (!journey) {
     return (
-      <Screen title="מסע לא נמצא" onBack>
-        <p className="txt-2 text-sm">המסע הזה כבר לא קיים בקטלוג.</p>
+      <Screen title={t('journey.notFound')} onBack>
+        <p className="txt-2 text-sm">{t('journey.notFoundBody')}</p>
       </Screen>
     )
   }
@@ -30,19 +41,19 @@ export function JourneyDetail({ id }: { id: string }) {
   }
 
   return (
-    <Screen title={journey.title} subtitle={journey.description} onBack>
+    <Screen title={journeyTitle(journey, lang)} subtitle={journeyDescription(journey, lang)} onBack>
       {/* Progress header */}
       <Card glow className="mb-5">
         <div className="flex items-center gap-4">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="chip">{PURPOSE_LABEL[journey.purpose]}</span>
+              <span className="chip">{t(purposeKey(journey.purpose))}</span>
               {journey.arc && (
                 <span className="chip">
-                  {journey.arc === 'ascending' ? '↑ עולה בסולם' : '↓ יורד בסולם'}
+                  {t(journey.arc === 'ascending' ? 'journey.ascendingMark' : 'journey.descendingMark')}
                 </span>
               )}
-              <span className="txt-3 ltr text-[11px]">{journey.days} ימים</span>
+              <span className="txt-3 text-[11px]">{t('common.daysN', { n: journey.days })}</span>
             </div>
             <div className="mt-3 flex items-center gap-2">
               <div className="h-2 flex-1 overflow-hidden rounded-full" style={{ background: 'var(--border)' }}>
@@ -62,16 +73,20 @@ export function JourneyDetail({ id }: { id: string }) {
           </div>
         </div>
         <button onClick={handleStart} className="btn btn-primary mt-4 w-full">
-          {complete ? 'האזן שוב' : p ? `המשך — יום ${p.currentDay}` : 'התחל מסע'}
+          {complete
+            ? t('journey.listenAgain')
+            : p
+              ? t('journey.continue', { n: p.currentDay })
+              : t('journey.start')}
         </button>
         {p && (
           <button
             onClick={() => {
-              if (confirm('לאפס את ההתקדמות במסע הזה?')) reset(journey.id)
+              if (confirm(t('journey.resetConfirm'))) reset(journey.id)
             }}
             className="btn btn-ghost mt-2 w-full text-xs txt-3"
           >
-            איפוס התקדמות
+            {t('journey.reset')}
           </button>
         )}
       </Card>
@@ -106,18 +121,18 @@ export function JourneyDetail({ id }: { id: string }) {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold">{freq?.label ?? day.frequencyId}</p>
-                    {isCurrent && <span className="chip">היום שלך</span>}
+                    <p className="text-sm font-semibold">{freq ? freqLabel(freq, lang) : day.frequencyId}</p>
+                    {isCurrent && <span className="chip">{t('journey.today')}</span>}
                     {mood && <span className="text-sm leading-none">{MOOD_FACE[mood]}</span>}
                   </div>
                   <p className="txt-3 mt-0.5 text-[11px]">
                     <span className="ltr">
                       {freq?.hz ? `${freq.hz} Hz` : `${freq?.range?.[0]}–${freq?.range?.[1]} Hz`} ·{' '}
-                      {day.durationMin} דק׳
+                      <span className="ltr">{day.durationMin}</span> {t('common.min')}
                     </span>{' '}
-                    · {day.note}
+                    · {dayNote(day, lang)}
                     {band && !freq?.range && (
-                      <> · + {band.label.split('—')[0].trim()}</>
+                      <> · + {shortLabel(band, lang)}</>
                     )}
                   </p>
                 </div>

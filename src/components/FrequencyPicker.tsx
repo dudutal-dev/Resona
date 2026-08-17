@@ -2,9 +2,11 @@ import {
   BEAT_FREQUENCIES,
   ROOT_FREQUENCIES,
   ROOT_GROUPS,
-  TRUST_NOTICE,
-  TRUST_SHORT,
+  freqLabel,
+  trustNoticeKey,
+  trustShortKey,
 } from '../lib/catalog'
+import { useT } from '../lib/i18n'
 import type { Frequency, TrustLevel } from '../lib/types'
 import { TrustBadge } from './ui'
 
@@ -17,13 +19,16 @@ import { TrustBadge } from './ui'
  * footer would now misdescribe some of the rows above it.
  */
 function Notices({ of }: { of: Frequency[] }) {
+  const { t } = useT()
   const levels = [...new Set(of.map((f) => f.trust))] as TrustLevel[]
   return (
     <div className="mt-3 space-y-1">
       {levels.map((level) => (
         <p key={level} className="txt-3 text-[11px] leading-relaxed">
-          {levels.length > 1 && <span className="font-semibold">{`${TRUST_SHORT[level]}: `}</span>}
-          {TRUST_NOTICE[level]}
+          {levels.length > 1 && (
+            <span className="font-semibold">{`${t(trustShortKey(level))}: `}</span>
+          )}
+          {t(trustNoticeKey(level))}
         </p>
       ))}
     </div>
@@ -41,6 +46,7 @@ function FrequencyRow({
   onSelect: () => void
   onInfo?: () => void
 }) {
+  const { t, lang } = useT()
   const value = freq.hz ? `${freq.hz}` : `${freq.range?.[0]}–${freq.range?.[1]}`
   return (
     <div
@@ -52,7 +58,7 @@ function FrequencyRow({
         background: selected ? 'var(--accent-soft)' : undefined,
       }}
     >
-      <button onClick={onSelect} className="flex min-w-0 flex-1 items-center gap-3 text-right">
+      <button onClick={onSelect} className="flex min-w-0 flex-1 items-center gap-3 text-start">
         <span
           className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-[13px] font-bold leading-none"
           style={{
@@ -65,7 +71,9 @@ function FrequencyRow({
           <span className="ltr">{value}</span>
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold">{freq.label}</span>
+          {/* Not truncated: several English labels share an opening phrase and
+              would clip to the same stub, which is worse than two lines. */}
+          <span className="block text-sm font-semibold leading-snug">{freqLabel(freq, lang)}</span>
           <span className="txt-3 ltr mt-0.5 block text-[11px]">
             {freq.hz ? `${freq.hz} Hz` : `${freq.range?.[0]}–${freq.range?.[1]} Hz`}
           </span>
@@ -76,7 +84,7 @@ function FrequencyRow({
         {onInfo && (
           <button
             onClick={onInfo}
-            aria-label={`מידע על ${freq.label}`}
+            aria-label={t('freq.infoAria', { name: freqLabel(freq, lang) })}
             className="btn btn-ghost h-8 w-8 rounded-full p-0"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -105,20 +113,21 @@ export function FrequencyPicker({
   onInfo?: (freq: Frequency) => void
   showBeats?: boolean
 }) {
+  const { t } = useT()
   return (
     <div className="space-y-6">
       <section>
         <div className="mb-3 flex items-baseline justify-between">
-          <h3 className="text-sm font-bold">תדר יסוד</h3>
-          <span className="txt-3 text-[11px]">כל תו במלודיה נגזר ממנו</span>
+          <h3 className="text-sm font-bold">{t('freq.rootTitle')}</h3>
+          <span className="txt-3 text-[11px]">{t('freq.rootHint')}</span>
         </div>
 
         <div className="space-y-5">
           {ROOT_GROUPS.map((group) => (
             <div key={group.id}>
               <div className="mb-2 flex items-baseline gap-2 px-1">
-                <h4 className="text-[12px] font-bold txt-2">{group.title}</h4>
-                <span className="txt-3 truncate text-[10px]">{group.note}</span>
+                <h4 className="text-[12px] font-bold txt-2">{t(group.titleKey)}</h4>
+                <span className="txt-3 truncate text-[10px]">{t(group.noteKey)}</span>
               </div>
               <div className="space-y-2">
                 {group.items.map((f) => (
@@ -141,18 +150,18 @@ export function FrequencyPicker({
       {showBeats && (
         <section>
           <div className="mb-3 flex items-baseline justify-between">
-            <h3 className="text-sm font-bold">גלי מוח</h3>
-            <span className="txt-3 text-[11px]">מהאיטי למהיר</span>
+            <h3 className="text-sm font-bold">{t('freq.beatsTitle')}</h3>
+            <span className="txt-3 text-[11px]">{t('freq.beatsHint')}</span>
           </div>
           <div className="space-y-2">
             <button
               onClick={() => onSelectBeat(null)}
-              className={`glass w-full rounded-2xl p-3 text-right text-sm font-semibold transition-all ${
+              className={`glass w-full rounded-2xl p-3 text-start text-sm font-semibold transition-all ${
                 selectedBeat === null ? 'rim' : ''
               }`}
               style={{ background: selectedBeat === null ? 'var(--accent-soft)' : undefined }}
             >
-              ללא שכבת גל מוחי
+              {t('freq.noBeat')}
             </button>
             {BEAT_FREQUENCIES.map((f) => (
               <FrequencyRow

@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { engine } from '../audio/ToneEngine'
 import { BAND_COUNT, MAX_RATIO, RATIOS, readBands } from '../audio/harmonics'
-import { figureAt } from '../data/figures'
 import { getFrequency } from '../lib/catalog'
 import { useSession } from '../store/sessionStore'
 import { useSettings } from '../store/settingsStore'
@@ -40,6 +39,8 @@ import { useSettings } from '../store/settingsStore'
  */
 
 type Props = {
+  /** The artwork to draw. The stage picks it; this only draws it. */
+  src: string
   playing: boolean
   /** Drives satellite and dust size — a television is looked at from further. */
   scale?: number
@@ -76,11 +77,10 @@ const DUST = (() => {
   }))
 })()
 
-export function FigureField({ playing, scale = 1, className = '' }: Props) {
+export function FigureField({ src, playing, scale = 1, className = '' }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
   const reducedMotion = useSettings((s) => s.reducedMotion)
-  const figure = figureAt(useSettings((s) => s.figure))
   const rootId = useSession((s) => s.config.rootId)
   // Held in a ref so changing frequency retunes the reading on the next frame
   // instead of tearing down and restarting the animation.
@@ -118,7 +118,7 @@ export function FigureField({ playing, scale = 1, className = '' }: Props) {
     const image = new Image()
     let ready = false
     image.decoding = 'async'
-    image.src = figure.src
+    image.src = src
     void image
       .decode()
       .then(() => {
@@ -407,7 +407,7 @@ export function FigureField({ playing, scale = 1, className = '' }: Props) {
       cancelAnimationFrame(raf)
       ro.disconnect()
     }
-  }, [playing, reducedMotion, scale, figure.src])
+  }, [playing, reducedMotion, scale, src])
 
   return (
     // The caller may position this itself (the stage fills the screen with it);

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { mediaRoute } from '../audio/MediaRoute'
 import { figureAt } from '../data/figures'
 import { freqLabel, getFrequency, getJourney, journeyTitle, shortLabel } from '../lib/catalog'
@@ -7,6 +7,18 @@ import { useSession } from '../store/sessionStore'
 import { useSettings } from '../store/settingsStore'
 import { FigureField } from './FigureField'
 import { formatClock } from './ui'
+
+/**
+ * The one figure that is a scene rather than a picture, split off on its own.
+ *
+ * It brings the whole Three.js stack with it — 250KB gzipped, more than the rest
+ * of the app — so it is its own chunk and is imported only when it is chosen.
+ * That keeps it out of the first paint; the service worker still precaches it, so
+ * the figure works offline like the rest.
+ */
+const ChakraScene = lazy(() =>
+  import('../three/ChakraScene').then((m) => ({ default: m.ChakraScene })),
+)
 
 /**
  * Full-screen presentation mode, shaped for a television.
@@ -34,6 +46,12 @@ export function TvStage({ onClose }: { onClose: () => void }) {
   const [portrait, setPortrait] = useState(false)
 
   const root = getFrequency(config.rootId)
+  // Read per render rather than once: the accent follows the frequency, and the
+  // frequency can change while the stage is open.
+  const accent =
+    typeof document === 'undefined'
+      ? undefined
+      : `hsl(${getComputedStyle(document.documentElement).getPropertyValue('--h').trim() || 265}, 90%, 60%)`
   const beat = config.beatId ? getFrequency(config.beatId) : null
   const journey = activeJourney ? getJourney(activeJourney.journeyId) : null
 
@@ -85,7 +103,21 @@ export function TvStage({ onClose }: { onClose: () => void }) {
       onClick={() => setChromeVisible(true)}
     >
       {/* The picture is the whole screen: mirroring sends exactly this. */}
-      <FigureField playing={isPlaying} scale={1.6} className="absolute inset-0" />
+      {figure.kind === 'image' ? (
+        <FigureField src={figure.src} playing={isPlaying} scale={1.6} className="absolute inset-0" />
+      ) : (
+        <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
+          <ChakraScene
+            className="absolute inset-0"
+            frequencyHz={root?.hz ?? 528}
+            // The accent as the rest of the app computes it, so the scene is the
+            // same colour as the readouts over it rather than its own idea of
+            // what this frequency looks like.
+            color={accent}
+            reactive
+          />
+        </Suspense>
+      )}
 
       {/* Readouts, inside a television-safe margin. */}
       <div className="pointer-events-none absolute inset-0">

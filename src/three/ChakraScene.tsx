@@ -2,6 +2,9 @@ import { OrbitControls, useAnimations, useGLTF } from '@react-three/drei'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
+import { engine } from '../audio/ToneEngine'
+import { BAND_COUNT, readBands } from '../audio/harmonics'
+import modelUrl from '../assets/models/chakra_model.glb?url'
 
 /**
  * An interactive 3D scene for the frequency app.
@@ -27,7 +30,14 @@ import * as THREE from 'three'
  * a transition rather than a cut.
  */
 
-const MODEL_URL = '/models/chakra_model.glb'
+const MODEL_URL = modelUrl
+
+/**
+ * The chakras sit between y = -1.25 and y = 1.25 in the model, root at the
+ * bottom. This maps a node's height onto the interval that answers for it.
+ */
+const bandOf = (y: number) =>
+  Math.max(0, Math.min(BAND_COUNT - 1, Math.round(((y + 1.25) / 2.5) * (BAND_COUNT - 1))))
 
 /**
  * The aura, as a fresnel shell.
@@ -100,6 +110,14 @@ export function pulseRateFor(frequencyHz: number): number {
 type FigureProps = {
   frequencyHz: number
   color?: string
+  /**
+   * Read the app's own audio and answer to it, rather than only to the frequency
+   * number. Off by default so the component stays what the brief asked for — a
+   * scene driven by two props — and only becomes part of the app when the app
+   * asks it to. Inside the frame loop it costs one FFT read, and the loop is
+   * already running.
+   */
+  reactive?: boolean
 }
 
 /**
@@ -157,7 +175,7 @@ function useMotes() {
   }, [])
 }
 
-function Figure({ frequencyHz, color }: FigureProps) {
+function Figure({ frequencyHz, color, reactive = false }: FigureProps) {
   const group = useRef<THREE.Group>(null)
   const { scene, animations } = useGLTF(MODEL_URL)
 
@@ -258,6 +276,22 @@ function Figure({ frequencyHz, color }: FigureProps) {
   const target = useMemo(() => new THREE.Color(), [])
   const eased = useMemo(() => new THREE.Color(0.4, 0.6, 1), [])
 
+  /**
+   * Per-interval levels, when reactive. The same reading the rest of the app's
+   * visualisers use, so a fifth sounds like a fifth here too — and the seven
+   * intervals land on the seven chakras in order, bottom to top, which is the
+   * mapping the model was built around.
+   */
+  const audio = useMemo(
+    () => ({
+      bands: new Float32Array(BAND_COUNT),
+      rise: new Float32Array(BAND_COUNT),
+      level: 0,
+      phase: 0,
+    }),
+    [],
+  )
+
   useFrame((_, delta) => {
     // Guard the tab having been in the background: `delta` can arrive as several
     // seconds, which would snap every eased value instead of easing it.
@@ -267,16 +301,27 @@ function Figure({ frequencyHz, color }: FigureProps) {
     else target.setHSL(hueFor(frequencyHz), 0.85, 0.55)
     eased.lerp(target, 1 - Math.exp(-step * 2.5))
 
+    audio.phase += step
+    if (reactive) {
+      readBands(audio.bands, audio.rise, engine.getSpectrum(), frequencyHz, engine.sampleRate, audio.phase)
+      let sum = 0
+      for (let i = 0; i < BAND_COUNT; i++) sum += audio.bands[i]
+      audio.level += (sum / BAND_COUNT - audio.level) * 0.12
+    }
+
     const pulse = 0.5 + 0.5 * Math.sin(performance.now() * 0.001 * pulseRateFor(frequencyHz) * Math.PI * 2)
     // Higher pitches read as brighter, over about four octaves.
     const brightness = THREE.MathUtils.clamp(Math.log2(frequencyHz / 120) / 4, 0, 1)
+    // When the sound is driving, it drives: the idle pulse stays underneath as a
+    // floor so a silent moment is calm rather than dark.
+    const drive = reactive ? Math.max(pulse * 0.35, audio.level * 1.6) : pulse
     // Kept under about 1.2: an emissive term past that clips each channel to
     // full and seven distinct colours converge on white, which is what happened
     // at 0.85 + 0.7 + 0.5.
-    const intensity = 0.45 + brightness * 0.3 + pulse * 0.28
+    const intensity = 0.45 + brightness * 0.3 + drive * 0.28
 
     owned.aura.uniforms.uColor.value.copy(eased)
-    owned.aura.uniforms.uIntensity.value = 0.75 + pulse * 0.6 + brightness * 0.45
+    owned.aura.uniforms.uIntensity.value = 0.75 + drive * 0.6 + brightness * 0.45
     owned.aura.uniforms.uTime.value += step
 
     for (const [mesh, material] of owned.emissive) {
@@ -285,17 +330,23 @@ function Figure({ frequencyHz, color }: FigureProps) {
       // way across was the difference between seven colours and seven white
       // blobs.
       material.emissive.lerpColors(material.color, eased, 0.3)
-      // Phase by height, so the pulse travels up the column instead of the whole
-      // thing flashing at once.
-      const rise = 0.5 + 0.5 * Math.sin(
-        performance.now() * 0.001 * pulseRateFor(frequencyHz) * Math.PI * 2 - mesh.position.y * 0.9,
-      )
-      material.emissiveIntensity = intensity + rise * 0.5
+      // Reactive, each chakra answers to its own interval — bottom to top, the
+      // order the scale runs in. Otherwise the pulse simply travels up the column,
+      // phased by height so the whole thing does not flash at once.
+      const lit = reactive
+        ? audio.bands[bandOf(mesh.position.y)]
+        : 0.5 +
+          0.5 *
+            Math.sin(
+              performance.now() * 0.001 * pulseRateFor(frequencyHz) * Math.PI * 2 -
+                mesh.position.y * 0.9,
+            )
+      material.emissiveIntensity = intensity + lit * 0.55
     }
 
     // The motes rise and wrap, faster when there is more light in the scene.
     const { positions, speeds } = motes
-    const lift = step * (0.4 + brightness * 0.8)
+    const lift = step * (0.4 + brightness * 0.8 + drive * 0.9)
     for (let i = 0; i < MOTE_COUNT; i++) {
       let y = positions[i * 3 + 1] + speeds[i] * lift
       if (y > 1.8) y -= 3.6
@@ -303,7 +354,7 @@ function Figure({ frequencyHz, color }: FigureProps) {
     }
     motes.geometry.attributes.position.needsUpdate = true
     motes.material.color.copy(eased)
-    motes.material.opacity = 0.45 + pulse * 0.35
+    motes.material.opacity = 0.45 + drive * 0.35
 
     if (group.current) group.current.rotation.y += step * 0.08
   })
@@ -327,7 +378,13 @@ export type ChakraSceneProps = FigureProps & {
   autoRotate?: boolean
 }
 
-export function ChakraScene({ frequencyHz, color, className, autoRotate = false }: ChakraSceneProps) {
+export function ChakraScene({
+  frequencyHz,
+  color,
+  className,
+  autoRotate = false,
+  reactive = false,
+}: ChakraSceneProps) {
   return (
     // Sized inline rather than with utility classes: a canvas in a box with no
     // height is a canvas 150 pixels tall, and this component should not depend on
@@ -349,7 +406,7 @@ export function ChakraScene({ frequencyHz, color, className, autoRotate = false 
             out by a flat fill. */}
         <ambientLight intensity={0.16} />
         <Suspense fallback={null}>
-          <Figure frequencyHz={frequencyHz} color={color} />
+          <Figure frequencyHz={frequencyHz} color={color} reactive={reactive} />
         </Suspense>
         <OrbitControls
           enableDamping

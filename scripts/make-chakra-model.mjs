@@ -1,5 +1,5 @@
 /**
- * Writes `public/models/chakra_model.glb`.
+ * Writes `src/assets/models/chakra_model.glb`.
  *
  *   node scripts/make-chakra-model.mjs
  *
@@ -21,7 +21,13 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
-const OUT = resolve(HERE, '../public/models/chakra_model.glb')
+// Under `src`, not `public`, so Vite resolves it: in the normal build it becomes
+// a hashed asset the service worker precaches, and in the single-file build it is
+// inlined as a data URL. Left in `public` it was referenced as `/models/...`,
+// which is correct from a server and resolves to the filesystem root when the
+// single file is opened from disk — the one build whose whole point is that it
+// needs no server.
+const OUT = resolve(HERE, '../src/assets/models/chakra_model.glb')
 
 /** Root, sacral, solar plexus, heart, throat, brow, crown — bottom to top. */
 const CHAKRAS = [

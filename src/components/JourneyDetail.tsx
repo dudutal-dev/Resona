@@ -53,13 +53,16 @@ export function JourneyDetail({ id }: { id: string }) {
         subtitle={t('journey.byline', { n: journey.days })}
         meta={
           <>
-            <span className="chip readout">
+            <span className="readout">
               {done}/{journey.days}
             </span>
             {journey.arc && (
-              <span className="chip">
-                {t(journey.arc === 'ascending' ? 'journey.ascendingMark' : 'journey.descendingMark')}
-              </span>
+              <>
+                <span aria-hidden>·</span>
+                <span>
+                  {t(journey.arc === 'ascending' ? 'journey.ascendingMark' : 'journey.descendingMark')}
+                </span>
+              </>
             )}
           </>
         }

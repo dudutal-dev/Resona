@@ -71,10 +71,11 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
         subtitle={dayNote(entry, lang)}
         meta={
           <>
-            <span className="chip">
-              <span className="readout">{freq?.hz ?? beatHz}</span> Hz
+            <span className="readout">{freq?.hz ?? beatHz} Hz</span>
+            <span aria-hidden>·</span>
+            <span>
+              <span className="readout">{entry.durationMin}</span> {t('common.minutes')}
             </span>
-            <span className="chip">{`${entry.durationMin} ${t('common.minutes')}`}</span>
             {freq && <TrustBadge trust={freq.trust} />}
             {isDone && <span className="chip">{t('common.done')}</span>}
           </>

@@ -95,19 +95,18 @@ export function TrustBadge({ trust, full = false }: { trust: TrustLevel; full?: 
   const [h, s, l] = TRUST_TINT[trust]
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-[3px] px-2.5 py-1 text-[11px] font-medium leading-tight"
+      className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-[3px] text-[11px] font-semibold leading-none"
       style={{
-        background: `hsl(${h} calc(${s}% * var(--trust-s, 1)) ${l}% / 0.12)`,
+        background: `hsl(${h} calc(${s}% * var(--trust-s, 1)) ${l}% / 0.14)`,
         // Each level has its own lightness, tuned against black. On paper they
         // all have to come down to pigment, so the light theme overrides them
         // with one value rather than three — see `--trust-l`.
         color: `hsl(${h} calc(${s}% * var(--trust-s, 1)) var(--trust-l, ${l}%))`,
-        border: `1px solid hsl(${h} calc(${s}% * var(--trust-s, 1)) var(--trust-l, ${l}%) / 0.35)`,
       }}
     >
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-        <path d="M12 8h.01M11 12h1v4h1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden>
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.2" />
+        <path d="M12 8h.01M11 12h1v4h1" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
       </svg>
       {full ? t(trustNoticeKey(trust)) : t(trustShortKey(trust))}
     </span>

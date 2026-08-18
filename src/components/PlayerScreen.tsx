@@ -161,14 +161,17 @@ export function PlayerScreen() {
         meta={
           <>
             {root && (
-              <button onClick={() => setInfoFreq(root)} className="chip">
-                <span className="readout">{root.hz} Hz</span>
+              <button onClick={() => setInfoFreq(root)} className="readout">
+                {root.hz} Hz
               </button>
             )}
             {beat && (
-              <button onClick={() => setInfoFreq(beat)} className="chip">
-                <span className="readout">{config.beatHz} Hz</span> · {shortLabel(beat, lang)}
-              </button>
+              <>
+                <span aria-hidden>·</span>
+                <button onClick={() => setInfoFreq(beat)}>
+                  {shortLabel(beat, lang)} <span className="readout">{config.beatHz} Hz</span>
+                </button>
+              </>
             )}
             {root && <TrustBadge trust={root.trust} />}
           </>

@@ -117,7 +117,13 @@ export function ReleaseHeader({
         <p className="txt-2 mt-1 text-center text-[15px] font-bold">{subtitle}</p>
       )}
 
-      {meta && <div className="mt-3 flex flex-wrap items-center justify-center gap-2">{meta}</div>}
+            {/* One line, the way a release states its year and its format — not a row
+          of boxes. Anything that needs a box gets exactly one. */}
+      {meta && (
+        <div className="txt-3 mt-2.5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5 text-[13px] font-semibold">
+          {meta}
+        </div>
+      )}
 
       <div className="mt-6 flex items-stretch gap-3">
         <button onClick={primary.onClick} className="pill pill-solid">

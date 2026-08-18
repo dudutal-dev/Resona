@@ -1,17 +1,29 @@
 import { useEffect, useRef } from 'react'
+import { clubBpm } from '../audio/ClubGroove'
 import { engine } from '../audio/ToneEngine'
 import { useSession } from '../store/sessionStore'
 import { useSettings } from '../store/settingsStore'
 
 /**
- * A figure making one revolution, turning at the rate of the brainwave layer.
+ * A figure making one revolution, turning on the music's own clock.
  *
  * The clip is five seconds of a locked-camera turntable. Left alone it would be
  * a loop playing at whatever speed it was shot at, which is wallpaper. What
- * makes it belong to this app is that the rate is derived: one full revolution
- * per `TURNS` cycles of the beat frequency, so a 6Hz theta night turns the
- * figure once every eight seconds and a 2Hz delta night takes twenty-four. The
- * thing on screen is running at the rate the session is trying to entrain.
+ * makes it belong to this app is that the rate is derived from what is
+ * actually sounding:
+ *
+ *  - On a **club engine** there is a real tempo, so a revolution takes sixteen
+ *    bars of it. The turn completes on a phrase boundary rather than drifting
+ *    against one — at 126 BPM that is a little over half a minute.
+ *  - On the **ambient engine** there is no grid, but there is a note interval,
+ *    which is the one number everything rhythmic there follows. A revolution
+ *    takes `NOTES_PER_TURN` of those.
+ *
+ * The first version locked it to the brainwave rate instead. That was a nicer
+ * idea on paper than in a room: theta at 6Hz came out at eight seconds a turn,
+ * which reads as a figure spinning rather than a figure turning. Whatever the
+ * music says, the period is held inside `SLOWEST`/`FASTEST`, because there is a
+ * speed past which this stops being something you can rest your eyes on.
  *
  * Everything else is the treatment `FigureField` already applies to a still:
  * the frame is sheared into horizontal strips by the live waveform, and a
@@ -24,10 +36,21 @@ import { useSettings } from '../store/settingsStore'
  * system's Now Playing session, and on iOS the route follows whichever wins.
  */
 
-/** Revolutions are counted in beat cycles, not seconds. */
-const TURNS = 48
-/** Kept inside what browsers accept, and inside what looks like turning. */
-const MIN_RATE = 0.06
+/** One revolution per this many bars of a club engine. */
+const BARS_PER_TURN = 16
+/** One revolution per this many lead notes of the ambient engine. */
+const NOTES_PER_TURN = 24
+/**
+ * However fast the music is, a turn takes at least this long, and however slow
+ * it is, no longer than this. Twenty seconds is about where a rotation stops
+ * reading as motion and starts reading as drift.
+ */
+const FASTEST_TURN_SECONDS = 20
+const SLOWEST_TURN_SECONDS = 60
+/** Nothing playing: a slow idle drift, so the figure is never simply frozen. */
+const IDLE_TURN_SECONDS = 45
+/** What browsers accept. Reached only if the clip length changes. */
+const MIN_RATE = 0.0625
 const MAX_RATE = 2
 
 /** Strips the frame is sheared into. Matches `FigureField`. */
@@ -44,17 +67,47 @@ export function TurntableField({ sources, playing, className = '' }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const reducedMotion = useSettings((s) => s.reducedMotion)
-  const beatHz = useSession((s) => s.config.beatHz)
+  const style = useSession((s) => s.config.style)
+  const pace = useSession((s) => s.config.pace)
 
-  // The rate is the whole idea, so it is set from the beat rather than baked in.
+  // The rate is the whole idea, so it is derived rather than baked in.
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
-    const period = beatHz > 0 ? TURNS / beatHz : 12
-    const natural = video.duration || 5.04
-    const wanted = natural / period
-    video.playbackRate = Math.min(MAX_RATE, Math.max(MIN_RATE, wanted))
-  }, [beatHz, playing])
+
+    const musicalPeriod = () => {
+      if (!playing) return IDLE_TURN_SECONDS
+      if (style && style !== 'ambient') {
+        // Sixteen bars of four beats, at whatever tempo the style is running.
+        return (BARS_PER_TURN * 4 * 60) / clubBpm(style, pace)
+      }
+      // `leadInterval` in GenerativeMelody — the interval everything rhythmic
+      // on the ambient engine follows. Kept in step with it by hand, which is
+      // why it is named here rather than being a bare number.
+      const leadInterval = 1.5 - pace * 1.12
+      return NOTES_PER_TURN * leadInterval
+    }
+
+    const period = Math.min(
+      SLOWEST_TURN_SECONDS,
+      Math.max(FASTEST_TURN_SECONDS, musicalPeriod()),
+    )
+    const clip = video.duration || 5.04
+    video.playbackRate = Math.min(MAX_RATE, Math.max(MIN_RATE, clip / period))
+    // Development only, beside `window.__audio`: what the figure is doing and
+    // why, in one object. Worth keeping — it is what caught a measurement of
+    // this very effect that was reading a duplicate store left behind by a hot
+    // reload, and reporting that the rate never changed when it always had.
+    if (import.meta.env.DEV) {
+      ;(window as unknown as { __turn?: unknown }).__turn = {
+        style,
+        pace,
+        playing,
+        secondsPerTurn: +period.toFixed(1),
+        rate: video.playbackRate,
+      }
+    }
+  }, [style, pace, playing])
 
   useEffect(() => {
     const canvas = canvasRef.current

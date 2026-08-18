@@ -1,5 +1,5 @@
 import { OrbitControls, useAnimations, useGLTF } from '@react-three/drei'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { engine } from '../audio/ToneEngine'
@@ -105,6 +105,47 @@ export function pulseRateFor(frequencyHz: number): number {
   while (rate > 1) rate /= 2
   while (rate < 0.5) rate *= 2
   return rate
+}
+
+/**
+ * Half the extent the scene has to keep on screen: the aura is scaled to 1.6
+ * across and 2.1 tall, and the motes sit a little outside it.
+ */
+const SCENE_HALF_WIDTH = 1.9
+const SCENE_HALF_HEIGHT = 2.2
+
+/**
+ * Keeps the whole scene in frame whichever way the screen is turned.
+ *
+ * A perspective camera's `fov` is its *vertical* angle, so a fixed one holds the
+ * height constant and lets the visible width follow the aspect ratio. That is
+ * fine on a television and wrong on a phone held upright, where the width
+ * collapses to about a quarter of the height: the column of chakras still filled
+ * the screen top to bottom while the aura around it was cut off down both sides.
+ *
+ * So the angle is derived instead of declared — widened until the scene's width
+ * fits as well as its height. The camera does not move, which matters: OrbitControls
+ * owns the camera's position and applies its own each frame, so anything that
+ * fought it there would be undone. It does not touch the field of view.
+ */
+function FitToFrame() {
+  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera
+  const size = useThree((s) => s.size)
+
+  useEffect(() => {
+    if (!size.width || !size.height) return
+    const aspect = size.width / size.height
+    const distance = camera.position.length() || 6
+    // The half-angle each axis needs, as a tangent; the wider one wins.
+    const forHeight = SCENE_HALF_HEIGHT / distance
+    const forWidth = SCENE_HALF_WIDTH / (distance * aspect)
+    const half = Math.atan(Math.max(forHeight, forWidth))
+    // Capped: past this the perspective distortion is worse than the crop.
+    camera.fov = Math.min(90, THREE.MathUtils.radToDeg(half) * 2)
+    camera.updateProjectionMatrix()
+  }, [camera, size])
+
+  return null
 }
 
 type FigureProps = {
@@ -404,6 +445,7 @@ export function ChakraScene({
       >
         {/* Low, so the emissive colours carry the scene rather than being washed
             out by a flat fill. */}
+        <FitToFrame />
         <ambientLight intensity={0.16} />
         <Suspense fallback={null}>
           <Figure frequencyHz={frequencyHz} color={color} reactive={reactive} />

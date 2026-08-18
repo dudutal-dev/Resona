@@ -1,5 +1,5 @@
 import { freqLabel, getFrequency, getJourney, journeyTitle } from '../lib/catalog'
-import { coverFor } from '../data/figures'
+import { coverForRoot } from '../lib/cover'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
@@ -21,7 +21,7 @@ export function MiniPlayer({ hidden }: { hidden: boolean }) {
   const root = getFrequency(config.rootId)
   const journey = activeJourney ? getJourney(activeJourney.journeyId) : null
   const title = journey ? journeyTitle(journey, lang) : root ? freqLabel(root, lang) : 'Resona'
-  const cover = coverFor(config.rootId)
+  const cover = coverForRoot(config.rootId)
 
   return (
     <div className="fixed inset-x-0 bottom-[5.25rem] z-40 px-4">

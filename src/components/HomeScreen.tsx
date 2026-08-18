@@ -13,7 +13,7 @@ import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
 import { formatClock } from './ui'
 import { Shelf, ShelfCard } from './Shelf'
-import { coverFor } from '../data/figures'
+import { coverForRoot, frequencyCover, journeyCover } from '../lib/cover'
 import { HistoryPanel } from './HistoryPanel'
 
 export function HomeScreen() {
@@ -59,7 +59,7 @@ export function HomeScreen() {
         className="bar flex w-full items-center gap-3 rounded-[14px] p-2.5 text-start transition-transform active:scale-[0.99]"
       >
         <img
-          src={coverFor(config.rootId)}
+          src={coverForRoot(config.rootId)}
           alt=""
           className="h-14 w-14 shrink-0 rounded-[8px] object-cover"
           style={{ boxShadow: '0 8px 18px -8px rgba(0,0,0,0.7)' }}
@@ -91,7 +91,7 @@ export function HomeScreen() {
           {inProgress.map(({ p, journey }) => (
             <ShelfCard
               key={p.journeyId}
-              cover={coverFor(p.journeyId)}
+              cover={journeyCover(journey!)}
               title={journeyTitle(journey!, lang)}
               subtitle={`${p.completedDays.length}/${journey!.days}`}
               onClick={() => navigate(`/journey/${p.journeyId}`)}
@@ -104,7 +104,7 @@ export function HomeScreen() {
         {sets.map((j) => (
           <ShelfCard
             key={j.id}
-            cover={coverFor(j.id)}
+            cover={journeyCover(j)}
             title={journeyTitle(j, lang)}
             subtitle={t('common.daysN', { n: j.days })}
             onClick={() => navigate(`/journey/${j.id}`)}
@@ -116,7 +116,7 @@ export function HomeScreen() {
         {trips.map((j) => (
           <ShelfCard
             key={j.id}
-            cover={coverFor(j.id)}
+            cover={journeyCover(j)}
             title={journeyTitle(j, lang)}
             subtitle={t('common.daysN', { n: j.days })}
             onClick={() => navigate(`/journey/${j.id}`)}
@@ -128,7 +128,7 @@ export function HomeScreen() {
         {starters.map((j) => (
           <ShelfCard
             key={j.id}
-            cover={coverFor(j.id)}
+            cover={journeyCover(j)}
             title={journeyTitle(j, lang)}
             subtitle={t('common.daysN', { n: j.days })}
             onClick={() => navigate(`/journey/${j.id}`)}
@@ -140,7 +140,7 @@ export function HomeScreen() {
         {ROOT_FREQUENCIES.slice(0, 12).map((f) => (
           <ShelfCard
             key={f.id}
-            cover={coverFor(f.id)}
+            cover={frequencyCover(f)}
             title={freqLabel(f, lang)}
             subtitle={`${f.hz} Hz`}
             onClick={() => {
@@ -156,7 +156,7 @@ export function HomeScreen() {
           {presets.slice(0, 10).map((preset) => (
             <ShelfCard
               key={preset.id}
-              cover={coverFor(preset.id)}
+              cover={coverForRoot(preset.config.rootId)}
               title={preset.name}
               onClick={() => navigate('/presets')}
             />

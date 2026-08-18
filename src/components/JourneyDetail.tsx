@@ -16,7 +16,7 @@ import { hueText } from '../lib/themes'
 import { useJourneys } from '../store/journeyStore'
 import { Screen, TrustBadge } from './ui'
 import { ReleaseHeader } from './ReleaseHeader'
-import { coverFor } from '../data/figures'
+import { journeyCover } from '../lib/cover'
 
 const MOOD_FACE: Record<number, string> = { 1: '😣', 2: '😕', 3: '😐', 4: '🙂', 5: '😌' }
 
@@ -47,7 +47,7 @@ export function JourneyDetail({ id }: { id: string }) {
   return (
     <div className="mx-auto w-full max-w-3xl overflow-hidden px-4 pb-40 safe-top">
       <ReleaseHeader
-        cover={coverFor(journey.id)}
+        cover={journeyCover(journey)}
         eyebrow={t(purposeKey(journey.purpose))}
         title={journeyTitle(journey, lang)}
         subtitle={t('journey.byline', { n: journey.days })}

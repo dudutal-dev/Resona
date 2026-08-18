@@ -7,7 +7,7 @@ import { THEME_HUE, hueFill, hueGlow, hueLine, hueText, journeysByTheme, themeBl
 import type { Journey } from '../lib/types'
 import { useJourneys } from '../store/journeyStore'
 import { Card, Screen } from './ui'
-import { coverFor } from '../data/figures'
+import { journeyCover } from '../lib/cover'
 
 function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
   const { t, lang } = useT()
@@ -24,7 +24,7 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
             glance instead of two, and it leaves the row for the words. */}
         <div className="relative shrink-0">
           <img
-            src={coverFor(journey.id)}
+            src={journeyCover(journey)}
             alt=""
             className="h-16 w-16 rounded-[9px] object-cover"
             style={{ boxShadow: '0 8px 20px -10px rgba(0,0,0,0.7)' }}

@@ -17,7 +17,7 @@ import { useJourneys } from '../store/journeyStore'
 import type { MoodScore } from '../lib/types'
 import { Screen, TrustBadge } from './ui'
 import { ReleaseHeader } from './ReleaseHeader'
-import { coverFor } from '../data/figures'
+import { coverForRoot } from '../lib/cover'
 import { MoodPicker } from './MoodPicker'
 import { ListeningMode } from './ListeningMode'
 import { InfoPanel } from './InfoPanel'
@@ -65,7 +65,7 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
   return (
     <div className="mx-auto w-full max-w-3xl overflow-hidden px-4 pb-40 safe-top">
       <ReleaseHeader
-        cover={coverFor(entry.frequencyId)}
+        cover={coverForRoot(entry.frequencyId)}
         eyebrow={`${journeyTitle(journey, lang)} · ${t('common.dayN', { n: day })}`}
         title={freq ? freqLabel(freq, lang) : t('common.dayN', { n: day })}
         subtitle={dayNote(entry, lang)}

@@ -15,7 +15,7 @@ import { InfoPanel } from './InfoPanel'
 import { FrequencyPicker } from './FrequencyPicker'
 import { Sheet, TrustBadge, formatClock } from './ui'
 import { ReleaseHeader } from './ReleaseHeader'
-import { coverFor } from '../data/figures'
+import { coverForRoot } from '../lib/cover'
 import { MoodPicker } from './MoodPicker'
 
 /**
@@ -122,7 +122,7 @@ export function PlayerScreen() {
   // The cover follows the frequency, not the journey: it is what is sounding,
   // and it keeps the artwork from changing under you on the way in from a day
   // page or out to the docked card.
-  const cover = coverFor(config.rootId)
+  const cover = coverForRoot(config.rootId)
 
   return (
     <div className="mx-auto w-full max-w-3xl overflow-hidden px-4 pb-40 safe-top">

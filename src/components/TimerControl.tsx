@@ -6,42 +6,45 @@ import { formatClock } from './ui'
 
 const MODES: TimerMode[] = ['15', '30', '60', '120', 'untilMorning', 'unlimited']
 
+/**
+ * How long the session runs.
+ *
+ * This used to be a bracketed panel of six bordered boxes, in the instrument
+ * language the rest of the app has since moved off. It sat under a release page
+ * whose whole point is that the picture is the loudest thing on it, and it was
+ * heavier than the two buttons above it. Nothing is boxed now: a quiet label
+ * with the countdown on the end of it, and the choices as chips that are filled
+ * when chosen and barely there when not.
+ */
 export function TimerControl() {
   const { config, setTimerMode, remaining, isPlaying, isFading } = useSession()
   const { t } = useT()
 
+  const chip = (active: boolean) =>
+    `rounded-full px-4 py-2.5 text-[13px] font-bold leading-none transition-all active:scale-95 ${
+      active ? '' : 'txt-2'
+    }`
+  const chipStyle = (active: boolean) =>
+    active
+      ? { background: 'var(--accent-soft)', color: 'var(--accent)' }
+      : { background: 'var(--pill-quiet-bg)' }
+
   return (
-    <div className="glass brackets rounded-3xl p-4">
-      {/* The label, then a rule out to the panel edge, then the clock sitting on
-          the end of that rule — so the countdown reads off the same line rather
-          than floating opposite a heading. */}
-      <div className="mb-3 flex items-center gap-2.5">
-        <h3 className="rule-label">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <circle cx="12" cy="13" r="8" stroke="currentColor" strokeWidth="2" />
-            <path d="M12 9v4l2.5 2M9 2h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          {t('timer.label')}
-        </h3>
+    <section>
+      <div className="mb-3 flex items-baseline justify-between gap-3 px-0.5">
+        <h3 className="text-[15px] font-extrabold tracking-tight">{t('timer.label')}</h3>
         {isPlaying && (
-          <span className="readout text-xs txt-2">
+          <span className="txt-3 readout text-[13px] font-semibold">
             {remaining === null ? '∞' : formatClock(remaining)}
           </span>
         )}
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
-        {/* A journey day prescribes its own length; it shows here as an extra pill. */}
+      <div className="flex flex-wrap gap-2">
+        {/* A journey day prescribes its own length; it shows here as an extra
+            chip that cannot be chosen, because the day already chose. */}
         {config.timerMode === 'custom' && (
-          <button
-            aria-pressed
-            className="rim rounded-[4px] px-2 py-2.5 text-xs font-semibold"
-            style={{
-              background: 'var(--accent-soft)',
-              border: '1px solid var(--accent-line)',
-              color: 'var(--accent)',
-            }}
-          >
+          <button aria-pressed className={chip(true)} style={chipStyle(true)}>
             <span className="readout">{config.customMinutes}</span> {t('common.min')}
           </button>
         )}
@@ -52,12 +55,8 @@ export function TimerControl() {
               key={mode}
               onClick={() => setTimerMode(mode)}
               aria-pressed={active}
-              className={`rounded-[4px] px-2 py-2.5 text-xs font-semibold transition-all ${active ? 'rim' : ''}`}
-              style={{
-                background: active ? 'var(--accent-soft)' : 'var(--card)',
-                border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,
-                color: active ? 'var(--accent)' : 'var(--txt-2)',
-              }}
+              className={chip(active)}
+              style={chipStyle(active)}
             >
               {t(`timer.${mode}` as StringKey)}
             </button>
@@ -65,11 +64,9 @@ export function TimerControl() {
         })}
       </div>
 
-      <p className="txt-3 mt-3 text-[11px] leading-relaxed">
-        {isFading
-          ? t('timer.fading')
-          : t('timer.fadeNote', { seconds: FADE_OUT_SECONDS })}
+      <p className="txt-3 mt-3 px-0.5 text-[11px] leading-relaxed">
+        {isFading ? t('timer.fading') : t('timer.fadeNote', { seconds: FADE_OUT_SECONDS })}
       </p>
-    </div>
+    </section>
   )
 }

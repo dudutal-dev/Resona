@@ -56,8 +56,50 @@ const MAX_RATE = 2
 /** Strips the frame is sheared into. Matches `FigureField`. */
 const STRIPS = 96
 
+/**
+ * URLs already pulled through a plain fetch, so a play/pause cycle does not ask
+ * for the same file again.
+ */
+const warmed = new Set<string>()
+
+/**
+ * Picks the source this browser can actually decode, rather than leaving it to
+ * `<source>` children. The URL has to be known here so the cache can be warmed
+ * with it — see `warm`.
+ */
+function pickSource(sources: { src: string; type: string }[]) {
+  const probe = document.createElement('video')
+  return (
+    sources.find((s) => probe.canPlayType(s.type) === 'probably') ??
+    sources.find((s) => probe.canPlayType(s.type)) ??
+    sources[0]
+  )
+}
+
+/**
+ * Pulls the clip through `fetch` once, purely so the service worker keeps a copy.
+ *
+ * A video element asks for its file with a `Range` header, and a ranged media
+ * request does not end up in the runtime cache: measured on a production build,
+ * `resona-turntables` was still empty after a full playthrough of TV mode, while
+ * one plain fetch of the same URL filled it. What was holding the clip instead
+ * was the browser's own HTTP cache, which is evictable and is not what an
+ * offline-first app should be resting on. Cache Storage is.
+ *
+ * It runs alongside playback rather than before it, so the first frame still
+ * appears while the file streams. That costs the bytes twice on the very first
+ * viewing and nothing on every viewing after.
+ */
+function warm(url: string) {
+  if (warmed.has(url)) return
+  warmed.add(url)
+  fetch(url)
+    .then((r) => r.arrayBuffer())
+    .catch(() => warmed.delete(url))
+}
+
 type Props = {
-  /** Sources in preference order; the browser downloads only the one it picks. */
+  /** Candidates; only the one this browser can decode is ever requested. */
   sources: { src: string; type: string }[]
   playing: boolean
   className?: string
@@ -125,6 +167,12 @@ export function TurntableField({ sources, playing, className = '' }: Props) {
     resize()
     const ro = new ResizeObserver(resize)
     ro.observe(canvas)
+
+    const chosen = pickSource(sources)
+    if (chosen) {
+      video.src = chosen.src
+      warm(chosen.src)
+    }
 
     void video.play().catch(() => {
       /* autoplay of a muted, sourceless-audio element is allowed; if a platform
@@ -197,7 +245,7 @@ export function TurntableField({ sources, playing, className = '' }: Props) {
       video.removeAttribute('src')
       video.load()
     }
-  }, [playing, reducedMotion])
+  }, [sources, playing, reducedMotion])
 
   return (
     <div className={className}>
@@ -210,11 +258,7 @@ export function TurntableField({ sources, playing, className = '' }: Props) {
         playsInline
         preload="auto"
         aria-hidden
-      >
-        {sources.map((s) => (
-          <source key={s.src} src={s.src} type={s.type} />
-        ))}
-      </video>
+      />
     </div>
   )
 }

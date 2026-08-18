@@ -3,7 +3,14 @@ import { ABOUT } from '../lib/aboutContent'
 import { renderRich, useT } from '../lib/i18n'
 import { Card, Screen } from './ui'
 
-const APP_VERSION = '1.0'
+/**
+ * Version, commit and date of the build that is actually running — see
+ * `buildStamp` in the Vite config. Printed rather than kept in a comment so a
+ * screenshot is enough to tell whether the phone is on the current commit.
+ */
+const BUILD = __BUILD__
+/** Just the semver, for the places that name the app rather than identify it. */
+const APP_VERSION = BUILD.split(' · ')[0]
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -63,6 +70,13 @@ export function AboutScreen() {
 
       <p className="txt-3 mt-5 px-1 text-center text-[11px]">
         {t('about.footer', { year: new Date().getFullYear(), v: APP_VERSION })}
+      </p>
+      {/* The line that answers "are we looking at the same thing?" — compare it
+          against `git log --oneline -1`. */}
+      <p className="txt-3 mt-1 px-1 text-center text-[10px] opacity-70">
+        {/* Only the stamp is LTR. Putting the Hebrew label inside the isolated
+            run reorders it into the middle of the commit. */}
+        {t('about.build')} <span className="readout">{BUILD}</span>
       </p>
     </Screen>
   )

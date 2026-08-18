@@ -97,12 +97,12 @@ export function TrustBadge({ trust, full = false }: { trust: TrustLevel; full?: 
     <span
       className="inline-flex items-center gap-1.5 rounded-[3px] px-2.5 py-1 text-[11px] font-medium leading-tight"
       style={{
-        background: `hsl(${h} ${s}% ${l}% / 0.12)`,
+        background: `hsl(${h} calc(${s}% * var(--trust-s, 1)) ${l}% / 0.12)`,
         // Each level has its own lightness, tuned against black. On paper they
         // all have to come down to pigment, so the light theme overrides them
         // with one value rather than three — see `--trust-l`.
-        color: `hsl(${h} ${s}% var(--trust-l, ${l}%))`,
-        border: `1px solid hsl(${h} ${s}% var(--trust-l, ${l}%) / 0.35)`,
+        color: `hsl(${h} calc(${s}% * var(--trust-s, 1)) var(--trust-l, ${l}%))`,
+        border: `1px solid hsl(${h} calc(${s}% * var(--trust-s, 1)) var(--trust-l, ${l}%) / 0.35)`,
       }}
     >
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -197,7 +197,7 @@ export function Sheet({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="glass-strong animate-scale-in relative max-h-[85vh] w-full overflow-y-auto rounded-t-3xl p-5 sm:max-w-lg sm:rounded-3xl"
+        className="sheet-panel glass-strong animate-scale-in relative max-h-[85vh] w-full overflow-y-auto rounded-t-3xl p-5 sm:max-w-lg sm:rounded-3xl"
         style={{ boxShadow: 'var(--shadow-page)' }}
       >
         <div className="mb-4 flex items-center justify-between gap-3">

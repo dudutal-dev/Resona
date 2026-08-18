@@ -15,6 +15,7 @@ import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { useJourneys } from '../store/journeyStore'
 import type { MoodScore } from '../lib/types'
+import { hueFill, hueGlow, hueLine } from '../lib/themes'
 import { Card, Screen, TrustBadge } from './ui'
 import { MoodPicker } from './MoodPicker'
 import { ListeningMode } from './ListeningMode'
@@ -66,9 +67,9 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
         <div
           className="mx-auto grid h-24 w-24 place-items-center rounded-3xl"
           style={{
-            background: `hsl(${freq?.hue ?? 265} 85% 62% / 0.16)`,
-            border: `1px solid hsl(${freq?.hue ?? 265} 85% 65% / 0.45)`,
-            boxShadow: `0 0 50px hsl(${freq?.hue ?? 265} 90% 60% / 0.35)`,
+            background: hueFill(freq?.hue ?? 265, 0.16),
+            border: `1px solid ${hueLine(freq?.hue ?? 265)}`,
+            boxShadow: `0 0 50px ${hueGlow(freq?.hue ?? 265)}`,
           }}
         >
           <div>

@@ -1,7 +1,7 @@
 import { freqLabel, getFrequency } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
-import { hueText } from '../lib/themes'
+import { hueFill, hueLine, hueText } from '../lib/themes'
 import { useSession } from '../store/sessionStore'
 import { formatClock } from './ui'
 
@@ -20,8 +20,8 @@ export function MiniPlayer({ hidden }: { hidden: boolean }) {
           <span
             className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl text-[11px] font-bold"
             style={{
-              background: `hsl(${root?.hue ?? 265} 85% 62% / 0.18)`,
-              border: `1px solid hsl(${root?.hue ?? 265} 85% 65% / 0.45)`,
+              background: hueFill(root?.hue ?? 265),
+              border: `1px solid ${hueLine(root?.hue ?? 265)}`,
               color: hueText(root?.hue ?? 265),
             }}
           >

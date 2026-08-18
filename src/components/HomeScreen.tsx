@@ -10,7 +10,7 @@ import {
 } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
-import { hueText } from '../lib/themes'
+import { hueFill, hueGlow, hueLine, hueText } from '../lib/themes'
 import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
@@ -62,9 +62,9 @@ export function HomeScreen() {
           <div
             className="relative grid h-16 w-16 shrink-0 place-items-center rounded-2xl"
             style={{
-              background: `hsl(${root?.hue ?? 265} 85% 62% / 0.18)`,
-              border: `1px solid hsl(${root?.hue ?? 265} 85% 65% / 0.45)`,
-              boxShadow: `0 0 32px hsl(${root?.hue ?? 265} 90% 60% / 0.35)`,
+              background: hueFill(root?.hue ?? 265),
+              border: `1px solid ${hueLine(root?.hue ?? 265)}`,
+              boxShadow: `0 0 32px ${hueGlow(root?.hue ?? 265)}`,
             }}
           >
             {isPlaying && (

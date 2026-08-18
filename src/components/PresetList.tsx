@@ -6,7 +6,7 @@ import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
 import type { Preset } from '../lib/types'
-import { hueText } from '../lib/themes'
+import { hueFill, hueLine, hueText } from '../lib/themes'
 import { Card, EmptyState, Screen, Sheet } from './ui'
 
 function describe(preset: Preset, t: (k: StringKey, v?: Record<string, string | number>) => string) {
@@ -61,8 +61,8 @@ export function PresetList() {
                     aria-label={t('presets.playAria', { name: preset.name })}
                     className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl transition-transform active:scale-95"
                     style={{
-                      background: `hsl(${root?.hue ?? 265} 85% 62% / 0.16)`,
-                      border: `1px solid hsl(${root?.hue ?? 265} 85% 65% / 0.42)`,
+                      background: hueFill(root?.hue ?? 265, 0.16),
+                      border: `1px solid ${hueLine(root?.hue ?? 265, 0.42)}`,
                       color: hueText(root?.hue ?? 265),
                     }}
                   >

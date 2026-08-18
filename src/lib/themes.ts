@@ -90,3 +90,27 @@ export function journeysByTheme(): { theme: JourneyTheme; journeys: Journey[] }[
  * the tuning in one place.
  */
 export const hueText = (hue: number) => `hsl(${hue} var(--tint-s) var(--tint-l))`
+
+/**
+ * A surface, a hairline and a halo in a given hue.
+ *
+ * These three appear together everywhere a frequency, a band or a journey gets
+ * its own tile, and all three were written as literals tuned against the violet
+ * night — 85% saturation, a lit edge, and a 32px bloom behind it. That is
+ * correct for one theme out of three. Noir wants the same shapes at half the
+ * saturation and with the bloom nearly gone, because a black surface covered in
+ * glowing green tiles reads as a console rather than as something expensive;
+ * daylight wants more saturation, not less, because chroma is the only thing
+ * that survives on white.
+ *
+ * The call sites keep their own alphas — a chip is fainter than a tile — and
+ * the theme scales them. `--halo` at zero removes the bloom entirely.
+ */
+export const hueFill = (hue: number, alpha = 0.18) =>
+  `hsl(${hue} var(--tile-s) var(--tile-l) / calc(${alpha} * var(--tile-a)))`
+
+export const hueLine = (hue: number, alpha = 0.45) =>
+  `hsl(${hue} var(--line-s) var(--line-l) / calc(${alpha} * var(--line-a)))`
+
+export const hueGlow = (hue: number, alpha = 0.35) =>
+  `hsl(${hue} var(--tile-s) var(--tile-l) / calc(${alpha} * var(--halo)))`

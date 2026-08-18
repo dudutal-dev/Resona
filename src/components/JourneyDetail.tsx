@@ -12,7 +12,7 @@ import {
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
 import { bandForDay, configForDay } from '../lib/journeyConfig'
-import { hueText } from '../lib/themes'
+import { hueFill, hueLine, hueText } from '../lib/themes'
 import { useJourneys } from '../store/journeyStore'
 import { Card, Screen, TrustBadge } from './ui'
 
@@ -118,8 +118,8 @@ export function JourneyDetail({ id }: { id: string }) {
                 <div
                   className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-bold"
                   style={{
-                    background: isDone ? 'var(--accent-soft)' : `hsl(${freq?.hue ?? 265} 85% 62% / 0.14)`,
-                    border: `1px solid ${isDone ? 'var(--accent-line)' : `hsl(${freq?.hue ?? 265} 85% 65% / 0.35)`}`,
+                    background: isDone ? 'var(--accent-soft)' : hueFill(freq?.hue ?? 265, 0.14),
+                    border: `1px solid ${isDone ? 'var(--accent-line)' : hueLine(freq?.hue ?? 265, 0.35)}`,
                     color: isDone ? 'var(--accent)' : hueText(freq?.hue ?? 265),
                   }}
                 >

@@ -32,105 +32,163 @@
   --wash-l: 22%;
   --blob-l: 60%;
   --grain: 0.055;
+  /* Modals are opaque; see `.sheet-panel`. */
+  --sheet-bg: #120a26;
   /* Lightness for text set in a frequency's hue — see `hueText`. */
   --tint-s: 90%;
   --tint-l: 74%;
+  /* Surfaces, hairlines and haloes drawn in a frequency's own hue — see
+     `hueFill` / `hueLine` / `hueGlow`. The alphas come from the call site; these
+     scale them per theme. */
+  --tile-s: 85%;
+  --tile-l: 62%;
+  --tile-a: 1;
+  --line-s: 85%;
+  --line-l: 65%;
+  --line-a: 1;
+  --halo: 1;
 }
 
 /* ---------------------------------------------------------------------------
-   Noir. Not "the dark theme, darker" — a different idea of what dark means.
+   Noir. Not "the dark theme, darker", and not a terminal either.
 
-   The default theme is a deep violet night: the ground carries hue, panels are
-   frosted, and colour is diffused through blur and glow. Noir starts from true
-   black and keeps it black, so colour has nothing to blend into. Every accent
-   is therefore raised in saturation and lightness, the frost is removed so
-   edges land on the pixel instead of inside a blur, and the ambient wash is cut
-   to a trace. The result is high-contrast rather than atmospheric — and on an
-   OLED panel the black is genuinely off, which is where the depth comes from.
+   The first attempt at this put a hairline in the frequency's hue around every
+   panel, which fixed the "switched-off" problem and created a worse one: a
+   screen edged in glowing green reads as a console, not as something expensive.
+   Neon is loud, and loud is the opposite of what black is for.
+
+   So this is black as a luxury material. Three rules carry it:
+
+   - Nothing is pure white. The type is bone — warm, slightly off — because
+     #ffffff on #000000 is the highest-contrast pair there is and it buzzes.
+   - The edges are machined, not lit. Each panel's fill runs from a faint warm
+     lift at the top to almost nothing at the bottom, with a fine highlight
+     along the top edge: the way a bevelled surface catches a light source above
+     it. That is where the depth comes from, not from glow.
+   - Colour is rationed. The frequency's hue appears on what is selected and on
+     what is playing, and nowhere else — desaturated to about half of what the
+     dark theme uses, because on black a muted colour reads as considered and a
+     saturated one reads as cheap.
+
+   The ground stays pure black with no wash at all, which on an OLED panel is
+   genuinely unlit.
 --------------------------------------------------------------------------- */
 html.theme-noir {
   --bg-deep: #000000;
   --bg: 0 0% 0%;
   --surface: 0 0% 0%;
-  /* Almost nothing. A panel here is an edge, not a fill: at 2.6% white the
-     rectangle read as a grey smudge on black, which is what made this theme look
-     like the dark one with the colour drained rather than like its own idea. */
-  --card: rgba(255, 255, 255, 0.012);
-  --card-strong: rgba(255, 255, 255, 0.03);
-  /* The edges carry the hue. Grey borders on black are the single reason this
-     theme looked switched-off — nothing on the screen had a colour except the
-     one accent, so the whole surface read as unlit. A hairline in the frequency's
-     own hue makes every panel part of the instrument. */
-  --border: hsl(var(--h) 90% 62% / 0.2);
-  --border-strong: hsl(var(--h) 100% 68% / 0.6);
-  --txt: #ffffff;
-  --txt-2: rgba(255, 255, 255, 0.84);
-  --txt-3: rgba(255, 255, 255, 0.52);
-  /* Pushed past the default theme's accent: on black there is no ambient light
-     to lift a colour, so it has to carry itself. */
-  --accent: hsl(var(--h) 100% 66%);
-  --accent-soft: hsl(var(--h) 100% 62% / 0.12);
-  --accent-line: hsl(var(--h) 100% 68% / 0.62);
-  --glow: hsl(var(--h) 100% 60% / 0.6);
-  --shadow-page: 0 30px 90px -25px #000;
+  /* A bevel, not a box: light gathers at the top edge and falls away. */
+  --card: linear-gradient(to bottom, rgba(255, 250, 240, 0.05), rgba(255, 250, 240, 0.014));
+  --card-strong: linear-gradient(to bottom, rgba(255, 250, 240, 0.085), rgba(255, 250, 240, 0.03));
+  /* Warm neutral, not the accent. The hue on every border was the console look. */
+  --border: rgba(255, 248, 236, 0.11);
+  --border-strong: rgba(255, 248, 236, 0.26);
+  /* Bone. Pure white on pure black is the one pairing that never looks costly. */
+  --txt: #f6f2ea;
+  --txt-2: rgba(246, 242, 234, 0.66);
+  --txt-3: rgba(246, 242, 234, 0.38);
+  /* Half the saturation of the dark theme. Restraint is the whole idea. */
+  --accent: hsl(var(--h) 58% 74%);
+  --accent-soft: hsl(var(--h) 50% 60% / 0.1);
+  --accent-line: hsl(var(--h) 45% 62% / 0.42);
+  --glow: hsl(var(--h) 60% 60% / 0.28);
+  --shadow-page: 0 40px 90px -40px #000;
+  /* Black under the panel and a hairline of true black above it, so the top
+     highlight has something to sit against. */
+  --panel-shadow: 0 1px 0 rgba(0, 0, 0, 0.9), 0 24px 48px -34px #000;
   --glass-blur: 0px;
   --glass-sat: 1;
-  --glass-top: hsl(var(--h) 100% 70% / 0.14);
-  --wash: 0.06;
+  --glass-top: rgba(255, 250, 240, 0.13);
+  --wash: 0;
   --wash-l: 20%;
   --blob-l: 55%;
-  --grain: 0.02;
-  --tint-s: 100%;
+  --grain: 0.012;
+  --sheet-bg: #0b0b0b;
+  --tint-s: 45%;
   --tint-l: 70%;
+  /* The corner marks are structure, not signal — they stay neutral so the hue
+     is left to mean "this one is selected". */
+  --bracket-line: var(--border-strong);
+  --rim-s: 45%;
+  --rim-l: 70%;
+  --tile-s: 42%;
+  --tile-l: 52%;
+  --tile-a: 0.8;
+  --line-s: 42%;
+  --line-l: 62%;
+  --line-a: 0.85;
+  /* Nearly none. The bloom behind every tile was the loudest thing on the
+     screen and the least premium. */
+  --halo: 0.25;
+  --trust-s: 0.5;
 }
 
 /* ---------------------------------------------------------------------------
-   Daylight. Not the dark theme inverted, and deliberately not the soft one.
+   Daylight. Bright, and unapologetic about it.
 
-   The first version of this was white cards with soft shadows on a pale lilac
-   wash — which is the default appearance of every wellness app made since 2019,
-   and carried none of what makes the dark theme this app: emitted light, depth,
-   and colour that comes from the frequency. Glow does not survive on white, so
-   that version simply dropped the idea instead of translating it.
+   Two wrong turns before this one. The first was white cards with soft shadows
+   on a lilac wash — the default appearance of every wellness app made since
+   2019. The second overcorrected into ink on paper: crisp, but grey and
+   editorial, and this app is not grey. It is a thing that makes light out of a
+   number you choose.
 
-   The translation is ink. What glow does in the dark — say where the energy is —
-   is done here by contrast and saturation: true white panels, a visible dark
-   hairline around each one, near-black type, and an accent deep enough to read
-   as pigment rather than as a tint. Crisp and graphic instead of soft and
-   floating.
+   So daylight is that, at noon. The panels are white and the type is dark, but
+   every other decision carries chroma: the ground is a clean tinted bloom in
+   the frequency's own hue, the shadow under each card is that hue rather than
+   black, the borders are tinted instead of grey, the accent is fully
+   saturated, and the big readouts are set in the colour itself rather than in
+   near-black.
+
+   Coloured shadow is the load-bearing trick. A black shadow on white says
+   "paper"; the same shadow in the accent hue says the object is lit from
+   inside, which is the one thing the dark theme does that white had been
+   swallowing.
 --------------------------------------------------------------------------- */
 html.theme-light {
-  --bg-deep: #e8eaef;
-  --bg: 225 16% 92%;
+  --bg-deep: #f7f8fc;
+  --bg: 228 44% 98%;
   --surface: 0 0% 100%;
   --card: #ffffff;
   --card-strong: #ffffff;
-  --border: rgba(12, 15, 26, 0.16);
-  --border-strong: rgba(12, 15, 26, 0.34);
-  --txt: #0a0d16;
-  --txt-2: rgba(10, 13, 22, 0.74);
-  --txt-3: rgba(10, 13, 22, 0.52);
-  --accent: hsl(var(--h) 82% 36%);
-  --accent-soft: hsl(var(--h) 82% 45% / 0.1);
-  --accent-line: hsl(var(--h) 82% 40% / 0.5);
-  --glow: hsl(var(--h) 85% 45% / 0.24);
-  --shadow-page: 0 18px 40px -24px rgba(12, 15, 26, 0.4);
-  /* Tight and close. A wide soft shadow on white is what makes a card look like
-     it is floating in fog; the edge is supposed to do the work here. */
-  --panel-shadow: 0 1px 2px rgba(12, 15, 26, 0.06);
-  /* No frost. Blurring white behind white produces nothing but cost. */
+  /* Tinted, not grey. A grey hairline next to a saturated accent looks dead. */
+  --border: hsl(var(--h) 45% 62% / 0.28);
+  --border-strong: hsl(var(--h) 70% 45% / 0.55);
+  --txt: #14161f;
+  --txt-2: rgba(20, 22, 31, 0.7);
+  --txt-3: rgba(20, 22, 31, 0.46);
+  /* Full saturation. This is the colour the app is about; muting it on the
+     light theme was the reason that theme had no identity. */
+  --accent: hsl(var(--h) 88% 42%);
+  --accent-soft: hsl(var(--h) 92% 55% / 0.13);
+  --accent-line: hsl(var(--h) 80% 50% / 0.45);
+  --glow: hsl(var(--h) 92% 52% / 0.38);
+  --shadow-page: 0 24px 60px -30px hsl(var(--h) 60% 35% / 0.35);
+  /* The hue, under the card. This is what makes white look lit rather than
+     printed — see the note above. */
+  --panel-shadow:
+    0 1px 2px hsl(var(--h) 45% 35% / 0.07),
+    0 14px 30px -16px hsl(var(--h) 70% 45% / 0.26);
   --glass-blur: 0px;
   --glass-sat: 1;
-  --glass-top: rgba(12, 15, 26, 0.06);
-  /* Light and small: on paper a wash is a stain, not an atmosphere. */
-  --wash: 0.32;
-  --wash-l: 93%;
-  --blob-l: 90%;
-  --grain: 0.015;
-  /* Deep enough to be pigment on white rather than a tint of it. */
-  --tint-s: 80%;
-  --tint-l: 32%;
-  --trust-l: 30%;
+  --glass-top: rgba(255, 255, 255, 0.9);
+  /* Bright and clean: high saturation at high lightness is a pastel bloom, and
+     it was only ever murky because the lightness was inherited from the dark
+     theme. */
+  --wash: 0.8;
+  --wash-l: 91%;
+  --blob-l: 85%;
+  --grain: 0.01;
+  --sheet-bg: #ffffff;
+  --tint-s: 85%;
+  --tint-l: 38%;
+  --trust-l: 34%;
+  --tile-s: 92%;
+  --tile-l: 56%;
+  --tile-a: 0.85;
+  --line-s: 82%;
+  --line-l: 48%;
+  --line-a: 1;
+  --halo: 0.55;
 }
 
 @layer base {
@@ -228,6 +286,19 @@ html.theme-light {
     -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 1.27)) saturate(var(--glass-sat));
   }
 
+  /**
+   * A sheet has to be opaque.
+   *
+   * Every panel in the app is a translucent film over the page, which is right
+   * for a card sitting on the background and wrong for a modal: the mixer
+   * opened over the player and the orb showed through the faders. The dark
+   * theme hid it behind 28px of blur, so it only became visible on the themes
+   * that removed the frost.
+   */
+  .sheet-panel {
+    background: var(--sheet-bg);
+  }
+
   .txt-2 {
     color: var(--txt-2);
   }
@@ -245,7 +316,12 @@ html.theme-light {
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(140deg, hsl(var(--h) 95% 75% / 0.55), transparent 45%, hsl(var(--h) 95% 60% / 0.25));
+    background: linear-gradient(
+      140deg,
+      hsl(var(--h) var(--rim-s, 95%) var(--rim-l, 75%) / 0.55),
+      transparent 45%,
+      hsl(var(--h) var(--rim-s, 95%) calc(var(--rim-l, 75%) - 15%) / 0.25)
+    );
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,
       linear-gradient(#000 0 0);
@@ -257,11 +333,13 @@ html.theme-light {
   .glow-text {
     text-shadow: 0 0 24px var(--glow);
   }
-  /* Nothing glows on paper. A 24px halo behind near-black type on white is a
-     smudge, not light — the size and the weight already say what the glow says
-     in the dark. */
+  /* On white a halo behind near-black type is a smudge — so instead of glowing,
+     the number becomes the colour. Same job, different medium: this is the one
+     element on the screen that says which frequency you are listening to, and
+     it should be unmistakable rather than tasteful. */
   html.theme-light .glow-text {
-    text-shadow: none;
+    color: var(--accent);
+    text-shadow: 0 8px 26px hsl(var(--h) 92% 50% / 0.28);
   }
 
   /**
@@ -325,7 +403,7 @@ html.theme-light {
     inset: -1px;
     border-radius: inherit;
     pointer-events: none;
-    border: 1px solid var(--accent-line);
+    border: 1px solid var(--bracket-line, var(--accent-line));
     /* Keep only the corners: the mask is opaque in two L-shaped bands and
        transparent along the middle of each edge. */
     -webkit-mask:
@@ -423,15 +501,17 @@ html.theme-light {
     filter: brightness(1.08);
     box-shadow: 0 14px 42px -8px var(--glow);
   }
-  /* Pigment, not neon: a fluorescent disc was the one thing on the light screen
-     still lit from behind, and it fought the ink everything else is set in. */
-  html.theme-light .btn-primary {
-    background: linear-gradient(135deg, hsl(var(--h) 78% 34%), hsl(calc(var(--h) + 34) 72% 28%));
-    color: #ffffff;
-    box-shadow: 0 6px 18px -8px rgba(12, 15, 26, 0.5);
+  /* Anodised, not fluorescent. On black a saturated disc is the cheapest thing
+     on the screen; a deep face with a lit top edge is a machined button. */
+  html.theme-noir .btn-primary {
+    background: linear-gradient(to bottom, hsl(var(--h) 48% 44%), hsl(var(--h) 55% 25%));
+    color: #f6f2ea;
+    box-shadow:
+      inset 0 1px 0 hsl(var(--h) 65% 75% / 0.45),
+      0 12px 34px -16px #000;
   }
-  html.theme-light .btn-primary:hover {
-    box-shadow: 0 10px 24px -10px rgba(12, 15, 26, 0.55);
+  html.theme-noir .btn-primary:hover {
+    filter: brightness(1.12);
   }
 
   .btn-ghost {
@@ -460,20 +540,27 @@ html.theme-light {
     border-radius: 1px;
     background: linear-gradient(
       to right,
-      hsl(var(--h) 92% 65%) 0%,
-      hsl(var(--h) 92% 65%) var(--fill, 50%),
+      var(--accent) 0%,
+      var(--accent) var(--fill, 50%),
       rgba(255, 255, 255, 0.12) var(--fill, 50%),
       rgba(255, 255, 255, 0.12) 100%
     );
   }
+  /* Only the unfilled half differs: white needs a darker groove than black
+     does, and the filled half is the accent in every theme. */
   html.theme-light .slider::-webkit-slider-runnable-track {
     background: linear-gradient(
       to right,
-      hsl(var(--h) 75% 50%) 0%,
-      hsl(var(--h) 75% 50%) var(--fill, 50%),
-      rgba(24, 12, 56, 0.14) var(--fill, 50%),
-      rgba(24, 12, 56, 0.14) 100%
+      var(--accent) 0%,
+      var(--accent) var(--fill, 50%),
+      rgba(20, 22, 31, 0.14) var(--fill, 50%),
+      rgba(20, 22, 31, 0.14) 100%
     );
+  }
+  /* Tight. An 18px halo under a fader cap is atmosphere on black and a smudge
+     on white. */
+  html.theme-light .slider::-webkit-slider-thumb {
+    box-shadow: 0 1px 3px hsl(var(--h) 55% 28% / 0.3);
   }
   .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -497,14 +584,14 @@ html.theme-light {
   .slider::-moz-range-progress {
     height: 4px;
     border-radius: 1px;
-    background: hsl(var(--h) 92% 65%);
+    background: var(--accent);
   }
   .slider::-moz-range-thumb {
     width: 10px;
     height: 24px;
     border-radius: 2px;
     background: #fff;
-    border: 2px solid hsl(var(--h) 92% 62%);
+    border: 1px solid var(--accent);
     box-shadow: 0 0 18px var(--glow);
   }
 
@@ -550,10 +637,17 @@ html.theme-light {
 html.theme-light .dark-only {
   display: none;
 }
+/* Noir keeps them, but as the faintest suggestion. A field of bright pinpricks
+   is an astronomy app; a few barely-there ones are texture on a black surface. */
+html.theme-noir .dark-only {
+  opacity: 0.3;
+}
 
 .vignette {
   background: radial-gradient(110% 80% at 50% 40%, transparent 45%, rgba(0, 0, 0, 0.55));
 }
+/* Barely there. A dark edge on a bright screen reads as grime, and the point of
+   this theme is that it is bright. */
 html.theme-light .vignette {
-  background: radial-gradient(120% 90% at 50% 35%, transparent 58%, rgba(12, 15, 26, 0.1));
+  background: radial-gradient(120% 90% at 50% 30%, transparent 62%, hsl(var(--h) 45% 45% / 0.05));
 }

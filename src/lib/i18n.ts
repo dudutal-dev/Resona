@@ -357,6 +357,7 @@ const HE = {
   'about.byline': 'פותח ועוצב על ידי',
   'about.author': 'דודו טל',
   'about.footer': '© {year} דודו טל · Resona {v}',
+  'about.build': 'בילד',
 } as const
 
 export type StringKey = keyof typeof HE
@@ -685,6 +686,7 @@ const EN: Record<StringKey, string> = {
   'about.byline': 'Built and designed by',
   'about.author': 'Dudu Tal',
   'about.footer': '© {year} Dudu Tal · Resona {v}',
+  'about.build': 'build',
 }
 
 export const STRINGS: Record<Lang, Record<StringKey, string>> = { he: HE, en: EN }

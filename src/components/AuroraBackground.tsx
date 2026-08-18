@@ -12,9 +12,10 @@ import { useSettings } from '../store/settingsStore'
 export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
   const reducedMotion = useSettings((s) => s.reducedMotion)
   const theme = useSettings((s) => s.theme)
-  // Noir keeps the ground black. A drifting wash is exactly what it is not for,
-  // so the blobs come down to a trace that only tints the very edges.
-  const wash = theme === 'noir' ? 0.1 : 1
+  // Noir keeps the ground black — actually black, with nothing drifting over it.
+  // A coloured wash is the one thing that would stop an OLED panel from being
+  // unlit, which is the whole point of that theme.
+  const wash = theme === 'noir' ? 0 : 1
 
   const stars = useMemo(
     () =>
@@ -97,8 +98,11 @@ export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
 
       {/* Film grain */}
       <div
-        className="absolute inset-0 opacity-[0.045] mix-blend-overlay"
+        className="absolute inset-0 mix-blend-overlay"
         style={{
+          // Per theme: grain exists to stop wide gradients from banding, and a
+          // ground that is nearly flat has almost nothing to band.
+          opacity: 'var(--grain)',
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E\")",
         }}

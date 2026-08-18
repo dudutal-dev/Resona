@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { freqLabel, getFrequency, journeyDescription, journeyTitle, purposeKey } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
-import { THEME_HUE, hueText, journeysByTheme, themeBlurbKey, themeKey, type JourneyTheme } from '../lib/themes'
+import { THEME_HUE, hueFill, hueGlow, hueLine, hueText, journeysByTheme, themeBlurbKey, themeKey, type JourneyTheme } from '../lib/themes'
 import type { Journey } from '../lib/types'
 import { useJourneys } from '../store/journeyStore'
 import { Card, Screen } from './ui'
@@ -22,8 +22,8 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
         <div
           className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl"
           style={{
-            background: `hsl(${hue} 85% 62% / 0.16)`,
-            border: `1px solid hsl(${hue} 85% 65% / 0.4)`,
+            background: hueFill(hue, 0.16),
+            border: `1px solid ${hueLine(hue, 0.4)}`,
             color: hueText(hue),
           }}
         >
@@ -36,9 +36,9 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
             <span
               className="rounded-[3px] px-2 py-0.5 text-[10px] font-semibold"
               style={{
-                background: `hsl(${hue} 85% 62% / 0.14)`,
+                background: hueFill(hue, 0.14),
                 color: hueText(hue),
-                border: `1px solid hsl(${hue} 85% 65% / 0.32)`,
+                border: `1px solid ${hueLine(hue, 0.32)}`,
               }}
             >
               {t(purposeKey(journey.purpose))}
@@ -63,7 +63,7 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
                   style={{
                     width: `${pct}%`,
                     background: `linear-gradient(90deg, hsl(${hue} 92% 62%), hsl(${hue + 40} 90% 62%))`,
-                    boxShadow: `0 0 12px hsl(${hue} 90% 60% / 0.5)`,
+                    boxShadow: `0 0 12px ${hueGlow(hue, 0.5)}`,
                   }}
                 />
               </div>
@@ -114,13 +114,13 @@ export function JourneyList() {
                 background: active
                   ? hue === null
                     ? 'var(--accent-soft)'
-                    : `hsl(${hue} 85% 62% / 0.18)`
+                    : hueFill(hue)
                   : 'var(--card)',
                 border: `1px solid ${
                   active
                     ? hue === null
                       ? 'var(--accent-line)'
-                      : `hsl(${hue} 85% 65% / 0.45)`
+                      : hueLine(hue)
                     : 'var(--border)'
                 }`,
                 color: active
@@ -144,7 +144,7 @@ export function JourneyList() {
                 className="h-2 w-2 shrink-0 self-center rounded-full"
                 style={{
                   background: `hsl(${THEME_HUE[group.theme]} 90% 62%)`,
-                  boxShadow: `0 0 10px hsl(${THEME_HUE[group.theme]} 90% 60% / 0.7)`,
+                  boxShadow: `0 0 10px ${hueGlow(THEME_HUE[group.theme], 0.7)}`,
                 }}
                 aria-hidden
               />

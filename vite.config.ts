@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { fileURLToPath } from 'node:url'
+import { execSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
 
 /**
  * `SINGLE_FILE=1` produces one self-contained .html with every asset inlined:
@@ -11,8 +13,34 @@ import { fileURLToPath } from 'node:url'
  */
 const singleFile = process.env.SINGLE_FILE === '1'
 
+/**
+ * The build stamp shown on the About screen.
+ *
+ * Whether the phone is running what the repository holds is not a question you
+ * can answer by looking at the app — a stale service worker looks exactly like
+ * a fresh one. The commit is the only identifier that settles it, so it is read
+ * at build time and printed where it can be compared against `git log`.
+ *
+ * `git` may be absent (a tarball, a clean CI checkout without history); the
+ * build must not fail over a caption, so it degrades to the version alone.
+ */
+function buildStamp(): string {
+  const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as {
+    version: string
+  }
+  let commit = ''
+  try {
+    commit = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim()
+  } catch {
+    commit = 'nogit'
+  }
+  const day = new Date().toISOString().slice(0, 10)
+  return `${pkg.version} · ${commit} · ${day}`
+}
+
 export default defineConfig({
   base: './',
+  define: { __BUILD__: JSON.stringify(buildStamp()) },
   plugins: [
     react(),
     !singleFile &&

@@ -101,6 +101,7 @@ export function Visualizer({ playing, children }: Props) {
     const hueOf = () =>
       Number(getComputedStyle(document.documentElement).getPropertyValue('--h').trim()) || 265
     const isLight = () => document.documentElement.classList.contains('theme-light')
+    const isNoir = () => document.documentElement.classList.contains('theme-noir')
 
     /** Level at one pitch, taken from the loudest octave it can sound in. */
     const levelAt = (spectrum: Float32Array, hz: number, binHz: number) => {
@@ -135,8 +136,14 @@ export function Visualizer({ playing, children }: Props) {
       const wave = playing ? engine.getWaveform() : null
       const H = hueOf()
       const light = isLight()
+      // Noir is black as a material, not as a stage. The rings stay — they are
+      // the reading — but the bloom behind them comes down to a suggestion,
+      // because a glowing green cloud is the one thing on that theme that does
+      // not look expensive.
+      const noir = isNoir()
       const strokeL = light ? 46 : 78
-      const glow = light ? 0.3 : 1
+      const glow = light ? 0.3 : noir ? 0.45 : 1
+      const bloomScale = light ? 1 : noir ? 0.34 : 1
       const binHz = spectrum?.length ? engine.sampleRate / (2 * spectrum.length) : 1
 
       // ---- Levels ---------------------------------------------------------
@@ -164,8 +171,11 @@ export function Visualizer({ playing, children }: Props) {
 
       // ---- Bloom ----------------------------------------------------------
       const bloom = ctx.createRadialGradient(cx, cy, 0, cx, cy, R)
-      bloom.addColorStop(0, `hsla(${H + 25}, 100%, ${light ? 62 : 70}%, ${(light ? 0.2 : 0.26) + energy * 0.32})`)
-      bloom.addColorStop(0.42, `hsla(${H}, 100%, 58%, ${0.05 + energy * 0.12})`)
+      bloom.addColorStop(
+        0,
+        `hsla(${H + 25}, ${noir ? 70 : 100}%, ${light ? 62 : 70}%, ${((light ? 0.2 : 0.26) + energy * 0.32) * bloomScale})`,
+      )
+      bloom.addColorStop(0.42, `hsla(${H}, ${noir ? 70 : 100}%, 58%, ${(0.05 + energy * 0.12) * bloomScale})`)
       bloom.addColorStop(1, 'hsla(0,0%,0%,0)')
       ctx.fillStyle = bloom
       ctx.fillRect(0, 0, w, h)
@@ -258,7 +268,10 @@ export function Visualizer({ playing, children }: Props) {
       const spread = light ? 1.5 : 3.2
       const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * spread)
       core.addColorStop(0, light ? `hsla(${H + 20}, 90%, 42%, 0.9)` : `hsla(0,0%,100%,${0.85 + energy * 0.15})`)
-      core.addColorStop(0.22, `hsla(${H + 30}, 100%, ${light ? 48 : 86}%, ${(0.7 + energy * 0.3) * (light ? 0.8 : 1)})`)
+      core.addColorStop(
+        0.22,
+        `hsla(${H + 30}, ${noir ? 72 : 100}%, ${light ? 48 : 86}%, ${(0.7 + energy * 0.3) * (light ? 0.8 : noir ? 0.55 : 1)})`,
+      )
       core.addColorStop(1, `hsla(${H}, 100%, 60%, 0)`)
       ctx.fillStyle = core
       ctx.beginPath()

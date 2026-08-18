@@ -8,7 +8,7 @@ import {
 } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import type { Frequency, TrustLevel } from '../lib/types'
-import { hueText } from '../lib/themes'
+import { hueFill, hueGlow, hueLine, hueText } from '../lib/themes'
 import { TrustBadge } from './ui'
 
 /**
@@ -63,10 +63,10 @@ function FrequencyRow({
         <span
           className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-[13px] font-bold leading-none"
           style={{
-            background: `hsl(${freq.hue} 85% 62% / 0.16)`,
-            border: `1px solid hsl(${freq.hue} 85% 65% / 0.4)`,
+            background: hueFill(freq.hue, 0.16),
+            border: `1px solid ${hueLine(freq.hue, 0.4)}`,
             color: hueText(freq.hue),
-            boxShadow: selected ? `0 0 22px hsl(${freq.hue} 90% 60% / 0.45)` : undefined,
+            boxShadow: selected ? `0 0 22px ${hueGlow(freq.hue, 0.45)}` : undefined,
           }}
         >
           <span className="readout">{value}</span>

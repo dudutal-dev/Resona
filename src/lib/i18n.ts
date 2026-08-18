@@ -721,7 +721,9 @@ export function renderRich(text: string): ReactNode {
     if (m.index! > last) out.push(text.slice(last, m.index))
     const [, tag, inner] = m
     if (tag === 'b') out.push(createElement('strong', { key: key++ }, inner))
-    else if (tag === 'ltr') out.push(createElement('span', { key: key++, className: 'ltr' }, inner))
+    // `<ltr>` only ever wraps a quantity in these strings — a frequency, a rate,
+    // a count of minutes — so it carries the readout face with it.
+    else if (tag === 'ltr') out.push(createElement('span', { key: key++, className: 'readout' }, inner))
     else out.push(createElement('span', { key: key++, style: { color: 'var(--accent)' } }, inner))
     last = m.index! + m[0].length
   }

@@ -252,13 +252,17 @@ export function Visualizer({ playing, children }: Props) {
       // ---- The root, on top ------------------------------------------------
       const breathe = reducedMotion ? 1 : 1 + Math.sin(t * 1.7) * 0.05
       const coreR = R * 0.088 * breathe * (1 + energy * 0.35)
-      const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * 3.2)
-      core.addColorStop(0, light ? `hsla(${H + 20}, 90%, 46%, 0.98)` : `hsla(0,0%,100%,${0.85 + energy * 0.15})`)
-      core.addColorStop(0.22, `hsla(${H + 30}, 100%, ${light ? 55 : 86}%, ${0.7 + energy * 0.3})`)
+      // On black the core is a bloom and the falloff is what makes it look lit.
+      // On paper the same falloff is a stain behind the number, so it is pulled
+      // in to roughly the width of the digits and lands as a saturated mark.
+      const spread = light ? 1.5 : 3.2
+      const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR * spread)
+      core.addColorStop(0, light ? `hsla(${H + 20}, 90%, 42%, 0.9)` : `hsla(0,0%,100%,${0.85 + energy * 0.15})`)
+      core.addColorStop(0.22, `hsla(${H + 30}, 100%, ${light ? 48 : 86}%, ${(0.7 + energy * 0.3) * (light ? 0.8 : 1)})`)
       core.addColorStop(1, `hsla(${H}, 100%, 60%, 0)`)
       ctx.fillStyle = core
       ctx.beginPath()
-      ctx.arc(cx, cy, coreR * 3.2, 0, Math.PI * 2)
+      ctx.arc(cx, cy, coreR * spread, 0, Math.PI * 2)
       ctx.fill()
 
       ctx.globalCompositeOperation = 'source-over'

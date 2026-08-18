@@ -27,7 +27,7 @@ export function HistoryPanel() {
   if (!listens.length) {
     return (
       <Card>
-        <h2 className="text-sm font-semibold">{t('history.title')}</h2>
+        <h2 className="rule-label">{t('history.title')}</h2>
         <p className="txt-3 mt-2 text-[12px] leading-relaxed">{t('history.empty')}</p>
       </Card>
     )
@@ -36,7 +36,7 @@ export function HistoryPanel() {
   return (
     <Card>
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold">{t('history.title')}</h2>
+        <h2 className="rule-label">{t('history.title')}</h2>
         <button onClick={clear} className="txt-3 text-[11px] underline underline-offset-2">
           {t('history.clear')}
         </button>
@@ -59,7 +59,7 @@ export function HistoryPanel() {
             <li key={listen.id} className="flex items-baseline justify-between gap-3">
               <div className="min-w-0">
                 <p className="truncate text-[13px] font-medium">
-                  <span className="ltr">{root?.hz ?? '—'} Hz</span>
+                  <span className="readout">{root?.hz ?? '—'} Hz</span>
                   {root && <> · {freqLabel(root, lang)}</>}
                 </p>
                 <p className="txt-3 truncate text-[11px]">
@@ -71,7 +71,7 @@ export function HistoryPanel() {
                 </p>
               </div>
               <div className="shrink-0 text-end">
-                <p className="text-[13px] font-semibold tabular-nums">
+                <p className="readout text-[13px] font-semibold">
                   {rich('history.minutes', { n: Math.round(listen.seconds / 60) })}
                 </p>
                 <p className="txt-3 text-[11px]">{when}</p>

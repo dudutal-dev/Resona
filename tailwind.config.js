@@ -45,6 +45,24 @@ export default {
         'inner-glow': 'inset 0 1px 0 0 rgba(255,255,255,0.08)',
       },
       backdropBlur: { xs: '2px' },
+      /**
+       * Sharpened geometry.
+       *
+       * Every panel in the app was a 16-24px blob, which is the default shape of
+       * a wellness card and reads as soft and conservative no matter what colour
+       * is inside it. The orb these panels sit around is drawn from precise
+       * concentric rings; the surfaces holding it should agree. Overriding the
+       * scale here rather than editing 85 call sites also keeps the corner
+       * language in one place, so it can be tuned as one decision.
+       *
+       * `full` is untouched — the play control and the orb are genuinely round.
+       */
+      borderRadius: {
+        lg: '5px',
+        xl: '6px',
+        '2xl': '8px',
+        '3xl': '12px',
+      },
       keyframes: {
         'aurora-drift': {
           '0%,100%': { transform: 'translate3d(0,0,0) scale(1)' },

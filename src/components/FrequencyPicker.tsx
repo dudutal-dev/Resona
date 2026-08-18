@@ -8,6 +8,7 @@ import {
 } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import type { Frequency, TrustLevel } from '../lib/types'
+import { hueText } from '../lib/themes'
 import { TrustBadge } from './ui'
 
 /**
@@ -64,17 +65,17 @@ function FrequencyRow({
           style={{
             background: `hsl(${freq.hue} 85% 62% / 0.16)`,
             border: `1px solid hsl(${freq.hue} 85% 65% / 0.4)`,
-            color: `hsl(${freq.hue} 90% 72%)`,
+            color: hueText(freq.hue),
             boxShadow: selected ? `0 0 22px hsl(${freq.hue} 90% 60% / 0.45)` : undefined,
           }}
         >
-          <span className="ltr">{value}</span>
+          <span className="readout">{value}</span>
         </span>
         <span className="min-w-0 flex-1">
           {/* Not truncated: several English labels share an opening phrase and
               would clip to the same stub, which is worse than two lines. */}
           <span className="block text-sm font-semibold leading-snug">{freqLabel(freq, lang)}</span>
-          <span className="txt-3 ltr mt-0.5 block text-[11px]">
+          <span className="txt-3 readout mt-0.5 block text-[11px]">
             {freq.hz ? `${freq.hz} Hz` : `${freq.range?.[0]}–${freq.range?.[1]} Hz`}
           </span>
         </span>

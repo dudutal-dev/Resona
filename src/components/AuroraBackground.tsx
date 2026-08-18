@@ -37,7 +37,11 @@ export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(120% 80% at 50% -10%, hsl(var(--h) 70% 22% / calc(0.55 * var(--wash))), transparent 60%), radial-gradient(100% 60% at 50% 110%, hsl(calc(var(--h) + 45) 70% 20% / calc(0.4 * var(--wash))), transparent 65%)',
+            // The lightness is a theme variable, not a constant. At 22% this is a
+            // dark tint, which is what a wash has to be to show up on a dark
+            // ground — and painting it over a light one turned the whole top of
+            // the screen murky green. Daylight sets it above the paper instead.
+            'radial-gradient(120% 80% at 50% -10%, hsl(var(--h) 70% var(--wash-l) / calc(0.55 * var(--wash))), transparent 60%), radial-gradient(100% 60% at 50% 110%, hsl(calc(var(--h) + 45) 70% var(--wash-l) / calc(0.4 * var(--wash))), transparent 65%)',
         }}
       />
 
@@ -47,7 +51,7 @@ export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
           reducedMotion ? '' : 'animate-aurora-drift'
         }`}
         style={{
-          background: `radial-gradient(circle, hsl(var(--h) 95% 60% / ${0.3 * intensity * wash}), transparent 65%)`,
+          background: `radial-gradient(circle, hsl(var(--h) 95% var(--blob-l) / ${0.3 * intensity * wash}), transparent 65%)`,
         }}
       />
       <div
@@ -56,7 +60,7 @@ export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
         }`}
         style={{
           animationDelay: '-9s',
-          background: `radial-gradient(circle, hsl(calc(var(--h) + 55) 95% 58% / ${0.26 * intensity * wash}), transparent 65%)`,
+          background: `radial-gradient(circle, hsl(calc(var(--h) + 55) 95% var(--blob-l) / ${0.26 * intensity * wash}), transparent 65%)`,
         }}
       />
       <div
@@ -65,7 +69,7 @@ export function AuroraBackground({ intensity = 1 }: { intensity?: number }) {
         }`}
         style={{
           animationDelay: '-17s',
-          background: `radial-gradient(circle, hsl(calc(var(--h) - 40) 95% 62% / ${0.2 * intensity * wash}), transparent 60%)`,
+          background: `radial-gradient(circle, hsl(calc(var(--h) - 40) 95% var(--blob-l) / ${0.2 * intensity * wash}), transparent 60%)`,
         }}
       />
 

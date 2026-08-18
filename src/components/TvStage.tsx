@@ -139,7 +139,7 @@ export function TvStage({ onClose }: { onClose: () => void }) {
 
         <div className="absolute" style={{ bottom: '6%', insetInlineStart: '6%' }}>
           <p
-            className="ltr font-bold leading-none"
+            className="readout font-bold leading-none"
             style={{
               fontSize: 'min(13vh, 9vw)',
               color: 'var(--accent)',
@@ -156,7 +156,7 @@ export function TvStage({ onClose }: { onClose: () => void }) {
 
         <div className="absolute text-end" style={{ bottom: '6%', insetInlineEnd: '6%' }}>
           <p
-            className="ltr font-semibold tabular-nums opacity-70"
+            className="readout font-semibold opacity-70"
             style={{ fontSize: 'min(3vh, 2vw)' }}
           >
             {formatClock(elapsed)}
@@ -164,7 +164,7 @@ export function TvStage({ onClose }: { onClose: () => void }) {
           </p>
           {beat && (
             <p className="opacity-55" style={{ fontSize: 'min(2vh, 1.4vw)' }}>
-              <span className="ltr">{config.beatHz} Hz</span> · {shortLabel(beat, lang)}
+              <span className="readout">{config.beatHz} Hz</span> · {shortLabel(beat, lang)}
             </p>
           )}
         </div>

@@ -73,12 +73,12 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
         >
           <div>
             <div
-              className="ltr text-2xl font-bold leading-none"
+              className="readout text-2xl font-bold leading-none"
               style={{ color: `hsl(${freq?.hue ?? 265} 92% 76%)` }}
             >
               {freq?.hz ?? beatHz}
             </div>
-            <div className="txt-3 ltr mt-1 text-[10px] font-semibold">Hz</div>
+            <div className="txt-3 readout mt-1 text-[10px] font-semibold">Hz</div>
           </div>
         </div>
 
@@ -99,7 +99,7 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
             <span className="font-semibold" style={{ color: 'var(--accent)' }}>
               {shortLabel(band, lang)}
             </span>{' '}
-            <span className="ltr">({beatHz} Hz)</span>
+            <span className="readout">({beatHz} Hz)</span>
             {t('day.supportingTail')}
           </p>
         )}

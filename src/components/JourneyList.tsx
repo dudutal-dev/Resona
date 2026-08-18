@@ -1,8 +1,9 @@
+import type { CSSProperties } from 'react'
 import { useState } from 'react'
 import { freqLabel, getFrequency, journeyDescription, journeyTitle, purposeKey } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
-import { THEME_HUE, journeysByTheme, themeBlurbKey, themeKey, type JourneyTheme } from '../lib/themes'
+import { THEME_HUE, hueText, journeysByTheme, themeBlurbKey, themeKey, type JourneyTheme } from '../lib/themes'
 import type { Journey } from '../lib/types'
 import { useJourneys } from '../store/journeyStore'
 import { Card, Screen } from './ui'
@@ -23,20 +24,20 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
           style={{
             background: `hsl(${hue} 85% 62% / 0.16)`,
             border: `1px solid hsl(${hue} 85% 65% / 0.4)`,
-            color: `hsl(${hue} 90% 72%)`,
+            color: hueText(hue),
           }}
         >
-          <span className="ltr text-lg font-bold leading-none">{journey.days}</span>
+          <span className="readout text-lg font-bold leading-none">{journey.days}</span>
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-base font-bold">{journeyTitle(journey, lang)}</h3>
             <span
-              className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+              className="rounded-[3px] px-2 py-0.5 text-[10px] font-semibold"
               style={{
                 background: `hsl(${hue} 85% 62% / 0.14)`,
-                color: `hsl(${hue} 90% 72%)`,
+                color: hueText(hue),
                 border: `1px solid hsl(${hue} 85% 65% / 0.32)`,
               }}
             >
@@ -53,9 +54,12 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
 
           {p ? (
             <div className="mt-3 flex items-center gap-2">
-              <div className="h-1.5 flex-1 overflow-hidden rounded-full" style={{ background: 'var(--border)' }}>
+              <div
+                className="meter h-1.5 flex-1 overflow-hidden rounded-[1px]"
+                style={{ background: 'var(--border)', '--segments': journey.days } as CSSProperties}
+              >
                 <div
-                  className="h-full rounded-full transition-all duration-500"
+                  className="h-full transition-all duration-500"
                   style={{
                     width: `${pct}%`,
                     background: `linear-gradient(90deg, hsl(${hue} 92% 62%), hsl(${hue + 40} 90% 62%))`,
@@ -63,7 +67,7 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
                   }}
                 />
               </div>
-              <span className="txt-3 ltr text-[11px] tabular-nums">
+              <span className="txt-3 readout text-[11px]">
                 {done}/{journey.days}
               </span>
             </div>
@@ -74,7 +78,7 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
                 const first = getFrequency(journey.schedule[0].frequencyId)
                 return first ? freqLabel(first, lang) : '—'
               })()}{' '}
-              · <span className="ltr">{journey.schedule[0].durationMin}</span> {t('common.min')}
+              · <span className="readout">{journey.schedule[0].durationMin}</span> {t('common.min')}
             </p>
           )}
         </div>
@@ -105,7 +109,7 @@ export function JourneyList() {
               key={g.theme}
               onClick={() => setFilter(g.theme)}
               aria-pressed={active}
-              className="shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all active:scale-95"
+              className="shrink-0 rounded-[4px] px-4 py-2 text-xs font-semibold transition-all active:scale-95"
               style={{
                 background: active
                   ? hue === null
@@ -122,11 +126,11 @@ export function JourneyList() {
                 color: active
                   ? hue === null
                     ? 'var(--accent)'
-                    : `hsl(${hue} 90% 74%)`
+                    : hueText(hue)
                   : 'var(--txt-2)',
               }}
             >
-              {isAll ? t('journeys.all') : t(themeKey(g.theme))} · <span className="ltr">{count}</span>
+              {isAll ? t('journeys.all') : t(themeKey(g.theme))} · <span className="readout">{count}</span>
             </button>
           )
         })}

@@ -1,6 +1,7 @@
 import { freqInfo, freqLabel, trustNoticeKey, typeKey } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import type { Frequency } from '../lib/types'
+import { hueText } from '../lib/themes'
 import { Sheet, TrustBadge } from './ui'
 
 /**
@@ -30,14 +31,14 @@ export function InfoPanel({
             style={{
               background: `hsl(${freq.hue} 85% 62% / 0.16)`,
               border: `1px solid hsl(${freq.hue} 85% 65% / 0.45)`,
-              color: `hsl(${freq.hue} 90% 72%)`,
+              color: hueText(freq.hue),
               boxShadow: `0 0 30px hsl(${freq.hue} 90% 60% / 0.35)`,
             }}
           >
-            <span className="ltr">{freq.hz ?? freq.range?.[0]}</span>
+            <span className="readout">{freq.hz ?? freq.range?.[0]}</span>
           </div>
           <div className="min-w-0">
-            <p className="ltr text-sm font-semibold">{hzText}</p>
+            <p className="readout text-sm font-semibold">{hzText}</p>
             <p className="txt-3 mt-0.5 text-xs">
               {t(typeKey(freq.type))}
             </p>

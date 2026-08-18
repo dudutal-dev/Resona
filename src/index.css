@@ -29,7 +29,12 @@
   --glass-sat: 1.3;
   --glass-top: rgba(255, 255, 255, 0.07);
   --wash: 0.55;
+  --wash-l: 22%;
+  --blob-l: 60%;
   --grain: 0.055;
+  /* Lightness for text set in a frequency's hue — see `hueText`. */
+  --tint-s: 90%;
+  --tint-l: 74%;
 }
 
 /* ---------------------------------------------------------------------------
@@ -47,42 +52,85 @@ html.theme-noir {
   --bg-deep: #000000;
   --bg: 0 0% 0%;
   --surface: 0 0% 0%;
-  /* Panels are almost transparent; what defines them is the edge. */
-  --card: rgba(255, 255, 255, 0.026);
-  --card-strong: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.13);
-  --border-strong: hsl(var(--h) 95% 70% / 0.38);
+  /* Almost nothing. A panel here is an edge, not a fill: at 2.6% white the
+     rectangle read as a grey smudge on black, which is what made this theme look
+     like the dark one with the colour drained rather than like its own idea. */
+  --card: rgba(255, 255, 255, 0.012);
+  --card-strong: rgba(255, 255, 255, 0.03);
+  /* The edges carry the hue. Grey borders on black are the single reason this
+     theme looked switched-off — nothing on the screen had a colour except the
+     one accent, so the whole surface read as unlit. A hairline in the frequency's
+     own hue makes every panel part of the instrument. */
+  --border: hsl(var(--h) 90% 62% / 0.2);
+  --border-strong: hsl(var(--h) 100% 68% / 0.6);
   --txt: #ffffff;
-  --txt-2: rgba(255, 255, 255, 0.78);
-  --txt-3: rgba(255, 255, 255, 0.46);
+  --txt-2: rgba(255, 255, 255, 0.84);
+  --txt-3: rgba(255, 255, 255, 0.52);
   /* Pushed past the default theme's accent: on black there is no ambient light
      to lift a colour, so it has to carry itself. */
   --accent: hsl(var(--h) 100% 66%);
-  --accent-soft: hsl(var(--h) 100% 62% / 0.14);
-  --accent-line: hsl(var(--h) 100% 68% / 0.55);
-  --glow: hsl(var(--h) 100% 60% / 0.55);
+  --accent-soft: hsl(var(--h) 100% 62% / 0.12);
+  --accent-line: hsl(var(--h) 100% 68% / 0.62);
+  --glow: hsl(var(--h) 100% 60% / 0.6);
   --shadow-page: 0 30px 90px -25px #000;
   --glass-blur: 0px;
   --glass-sat: 1;
-  --glass-top: rgba(255, 255, 255, 0.05);
-  --wash: 0.1;
-  --grain: 0.03;
+  --glass-top: hsl(var(--h) 100% 70% / 0.14);
+  --wash: 0.06;
+  --wash-l: 20%;
+  --blob-l: 55%;
+  --grain: 0.02;
+  --tint-s: 100%;
+  --tint-l: 70%;
 }
 
+/* ---------------------------------------------------------------------------
+   Daylight. Not the dark theme inverted, and deliberately not the soft one.
+
+   The first version of this was white cards with soft shadows on a pale lilac
+   wash — which is the default appearance of every wellness app made since 2019,
+   and carried none of what makes the dark theme this app: emitted light, depth,
+   and colour that comes from the frequency. Glow does not survive on white, so
+   that version simply dropped the idea instead of translating it.
+
+   The translation is ink. What glow does in the dark — say where the energy is —
+   is done here by contrast and saturation: true white panels, a visible dark
+   hairline around each one, near-black type, and an accent deep enough to read
+   as pigment rather than as a tint. Crisp and graphic instead of soft and
+   floating.
+--------------------------------------------------------------------------- */
 html.theme-light {
-  --bg-deep: #f3f0fb;
-  --card: rgba(255, 255, 255, 0.72);
-  --card-strong: rgba(255, 255, 255, 0.9);
-  --border: rgba(24, 12, 56, 0.1);
-  --border-strong: rgba(24, 12, 56, 0.2);
-  --txt: #16102b;
-  --txt-2: rgba(30, 20, 62, 0.7);
-  --txt-3: rgba(30, 20, 62, 0.45);
-  --accent: hsl(var(--h) 72% 46%);
-  --accent-soft: hsl(var(--h) 80% 55% / 0.14);
-  --accent-line: hsl(var(--h) 75% 50% / 0.4);
-  --glow: hsl(var(--h) 85% 55% / 0.32);
-  --shadow-page: 0 30px 80px -30px rgba(60, 40, 120, 0.35);
+  --bg-deep: #e8eaef;
+  --bg: 225 16% 92%;
+  --surface: 0 0% 100%;
+  --card: #ffffff;
+  --card-strong: #ffffff;
+  --border: rgba(12, 15, 26, 0.16);
+  --border-strong: rgba(12, 15, 26, 0.34);
+  --txt: #0a0d16;
+  --txt-2: rgba(10, 13, 22, 0.74);
+  --txt-3: rgba(10, 13, 22, 0.52);
+  --accent: hsl(var(--h) 82% 36%);
+  --accent-soft: hsl(var(--h) 82% 45% / 0.1);
+  --accent-line: hsl(var(--h) 82% 40% / 0.5);
+  --glow: hsl(var(--h) 85% 45% / 0.24);
+  --shadow-page: 0 18px 40px -24px rgba(12, 15, 26, 0.4);
+  /* Tight and close. A wide soft shadow on white is what makes a card look like
+     it is floating in fog; the edge is supposed to do the work here. */
+  --panel-shadow: 0 1px 2px rgba(12, 15, 26, 0.06);
+  /* No frost. Blurring white behind white produces nothing but cost. */
+  --glass-blur: 0px;
+  --glass-sat: 1;
+  --glass-top: rgba(12, 15, 26, 0.06);
+  /* Light and small: on paper a wash is a stain, not an atmosphere. */
+  --wash: 0.32;
+  --wash-l: 93%;
+  --blob-l: 90%;
+  --grain: 0.015;
+  /* Deep enough to be pigment on white rather than a tint of it. */
+  --tint-s: 80%;
+  --tint-l: 32%;
+  --trust-l: 30%;
 }
 
 @layer base {
@@ -120,6 +168,29 @@ html.theme-light {
     unicode-bidi: isolate;
   }
 
+  /**
+   * Numbers, as instrumentation.
+   *
+   * This app is about a quantity — a frequency, a rate, a count of minutes —
+   * and every one of them was set in the same humanist sans as the prose, which
+   * is what made the whole thing read like a wellness pamphlet rather than
+   * something tuned. A monospaced face with tabular figures reads as a
+   * measurement: the digits line up in a column, they do not reflow as the
+   * seconds tick, and the slight technical coldness is the point.
+   *
+   * No font is downloaded for this. `ui-monospace` is SF Mono on Apple devices
+   * and the platform's own on everything else, which costs nothing and is
+   * already the right face on the phone this was built for.
+   */
+  .readout {
+    font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Menlo', 'Roboto Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1, 'zero' 1;
+    letter-spacing: -0.02em;
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
   ::selection {
     background: var(--accent-soft);
     color: var(--txt);
@@ -147,7 +218,7 @@ html.theme-light {
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
     box-shadow:
       inset 0 1px 0 0 var(--glass-top),
-      0 12px 40px -18px rgba(0, 0, 0, 0.7);
+      var(--panel-shadow, 0 12px 40px -18px rgba(0, 0, 0, 0.7));
   }
 
   .glass-strong {
@@ -186,12 +257,146 @@ html.theme-light {
   .glow-text {
     text-shadow: 0 0 24px var(--glow);
   }
+  /* Nothing glows on paper. A 24px halo behind near-black type on white is a
+     smudge, not light — the size and the weight already say what the glow says
+     in the dark. */
+  html.theme-light .glow-text {
+    text-shadow: none;
+  }
 
+  /**
+   * A chip is a readout, not a tag.
+   *
+   * These carry the only hard facts on the player screen — the root, the beat
+   * rate, whether the frequency is one of the traditional ones — and as
+   * full-round pills they read as decorative labels of the sort a shopping app
+   * puts next to a price. Squared off, with the accent moved to a bar on the
+   * leading edge, the same content reads as a value taken off an instrument.
+   *
+   * The bar sits on the inline start so it follows the reading direction and
+   * lands on the right in Hebrew.
+   */
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium leading-none;
+    @apply relative inline-flex items-center gap-1.5 rounded-[3px] py-1 text-[11px] font-medium leading-none;
+    padding-inline: 0.5rem 0.6rem;
     background: var(--accent-soft);
     color: var(--accent);
     border: 1px solid var(--accent-line);
+    border-inline-start-width: 3px;
+    border-inline-start-color: var(--accent);
+  }
+
+  /**
+   * Corner brackets — four hairline Ls, drawn with two conic-free gradients and
+   * a mask so the whole thing costs one pseudo-element.
+   *
+   * This is the piece that makes a panel read as part of an instrument rather
+   * than as a card. It is deliberately opt-in: on every surface at once it
+   * becomes wallpaper, so it goes on the panels that hold a measurement.
+   */
+  /**
+   * A progress bar with the divisions marked. A plain filled capsule says
+   * "roughly this far"; the ticks make it countable, which is what a journey of
+   * seven or twenty-one nights actually is. The marks are painted over the
+   * track and the fill both, so they read through either.
+   */
+  .meter {
+    position: relative;
+  }
+  .meter::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to right,
+      transparent 0 calc(100% / var(--segments, 7) - 1px),
+      var(--bg-deep) calc(100% / var(--segments, 7) - 1px) calc(100% / var(--segments, 7))
+    );
+    opacity: 0.85;
+  }
+
+  .brackets {
+    position: relative;
+  }
+  .brackets::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    pointer-events: none;
+    border: 1px solid var(--accent-line);
+    /* Keep only the corners: the mask is opaque in two L-shaped bands and
+       transparent along the middle of each edge. */
+    -webkit-mask:
+      linear-gradient(to right, #000 var(--bracket, 14px), transparent var(--bracket, 14px) calc(100% - var(--bracket, 14px)), #000 calc(100% - var(--bracket, 14px))),
+      linear-gradient(to bottom, #000 var(--bracket, 14px), transparent var(--bracket, 14px) calc(100% - var(--bracket, 14px)), #000 calc(100% - var(--bracket, 14px)));
+    -webkit-mask-composite: source-in;
+    mask:
+      linear-gradient(to right, #000 var(--bracket, 14px), transparent var(--bracket, 14px) calc(100% - var(--bracket, 14px)), #000 calc(100% - var(--bracket, 14px))),
+      linear-gradient(to bottom, #000 var(--bracket, 14px), transparent var(--bracket, 14px) calc(100% - var(--bracket, 14px)), #000 calc(100% - var(--bracket, 14px)));
+    mask-composite: intersect;
+  }
+
+  /**
+   * A section heading as a ruled label: the words, then a hairline that runs out
+   * to the edge of the panel. Cheaper than a boxed header and it gives the
+   * layout a horizontal structure it did not have — the eye gets a line to
+   * follow instead of a stack of equally-weighted blocks.
+   */
+  .rule-label {
+    @apply flex items-center gap-2.5 text-[11px] font-semibold uppercase leading-none;
+    /* The rule fills whatever is left, so the label has to be allowed to grow
+       when it sits in a flex row next to a readout. */
+    flex: 1 1 auto;
+    min-width: 0;
+    letter-spacing: 0.16em;
+    color: var(--txt-3);
+  }
+  .rule-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    /* Strong where it leaves the words, fading out at the far end — so the rule
+       reads as drawn from the label rather than as a bar. */
+    background: linear-gradient(to left, var(--border-strong), transparent);
+  }
+  [dir='ltr'] .rule-label::after {
+    background: linear-gradient(to right, var(--border-strong), transparent);
+  }
+
+  /**
+   * The transport control, as a dial.
+   *
+   * A filled circle with a triangle in it is the play button every media app
+   * has had since 2013, and next to an orb drawn from concentric rings it was
+   * the one element on the screen that looked bought rather than built. The
+   * disc stays — it is the target, and it has to look pressable — but it now
+   * sits inside a hairline ring with four cardinal ticks outside it, which is
+   * the same geometry the orb is made of, at the size of a thumb.
+   *
+   * Both rings are pseudo-elements outside the button box, so they change
+   * nothing about the hit area.
+   */
+  .dial::before {
+    content: '';
+    position: absolute;
+    inset: -7px;
+    border-radius: 999px;
+    border: 1px solid var(--accent-line);
+    pointer-events: none;
+  }
+  .dial::after {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border-radius: 999px;
+    pointer-events: none;
+    background:
+      linear-gradient(var(--accent-line), var(--accent-line)) 50% 0 / 1px 5px no-repeat,
+      linear-gradient(var(--accent-line), var(--accent-line)) 50% 100% / 1px 5px no-repeat,
+      linear-gradient(var(--accent-line), var(--accent-line)) 0 50% / 5px 1px no-repeat,
+      linear-gradient(var(--accent-line), var(--accent-line)) 100% 50% / 5px 1px no-repeat;
   }
 
   .btn {
@@ -218,6 +423,16 @@ html.theme-light {
     filter: brightness(1.08);
     box-shadow: 0 14px 42px -8px var(--glow);
   }
+  /* Pigment, not neon: a fluorescent disc was the one thing on the light screen
+     still lit from behind, and it fought the ink everything else is set in. */
+  html.theme-light .btn-primary {
+    background: linear-gradient(135deg, hsl(var(--h) 78% 34%), hsl(calc(var(--h) + 34) 72% 28%));
+    color: #ffffff;
+    box-shadow: 0 6px 18px -8px rgba(12, 15, 26, 0.5);
+  }
+  html.theme-light .btn-primary:hover {
+    box-shadow: 0 10px 24px -10px rgba(12, 15, 26, 0.55);
+  }
 
   .btn-ghost {
     background: transparent;
@@ -237,9 +452,12 @@ html.theme-light {
     cursor: pointer;
     direction: ltr;
   }
+  /* A fader, not a toggle: squared track, and a cap rather than a bead. The
+     mixer is the one place in the app that is literally a mixing desk, and the
+     round white pill on a capsule was the generic control it was not. */
   .slider::-webkit-slider-runnable-track {
-    height: 6px;
-    border-radius: 99px;
+    height: 4px;
+    border-radius: 1px;
     background: linear-gradient(
       to right,
       hsl(var(--h) 92% 65%) 0%,
@@ -259,32 +477,32 @@ html.theme-light {
   }
   .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    margin-top: -7px;
-    border-radius: 99px;
+    width: 10px;
+    height: 24px;
+    margin-top: -10px;
+    border-radius: 2px;
     background: #fff;
-    border: 2px solid hsl(var(--h) 92% 62%);
+    border: 1px solid hsl(var(--h) 92% 62%);
     box-shadow: 0 0 18px var(--glow);
     transition: transform 0.15s ease;
   }
   .slider:active::-webkit-slider-thumb {
-    transform: scale(1.18);
+    transform: scaleY(1.12);
   }
   .slider::-moz-range-track {
-    height: 6px;
-    border-radius: 99px;
+    height: 4px;
+    border-radius: 1px;
     background: rgba(255, 255, 255, 0.12);
   }
   .slider::-moz-range-progress {
-    height: 6px;
-    border-radius: 99px;
+    height: 4px;
+    border-radius: 1px;
     background: hsl(var(--h) 92% 65%);
   }
   .slider::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 99px;
+    width: 10px;
+    height: 24px;
+    border-radius: 2px;
     background: #fff;
     border: 2px solid hsl(var(--h) 92% 62%);
     box-shadow: 0 0 18px var(--glow);
@@ -337,5 +555,5 @@ html.theme-light .dark-only {
   background: radial-gradient(110% 80% at 50% 40%, transparent 45%, rgba(0, 0, 0, 0.55));
 }
 html.theme-light .vignette {
-  background: radial-gradient(120% 90% at 50% 35%, transparent 55%, rgba(60, 40, 120, 0.12));
+  background: radial-gradient(120% 90% at 50% 35%, transparent 58%, rgba(12, 15, 26, 0.1));
 }

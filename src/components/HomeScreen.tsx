@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import {
   BEAT_FREQUENCIES,
   JOURNEYS,
@@ -9,6 +10,7 @@ import {
 } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
+import { hueText } from '../lib/themes'
 import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
@@ -55,7 +57,7 @@ export function HomeScreen() {
       </header>
 
       {/* Continue listening */}
-      <Card glow onClick={() => navigate('/player')} className="mb-4">
+      <Card glow onClick={() => navigate('/player')} className="brackets mb-4">
         <div className="flex items-center gap-4">
           <div
             className="relative grid h-16 w-16 shrink-0 place-items-center rounded-2xl"
@@ -72,16 +74,14 @@ export function HomeScreen() {
                 aria-hidden
               />
             )}
-            <span className="ltr text-sm font-bold" style={{ color: `hsl(${root?.hue ?? 265} 90% 75%)` }}>
+            <span className="readout text-sm font-bold" style={{ color: hueText(root?.hue ?? 265) }}>
               {root?.hz}
             </span>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="txt-3 text-[11px] font-semibold uppercase tracking-wider">
-              {t(isPlaying ? 'home.nowPlaying' : 'home.continue')}
-            </p>
+            <p className="rule-label">{t(isPlaying ? 'home.nowPlaying' : 'home.continue')}</p>
             <p className="mt-0.5 truncate text-lg font-bold">{root ? freqLabel(root, lang) : ''}</p>
-            <p className="txt-2 ltr mt-0.5 text-xs tabular-nums">
+            <p className="txt-2 readout mt-0.5 text-xs">
               {isPlaying ? formatClock(elapsed) : `${root?.hz} Hz`}
             </p>
           </div>
@@ -98,12 +98,17 @@ export function HomeScreen() {
               <Card key={p.journeyId} onClick={() => navigate(`/journey/${p.journeyId}`)}>
                 <div className="flex items-center gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="txt-3 text-[11px] font-semibold uppercase tracking-wider">{t('home.activeJourney')}</p>
+                    <p className="rule-label">{t('home.activeJourney')}</p>
                     <p className="mt-0.5 truncate text-base font-bold">{journeyTitle(journey!, lang)}</p>
                     <div className="mt-2 flex items-center gap-2">
-                      <div className="h-1.5 flex-1 overflow-hidden rounded-full" style={{ background: 'var(--border)' }}>
+                      <div
+                        className="meter h-1.5 flex-1 overflow-hidden rounded-[1px]"
+                        style={
+                          { background: 'var(--border)', '--segments': journey!.days } as CSSProperties
+                        }
+                      >
                         <div
-                          className="h-full rounded-full transition-all duration-500"
+                          className="h-full transition-all duration-500"
                           style={{
                             width: `${pct}%`,
                             background: 'linear-gradient(90deg, hsl(var(--h) 92% 62%), hsl(calc(var(--h) + 40) 90% 60%))',
@@ -111,7 +116,7 @@ export function HomeScreen() {
                           }}
                         />
                       </div>
-                      <span className="txt-3 ltr text-[11px] tabular-nums">
+                      <span className="txt-3 readout text-[11px]">
                         {p.completedDays.length}/{journey!.days}
                       </span>
                     </div>

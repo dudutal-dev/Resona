@@ -78,3 +78,15 @@ export function journeysByTheme(): { theme: JourneyTheme; journeys: Journey[] }[
     journeys: JOURNEYS.filter((j) => THEME_OF[j.purpose] === theme),
   })).filter((g) => g.journeys.length > 0)
 }
+
+/**
+ * Text set in a frequency's — or a journey's — own hue.
+ *
+ * The lightness cannot come from the call site. 72% is a lit green on black and
+ * an illegible mint on white, and every one of these numbers was written while
+ * looking at the dark theme, which is why the light theme's coloured labels sat
+ * a shade above the background. Resolving saturation and lightness through
+ * custom properties lets the same expression work in all three themes and puts
+ * the tuning in one place.
+ */
+export const hueText = (hue: number) => `hsl(${hue} var(--tint-s) var(--tint-l))`

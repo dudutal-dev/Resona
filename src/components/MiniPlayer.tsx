@@ -1,6 +1,7 @@
 import { freqLabel, getFrequency } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
+import { hueText } from '../lib/themes'
 import { useSession } from '../store/sessionStore'
 import { formatClock } from './ui'
 
@@ -21,15 +22,15 @@ export function MiniPlayer({ hidden }: { hidden: boolean }) {
             style={{
               background: `hsl(${root?.hue ?? 265} 85% 62% / 0.18)`,
               border: `1px solid hsl(${root?.hue ?? 265} 85% 65% / 0.45)`,
-              color: `hsl(${root?.hue ?? 265} 90% 78%)`,
+              color: hueText(root?.hue ?? 265),
             }}
           >
             <span className="absolute inset-0 animate-pulse-ring rounded-xl" style={{ border: '1.5px solid hsl(var(--h) 95% 70% / 0.45)' }} aria-hidden />
-            <span className="ltr">{root?.hz}</span>
+            <span className="readout">{root?.hz}</span>
           </span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-xs font-semibold">{root ? freqLabel(root, lang) : ''}</span>
-            <span className="txt-3 ltr block text-[10px] tabular-nums">
+            <span className="txt-3 readout block text-[10px]">
               {formatClock(elapsed)}
               {remaining !== null && t('mini.remaining', { clock: formatClock(remaining) })}
             </span>

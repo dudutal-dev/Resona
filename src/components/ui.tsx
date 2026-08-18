@@ -95,11 +95,14 @@ export function TrustBadge({ trust, full = false }: { trust: TrustLevel; full?: 
   const [h, s, l] = TRUST_TINT[trust]
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium leading-tight"
+      className="inline-flex items-center gap-1.5 rounded-[3px] px-2.5 py-1 text-[11px] font-medium leading-tight"
       style={{
         background: `hsl(${h} ${s}% ${l}% / 0.12)`,
-        color: `hsl(${h} ${s}% ${l}%)`,
-        border: `1px solid hsl(${h} ${s}% ${l}% / 0.3)`,
+        // Each level has its own lightness, tuned against black. On paper they
+        // all have to come down to pigment, so the light theme overrides them
+        // with one value rather than three — see `--trust-l`.
+        color: `hsl(${h} ${s}% var(--trust-l, ${l}%))`,
+        border: `1px solid hsl(${h} ${s}% var(--trust-l, ${l}%) / 0.35)`,
       }}
     >
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -138,7 +141,7 @@ export function Slider({
           {icon}
           {label}
         </span>
-        <span className="txt-3 ltr text-xs tabular-nums">{display ?? `${Math.round(pct)}%`}</span>
+        <span className="txt-3 readout text-xs">{display ?? `${Math.round(pct)}%`}</span>
       </div>
       <input
         type="range"

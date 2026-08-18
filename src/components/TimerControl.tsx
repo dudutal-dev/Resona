@@ -11,17 +11,20 @@ export function TimerControl() {
   const { t } = useT()
 
   return (
-    <div className="glass rounded-3xl p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-sm font-bold">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <circle cx="12" cy="13" r="8" stroke="currentColor" strokeWidth="1.8" />
-            <path d="M12 9v4l2.5 2M9 2h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <div className="glass brackets rounded-3xl p-4">
+      {/* The label, then a rule out to the panel edge, then the clock sitting on
+          the end of that rule — so the countdown reads off the same line rather
+          than floating opposite a heading. */}
+      <div className="mb-3 flex items-center gap-2.5">
+        <h3 className="rule-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <circle cx="12" cy="13" r="8" stroke="currentColor" strokeWidth="2" />
+            <path d="M12 9v4l2.5 2M9 2h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
           {t('timer.label')}
         </h3>
         {isPlaying && (
-          <span className="ltr text-xs tabular-nums txt-2">
+          <span className="readout text-xs txt-2">
             {remaining === null ? '∞' : formatClock(remaining)}
           </span>
         )}
@@ -32,14 +35,14 @@ export function TimerControl() {
         {config.timerMode === 'custom' && (
           <button
             aria-pressed
-            className="rim rounded-2xl px-2 py-2.5 text-xs font-semibold"
+            className="rim rounded-[4px] px-2 py-2.5 text-xs font-semibold"
             style={{
               background: 'var(--accent-soft)',
               border: '1px solid var(--accent-line)',
               color: 'var(--accent)',
             }}
           >
-            <span className="ltr">{config.customMinutes}</span> {t('common.min')}
+            <span className="readout">{config.customMinutes}</span> {t('common.min')}
           </button>
         )}
         {MODES.map((mode) => {
@@ -49,7 +52,7 @@ export function TimerControl() {
               key={mode}
               onClick={() => setTimerMode(mode)}
               aria-pressed={active}
-              className={`rounded-2xl px-2 py-2.5 text-xs font-semibold transition-all ${active ? 'rim' : ''}`}
+              className={`rounded-[4px] px-2 py-2.5 text-xs font-semibold transition-all ${active ? 'rim' : ''}`}
               style={{
                 background: active ? 'var(--accent-soft)' : 'var(--card)',
                 border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,

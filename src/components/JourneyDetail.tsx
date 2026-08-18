@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import {
   dayNote,
   freqLabel,
@@ -11,6 +12,7 @@ import {
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
 import { bandForDay, configForDay } from '../lib/journeyConfig'
+import { hueText } from '../lib/themes'
 import { useJourneys } from '../store/journeyStore'
 import { Card, Screen, TrustBadge } from './ui'
 
@@ -56,9 +58,12 @@ export function JourneyDetail({ id }: { id: string }) {
               <span className="txt-3 text-[11px]">{t('common.daysN', { n: journey.days })}</span>
             </div>
             <div className="mt-3 flex items-center gap-2">
-              <div className="h-2 flex-1 overflow-hidden rounded-full" style={{ background: 'var(--border)' }}>
+              <div
+                className="meter h-2 flex-1 overflow-hidden rounded-[1px]"
+                style={{ background: 'var(--border)', '--segments': journey.days } as CSSProperties}
+              >
                 <div
-                  className="h-full rounded-full transition-all duration-500"
+                  className="h-full transition-all duration-500"
                   style={{
                     width: `${pct}%`,
                     background: 'linear-gradient(90deg, hsl(var(--h) 92% 62%), hsl(calc(var(--h) + 40) 90% 60%))',
@@ -66,7 +71,7 @@ export function JourneyDetail({ id }: { id: string }) {
                   }}
                 />
               </div>
-              <span className="txt-2 ltr text-xs font-semibold tabular-nums">
+              <span className="txt-2 readout text-xs font-semibold">
                 {done}/{journey.days}
               </span>
             </div>
@@ -115,10 +120,10 @@ export function JourneyDetail({ id }: { id: string }) {
                   style={{
                     background: isDone ? 'var(--accent-soft)' : `hsl(${freq?.hue ?? 265} 85% 62% / 0.14)`,
                     border: `1px solid ${isDone ? 'var(--accent-line)' : `hsl(${freq?.hue ?? 265} 85% 65% / 0.35)`}`,
-                    color: isDone ? 'var(--accent)' : `hsl(${freq?.hue ?? 265} 90% 72%)`,
+                    color: isDone ? 'var(--accent)' : hueText(freq?.hue ?? 265),
                   }}
                 >
-                  {isDone ? '✓' : <span className="ltr">{day.day}</span>}
+                  {isDone ? '✓' : <span className="readout">{day.day}</span>}
                 </div>
 
                 <div className="min-w-0 flex-1">
@@ -129,14 +134,14 @@ export function JourneyDetail({ id }: { id: string }) {
                   </div>
                   <p className="txt-3 mt-0.5 text-[11px]">
                     <span className="ltr">
-                      {freq?.hz ? `${freq.hz} Hz` : `${beatHz} Hz`} ·{' '}
-                      <span className="ltr">{day.durationMin}</span> {t('common.min')}
+                      <span className="readout">{freq?.hz ? `${freq.hz} Hz` : `${beatHz} Hz`}</span> ·{' '}
+                      <span className="readout">{day.durationMin}</span> {t('common.min')}
                     </span>{' '}
                     · {dayNote(day, lang)}
                     {band && !freq?.range && (
                       <>
                         {' '}
-                        · + {shortLabel(band, lang)} <span className="ltr">{beatHz} Hz</span>
+                        · + {shortLabel(band, lang)} <span className="readout">{beatHz} Hz</span>
                       </>
                     )}
                   </p>

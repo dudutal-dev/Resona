@@ -6,6 +6,7 @@ import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
 import type { Preset } from '../lib/types'
+import { hueText } from '../lib/themes'
 import { Card, EmptyState, Screen, Sheet } from './ui'
 
 function describe(preset: Preset, t: (k: StringKey, v?: Record<string, string | number>) => string) {
@@ -62,7 +63,7 @@ export function PresetList() {
                     style={{
                       background: `hsl(${root?.hue ?? 265} 85% 62% / 0.16)`,
                       border: `1px solid hsl(${root?.hue ?? 265} 85% 65% / 0.42)`,
-                      color: `hsl(${root?.hue ?? 265} 90% 75%)`,
+                      color: hueText(root?.hue ?? 265),
                     }}
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>

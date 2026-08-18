@@ -146,29 +146,29 @@ export function PlayerScreen() {
       >
         <Visualizer playing={isPlaying}>
           <div className="animate-fade-up">
-            <div className="ltr glow-text text-5xl font-bold tabular-nums tracking-tight sm:text-6xl">
+            <div className="readout glow-text text-5xl font-bold tracking-tight sm:text-6xl">
               {root?.hz ?? '—'}
             </div>
-            <div className="txt-3 ltr -mt-1 text-sm font-medium">Hz</div>
+            <div className="txt-3 readout -mt-1 text-sm font-medium">Hz</div>
             <div className="mt-2 max-w-[10rem] text-[13px] font-medium leading-tight txt-2">
               {root ? freqLabel(root, lang) : ''}
             </div>
             {isPlaying && (
-              <div className="ltr mt-2 text-xs tabular-nums txt-3">{formatClock(elapsed)}</div>
+              <div className="readout mt-2 text-xs txt-3">{formatClock(elapsed)}</div>
             )}
           </div>
         </Visualizer>
       </div>
 
       {/* ---- Transport ------------------------------------------------------ */}
-      <div className="mt-6 flex items-center justify-center gap-3">
+      <div className="mt-6 flex items-center justify-center gap-5">
         <button onClick={() => setPickerOpen(true)} className="btn h-12 rounded-2xl px-4 text-xs">
           {t('player.change')}
         </button>
 
         <button
           onClick={() => void toggle()}
-          className="btn btn-primary relative h-20 w-20 rounded-full p-0"
+          className="btn btn-primary dial relative h-20 w-20 rounded-full p-0"
           aria-label={t(isPlaying ? 'common.stop' : 'common.play')}
         >
           {isPlaying && (
@@ -202,12 +202,12 @@ export function PlayerScreen() {
       <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
         {root && (
           <button onClick={() => setInfoFreq(root)} className="chip">
-            <span className="ltr">{root.hz} Hz</span> · {freqLabel(root, lang)}
+            <span className="readout">{root.hz} Hz</span> · {freqLabel(root, lang)}
           </button>
         )}
         {beat && (
           <button onClick={() => setInfoFreq(beat)} className="chip">
-            <span className="ltr">{config.beatHz} Hz</span> · {shortLabel(beat, lang)}
+            <span className="readout">{config.beatHz} Hz</span> · {shortLabel(beat, lang)}
           </button>
         )}
         {root && <TrustBadge trust={root.trust} />}

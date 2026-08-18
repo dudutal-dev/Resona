@@ -91,7 +91,7 @@ export function MixerPanel() {
               session, so it needs a control here — otherwise a techno day would
               quietly follow the listener into every session after it. */}
           <div>
-            <span className="txt-2 text-xs font-semibold">{t('mixer.styleTitle')}</span>
+            <p className="rule-label">{t('mixer.styleTitle')}</p>
             <div
               ref={styleRow}
               className="no-scrollbar -mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1"
@@ -104,7 +104,7 @@ export function MixerPanel() {
                     ref={active ? activeChip : undefined}
                     onClick={() => setStyle(id)}
                     aria-pressed={active}
-                    className="shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all active:scale-95"
+                    className="shrink-0 rounded-[4px] px-4 py-2 text-xs font-semibold transition-all active:scale-95"
                     style={{
                       background: active ? 'var(--accent-soft)' : 'var(--card)',
                       border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,
@@ -231,7 +231,7 @@ export function MixerPanel() {
                 key={String(opt.id)}
                 onClick={() => setAmbience(opt.id)}
                 aria-pressed={active}
-                className="shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-all"
+                className="shrink-0 rounded-[4px] px-4 py-2 text-xs font-semibold transition-all"
                 style={{
                   background: active ? 'var(--accent-soft)' : 'var(--card)',
                   border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,

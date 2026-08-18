@@ -124,9 +124,16 @@ export function frequencyCover(freq: Frequency): string {
 }
 
 /**
- * The journey's own arc: one node per day at the height of the root it plays,
- * joined in order. An ascending week climbs, a sleep journey falls, and a
- * journey that holds one root is a flat line — which is exactly what it is.
+ * The journey's own arc, as rings.
+ *
+ * The first version drew it as a line with a node per day, which was accurate
+ * and read as a chart — the one cover in the set that looked like data rather
+ * than like art. Same information, different figure: one ring per day, each
+ * smaller than the one before it so the eye falls inward along the order the
+ * nights are listed in, and each ring's centre riding the root that day plays.
+ * An ascending week spirals up out of the frame, a descending one settles down
+ * into it, and a journey that holds a single root is perfectly concentric,
+ * which is exactly what it is.
  */
 export function journeyCover(journey: Journey): string {
   return memo(`j:${journey.id}`, () => {
@@ -138,65 +145,67 @@ export function journeyCover(journey: Journey): string {
     const values = roots.map((r) => r.hz)
     const lo = Math.min(...values)
     const hi = Math.max(...values)
-    // A flat arc would divide by zero and, worse, put every node on the floor.
+    // A journey that holds one root has no span. Every ring then lands on the
+    // centre line, which is the honest picture of a week that does not travel.
     const span = hi - lo || 1
     const flat = hi === lo
+    const n = roots.length
 
-    const pad = 74
-    const width = SIZE - pad * 2
-    const points = roots.map((r, i) => {
-      const x = roots.length === 1 ? SIZE / 2 : pad + (i / (roots.length - 1)) * width
+    const cx = SIZE / 2
+    const mid = SIZE / 2 - 26
+    const rings = roots.map((r, i) => {
+      // Day one is the widest and every day after it is smaller, so the eye
+      // falls inward along the order the nights are listed in.
+      const radius = 150 * (1 - 0.87 * (n === 1 ? 0 : i / (n - 1)))
       const norm = flat ? 0.5 : (r.hz - lo) / span
-      const y = SIZE - 118 - norm * 176
-      return { x, y, hue: r.hue, norm }
+      // ...and the ring's centre rides the root it plays, so an ascending week
+      // spirals up out of the frame and a descending one settles down into it.
+      const cy = mid - (norm - 0.5) * 84
+      return { radius, cy, hue: r.hue, norm }
     })
 
-    const line = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join('')
-    // Each node glows in its own frequency's hue, so the arc is a run of
-    // colours rather than a row of identical white blobs.
-    const glows = points
-      .map((p, i) => {
-        const r = 24 + p.norm * 24
-        return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r.toFixed(1)}" fill="url(#n${i})"/>`
-      })
-      .join('')
-    const nodes = points
-      .map((p) => {
-        const r = 9 + p.norm * 15
-        return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r.toFixed(1)}" fill="hsl(${p.hue} 88% 62%)" fill-opacity="0.28" stroke="hsl(${p.hue} 95% 74%)" stroke-width="1.6"/>`
-      })
+    const from = roots[0].hue
+    const to = roots[n - 1].hue
+
+    const halos = rings
+      .map(
+        (r, i) =>
+          `<circle cx="${cx}" cy="${r.cy.toFixed(1)}" r="${r.radius.toFixed(1)}" fill="none" stroke="hsl(${r.hue} 100% 70%)" stroke-opacity="0.16" stroke-width="${(9 - i * 0.4).toFixed(1)}"/>`,
+      )
       .join('')
 
-    // The ground travels between the first day's hue and the last one's, so an
-    // ascending week and a descending one are told apart across a room, before
-    // anybody reads the line.
-    const from = roots[0].hue
-    const to = roots[roots.length - 1].hue
-    const area = `${line}L${points[points.length - 1].x.toFixed(1)} ${SIZE}L${points[0].x.toFixed(1)} ${SIZE}Z`
+    const lines = rings
+      .map(
+        (r) =>
+          `<circle cx="${cx}" cy="${r.cy.toFixed(1)}" r="${r.radius.toFixed(1)}" fill="hsl(${r.hue} 88% 58%)" fill-opacity="0.05" stroke="hsl(${r.hue} 96% 74%)" stroke-opacity="0.9" stroke-width="1.5"/>`,
+      )
+      .join('')
+
+    const last = rings[n - 1]
 
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SIZE} ${SIZE}" width="${SIZE}" height="${SIZE}">
 <defs>
 <linearGradient id="g" x1="0" y1="0" x2="0.4" y2="1">
-<stop offset="0%" stop-color="hsl(${from} 72% 21%)"/>
+<stop offset="0%" stop-color="hsl(${from} 72% 20%)"/>
 <stop offset="55%" stop-color="hsl(${hue} 80% 8%)"/>
 <stop offset="100%" stop-color="hsl(${to} 86% 4%)"/>
 </linearGradient>
-<linearGradient id="a" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0%" stop-color="hsl(${to} 95% 70%)" stop-opacity="0.3"/>
-<stop offset="100%" stop-color="hsl(${to} 95% 70%)" stop-opacity="0"/>
+<linearGradient id="s" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="hsl(${to} 86% 4%)" stop-opacity="0"/>
+<stop offset="100%" stop-color="hsl(${to} 86% 4%)" stop-opacity="0.88"/>
 </linearGradient>
-${points
-  .map(
-    (p, i) => `<radialGradient id="n${i}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="hsl(${p.hue} 100% 76%)" stop-opacity="0.55"/><stop offset="100%" stop-color="hsl(${p.hue} 100% 70%)" stop-opacity="0"/></radialGradient>`,
-  )
-  .join('')}
+<radialGradient id="c" cx="50%" cy="50%" r="50%">
+<stop offset="0%" stop-color="hsl(${to} 100% 90%)" stop-opacity="0.9"/>
+<stop offset="45%" stop-color="hsl(${to} 100% 68%)" stop-opacity="0.4"/>
+<stop offset="100%" stop-color="hsl(${to} 100% 62%)" stop-opacity="0"/>
+</radialGradient>
 </defs>
 <rect width="${SIZE}" height="${SIZE}" fill="url(#g)"/>
-<path d="${area}" fill="url(#a)"/>
-<path d="${line}" fill="none" stroke="hsl(${hue} 95% 80%)" stroke-opacity="0.7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-${glows}
-${nodes}
-<text x="${SIZE / 2}" y="${SIZE - 40}" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="25" font-weight="600" letter-spacing="2" fill="#fff" fill-opacity="0.85">${values[0]} \u2192 ${values[values.length - 1]}</text>
+${halos}
+${lines}
+<circle cx="${cx}" cy="${last.cy.toFixed(1)}" r="${Math.max(30, last.radius * 1.9).toFixed(1)}" fill="url(#c)"/>
+<rect x="0" y="${SIZE - 96}" width="${SIZE}" height="96" fill="url(#s)"/>
+<text x="${SIZE / 2}" y="${SIZE - 34}" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="25" font-weight="600" letter-spacing="2" fill="#fff" fill-opacity="0.88">${values[0]} \u2192 ${values[values.length - 1]}</text>
 </svg>`
   })
 }

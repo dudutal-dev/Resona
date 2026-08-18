@@ -18,8 +18,29 @@ import * as Tone from 'tone'
  *
  * Re-measure with `scratchpad/audio-probe` if an engine's voicing changes.
  */
+/**
+ * Makeup per engine, matched on RMS — which is the correction, because the
+ * first version of this table was matched on peak.
+ *
+ * Peak is the wrong meter for this app. The club engines are transient music:
+ * a kick puts a tall spike on an otherwise quiet signal, so a high crest factor
+ * makes their peak run far ahead of their loudness. The ambient engine is the
+ * opposite — a sustained drone sits close to its own peak. Levelling the two on
+ * peak therefore levelled the wrong thing: measured across all five engines on
+ * the default session, ambient came out at -14.5dBFS RMS against about -21 for
+ * every club style. Seven decibels louder, from a table written to make them
+ * equal.
+ *
+ * Seven decibels of sustained low-frequency energy is not a small error. It is
+ * loud on its own, and loud low end masks high end far harder than the reverse,
+ * which is why the rain and the wind had all but vanished underneath it.
+ *
+ * These are now set so every engine lands near -20dBFS RMS with peaks around
+ * -10, which leaves the limiter as the safety net it is meant to be rather than
+ * something the mix leans on.
+ */
 const OUTPUT_TRIM: Record<string, number> = {
-  ambient: 4.2,
+  ambient: 2.1,
   techno: 1.2,
   trance: 1.2,
   psytrance: 1.2,

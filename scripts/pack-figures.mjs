@@ -56,10 +56,12 @@ try {
   process.exit(1)
 }
 
+// JPEG as well as PNG: the artwork arrives as whatever the phone saved it as,
+// and the encoder here does not care which it decodes from.
 const sources = readdirSync(SOURCE_DIR)
-  .filter((f) => f.endsWith('.png'))
+  .filter((f) => /\.(png|jpe?g)$/i.test(f))
   .sort()
-if (!sources.length) throw new Error(`no PNGs in ${SOURCE_DIR}`)
+if (!sources.length) throw new Error(`no images in ${SOURCE_DIR}`)
 
 mkdirSync(OUT_DIR, { recursive: true })
 
@@ -76,6 +78,8 @@ for (const name of sources) {
   const encoded = await page.evaluate(
     async ([data, quality]) => {
       const image = new Image()
+      // The decoder sniffs the bytes, so the declared type only has to be an
+      // image type the browser will attempt.
       image.src = `data:image/png;base64,${data}`
       await image.decode()
       const canvas = document.createElement('canvas')
@@ -90,7 +94,7 @@ for (const name of sources) {
   )
   const out = Buffer.from(encoded.data, 'base64')
   after += out.length
-  const target = name.replace(/\.png$/, '.webp')
+  const target = name.replace(/\.(png|jpe?g)$/i, '.webp')
   writeFileSync(join(OUT_DIR, target), out)
   console.log(
     `${name} ${encoded.w}x${encoded.h}  ${(png.length / 1024).toFixed(0)}KB -> ` +

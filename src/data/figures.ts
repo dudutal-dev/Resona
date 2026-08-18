@@ -5,6 +5,8 @@ import chakras from '../assets/figures/4-chakras.webp'
 import temple from '../assets/figures/5-temple.webp'
 import cosmos from '../assets/figures/6-cosmos.webp'
 import crimson from '../assets/figures/7-crimson.webp'
+import forest from '../assets/figures/8-forest.webp'
+import jupiter from '../assets/figures/9-jupiter.webp'
 import type { StringKey } from '../lib/i18n'
 
 /**
@@ -43,6 +45,8 @@ export const FIGURES: Figure[] = [
   { id: 'temple', kind: 'image', src: temple, name: 'figure.temple' },
   { id: 'cosmos', kind: 'image', src: cosmos, name: 'figure.cosmos' },
   { id: 'crimson', kind: 'image', src: crimson, name: 'figure.crimson' },
+  { id: 'forest', kind: 'image', src: forest, name: 'figure.forest' },
+  { id: 'jupiter', kind: 'image', src: jupiter, name: 'figure.jupiter' },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },
 ]
 

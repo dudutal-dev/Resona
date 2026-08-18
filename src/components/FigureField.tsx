@@ -243,8 +243,19 @@ export function FigureField({ src, playing, scale = 1, className = '' }: Props) 
       if (ready && image.naturalHeight) {
         // Fitted to the height with a margin, and breathing on the level.
         const breath = 1 + energy * 0.035 + (reducedMotion ? 0 : Math.sin(t * 0.9) * 0.006)
-        const dh = h * 0.94 * breath
-        const dw = (dh * image.naturalWidth) / image.naturalHeight
+        /**
+         * Fitted inside the frame on both axes, not scaled to its height.
+         *
+         * Every figure was a tall portrait until one arrived at 16:9, and
+         * height-fitting a landscape image makes it far wider than the screen —
+         * on a phone held upright a 1280x720 artwork came out at three and a half
+         * times the width of the frame, so all that showed was a slice of its
+         * middle. Taking the smaller of the two ratios lets a portrait fill the
+         * height as before and a landscape fill the width instead.
+         */
+        const fit = Math.min((h * 0.94) / image.naturalHeight, (w * 0.94) / image.naturalWidth)
+        const dh = image.naturalHeight * fit * breath
+        const dw = image.naturalWidth * fit * breath
         const dx = (w - dw) / 2
         const dy = (h - dh) / 2
         top = dy

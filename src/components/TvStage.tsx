@@ -185,17 +185,22 @@ export function TvStage({ onClose }: { onClose: () => void }) {
           <button onClick={onClose} className="btn h-11 rounded-2xl px-4 text-xs">
             {t('tv.exit')}
           </button>
-          <button
-            onClick={(e) => {
-              // The stage itself listens for taps to bring the chrome back; without
-              // this the click would also count as that and restart its timer.
-              e.stopPropagation()
-              setPickerOpen(true)
-            }}
-            className="btn h-11 rounded-2xl px-4 text-xs"
-          >
-            {t('figure.pick')} · {t(figure.name)}
-          </button>
+          {/* A picker with one thing in it is a control that cannot do
+              anything. It comes back on its own when artwork does. */}
+          {FIGURES.length > 1 && (
+            <button
+              onClick={(e) => {
+                // The stage itself listens for taps to bring the chrome back;
+                // without this the click would also count as that and restart
+                // its timer.
+                e.stopPropagation()
+                setPickerOpen(true)
+              }}
+              className="btn h-11 rounded-2xl px-4 text-xs"
+            >
+              {t('figure.pick')} · {t(figure.name)}
+            </button>
+          )}
         </div>
         <p className="max-w-[22rem] text-end text-[11px] leading-relaxed txt-3">
           {t('tv.mirror')}

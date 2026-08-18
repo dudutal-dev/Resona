@@ -1,36 +1,33 @@
-import starlight from '../assets/figures/1-starlight.webp'
-import violet from '../assets/figures/2-violet.webp'
-import spectrum from '../assets/figures/3-spectrum.webp'
-import chakras from '../assets/figures/4-chakras.webp'
-import temple from '../assets/figures/5-temple.webp'
-import cosmos from '../assets/figures/6-cosmos.webp'
-import crimson from '../assets/figures/7-crimson.webp'
-import forest from '../assets/figures/8-forest.webp'
-import jupiter from '../assets/figures/9-jupiter.webp'
-import emerald from '../assets/figures/10-emerald.webp'
-import amber from '../assets/figures/11-amber.webp'
 import type { StringKey } from '../lib/i18n'
 
 /**
  * The figures the television stage can show.
  *
- * All but one are artwork; the last is a scene, which is the only reason this is
- * a union rather than a list of image sources. The artwork is shipped as WebP and drawn
- * whole: an earlier version reduced it to a point cloud and redrew that, which
- * let every point be moved individually and threw away the detail that made the
- * renders worth using. The movement they need turns out to be the kind a whole
- * image can be given — see `FigureField`.
+ * Artwork, plus one scene — which is the only reason this is a union rather
+ * than a list of image sources. Artwork is shipped as WebP and drawn whole: an
+ * earlier version reduced it to a point cloud and redrew that, which let every
+ * point be moved individually and threw away the detail that made the renders
+ * worth using. The movement they need turns out to be the kind a whole image
+ * can be given — see `FigureField`.
  *
- * The scene is `ChakraScene`, in Three.js. It is split out and imported only when
- * it is chosen, so it is not part of the page that loads first — but it is 250KB
- * gzipped, more than the rest of the app put together, and the service worker
- * precaches it like everything else. That is deliberate: an offline app whose
- * fifth figure only works online would be worse than one that costs more to
- * install. It does mean the saving is on first paint, not on the download.
+ * The scene is `ChakraScene`, in Three.js. It is split out and imported only
+ * when it is chosen, so it is not part of the page that loads first — but it is
+ * 250KB gzipped, more than the rest of the app put together, and the service
+ * worker precaches it like everything else. That is deliberate: an offline app
+ * whose only other figure needs the network would be worse than one that costs
+ * more to install.
  *
- * `assets/figures` holds the originals and `scripts/pack-figures.mjs` does the
- * encoding; adding one means dropping a PNG there, running that, and adding a
- * line here with its name in both languages.
+ * **There is no artwork here at the moment.** The eleven renders that used to
+ * ship were pulled out of the bundle to make room for better ones; they are not
+ * lost — every original is still in `assets/figures`, and the round trip back
+ * in is three steps:
+ *
+ *   1. drop the PNGs in `assets/figures`
+ *   2. `npm run pack-figures` — encodes them into `src/assets/figures`
+ *   3. import each one below and add a line, with its name in both languages
+ *
+ * The `figure.*` keys for the old set are deliberately still in the dictionary,
+ * so re-adding one is a single line rather than a translation pass.
  */
 export type Figure =
   | { id: string; kind: 'image'; src: string; name: StringKey }
@@ -40,17 +37,6 @@ export type Figure =
 // at the end. Inserting into the middle shifts what a saved index points at,
 // which is a tap to correct and not worth reordering the list to avoid.
 export const FIGURES: Figure[] = [
-  { id: 'chakras', kind: 'image', src: chakras, name: 'figure.chakras' },
-  { id: 'spectrum', kind: 'image', src: spectrum, name: 'figure.spectrum' },
-  { id: 'violet', kind: 'image', src: violet, name: 'figure.violet' },
-  { id: 'starlight', kind: 'image', src: starlight, name: 'figure.starlight' },
-  { id: 'temple', kind: 'image', src: temple, name: 'figure.temple' },
-  { id: 'cosmos', kind: 'image', src: cosmos, name: 'figure.cosmos' },
-  { id: 'crimson', kind: 'image', src: crimson, name: 'figure.crimson' },
-  { id: 'forest', kind: 'image', src: forest, name: 'figure.forest' },
-  { id: 'jupiter', kind: 'image', src: jupiter, name: 'figure.jupiter' },
-  { id: 'emerald', kind: 'image', src: emerald, name: 'figure.emerald' },
-  { id: 'amber', kind: 'image', src: amber, name: 'figure.amber' },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },
 ]
 

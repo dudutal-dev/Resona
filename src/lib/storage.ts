@@ -32,6 +32,7 @@ export const STORAGE_KEYS = {
   journeyProgress: 'journeyProgress',
   settings: 'settings',
   lastSession: 'lastSession',
+  history: 'history',
 } as const
 
 /** crypto.randomUUID is unavailable on http origins in some browsers. */

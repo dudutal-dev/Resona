@@ -13,6 +13,7 @@ import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
 import { Card, formatClock } from './ui'
+import { HistoryPanel } from './HistoryPanel'
 
 function ArrowIcon() {
   return (
@@ -185,6 +186,11 @@ export function HomeScreen() {
             <ArrowIcon />
           </div>
         </Card>
+      </div>
+
+      {/* Below the ways in, because it is a record rather than a destination. */}
+      <div className="mt-4">
+        <HistoryPanel />
       </div>
 
       <p className="txt-3 mt-6 px-1 text-[11px] leading-relaxed">

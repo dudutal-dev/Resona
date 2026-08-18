@@ -3,6 +3,7 @@ import type { AmbienceId, BeatMode, MelodyStyle, SessionConfig, TimerMode } from
 import { defaultBeatHz, getFrequency } from '../lib/catalog'
 import { STORAGE_KEYS, readJSON, writeJSON } from '../lib/storage'
 import { player } from '../audio/SessionPlayer'
+import { useHistory } from './historyStore'
 
 export const DEFAULT_CONFIG: SessionConfig = {
   rootId: 'sol-528',
@@ -59,6 +60,16 @@ function restore(): SessionConfig {
     levels: { ...DEFAULT_CONFIG.levels, ...(saved.levels ?? {}) },
   }
 }
+
+/**
+ * Carried outside the store because they are not state anyone renders — they are
+ * what the last frame of a playing session looked like, kept so the moment it
+ * stops can still be described. See `tick`.
+ */
+let wasPlaying = false
+let lastElapsed = 0
+let lastConfig: SessionConfig | null = null
+let lastJourney: { journeyId: string; day: number } | null = null
 
 export const useSession = create<SessionState>((set, get) => {
   /** Writes the config through to the running audio graph and to storage. */
@@ -121,8 +132,41 @@ export const useSession = create<SessionState>((set, get) => {
     },
 
     tick: () => {
+      const playing = player.isPlaying
+
+      /**
+       * The one place a session's end is observable, whichever way it ended.
+       *
+       * Stopping, pausing and the timer running out all land here, because
+       * pausing is a full stop in the player — `toggle` calls `stop`, and the
+       * next play restarts the clock from zero. That is what makes recording on
+       * the transition safe: one play-to-stop cycle is one session, and resuming
+       * cannot count the same minutes twice.
+       *
+       * The reading has to be taken before the transition, not after:
+       * `getElapsedSeconds` returns zero the moment the player is no longer
+       * playing, so a listener that waited to be told the session ended would
+       * always record a session of length zero.
+       */
+      if (playing) {
+        lastElapsed = player.getElapsedSeconds()
+        lastConfig = get().config
+        lastJourney = get().activeJourney
+      } else if (wasPlaying && lastConfig) {
+        useHistory.getState().record({
+          rootId: lastConfig.rootId,
+          beatId: lastConfig.beatId,
+          beatHz: lastConfig.beatHz,
+          seconds: lastElapsed,
+          journeyId: lastJourney?.journeyId,
+          day: lastJourney?.day,
+        })
+        lastConfig = null
+      }
+      wasPlaying = playing
+
       set({
-        isPlaying: player.isPlaying,
+        isPlaying: playing,
         isFading: player.isFadingOut(),
         elapsed: player.getElapsedSeconds(),
         remaining: player.getRemainingSeconds(),

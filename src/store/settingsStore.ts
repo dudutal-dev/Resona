@@ -32,7 +32,7 @@ type SettingsState = Settings & {
   toggleTheme: () => void
   setReducedMotion: (v: boolean) => void
   setKeepScreenAwake: (v: boolean) => void
-  nextFigure: () => void
+  setFigure: (index: number) => void
   dismissHeadphoneNotice: () => void
   resetAllData: () => void
 }
@@ -114,10 +114,7 @@ export const useSettings = create<SettingsState>((set, get) => {
       void mediaRoute.setWakeLock(v)
       persist({ keepScreenAwake: v })
     },
-    // Wraps at the end of the list rather than being bounded here: the list is
-    // in the data layer, and `figureAt` takes the modulus. Keeping the raw count
-    // means adding a figure does not renumber anyone's saved choice.
-    nextFigure: () => persist({ figure: get().figure + 1 }),
+    setFigure: (index) => persist({ figure: index }),
     dismissHeadphoneNotice: () => persist({ headphoneNoticeSeen: true }),
     resetAllData: () => {
       for (const key of Object.values(STORAGE_KEYS)) removeKey(key)

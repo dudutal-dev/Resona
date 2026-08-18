@@ -86,7 +86,22 @@ const HE = {
   'tv.enter': 'מצב טלוויזיה',
   'tv.enterHint': 'מסך מלא עם ההדמיה בלבד — ומשם שיקוף מסך מעביר אותה לטלוויזיה.',
   'tv.exit': 'יציאה',
-  'tv.figure': 'החלף דמות',
+  'player.mix': 'מיקס',
+  'player.mixTitle': 'מיקס והגדרות סשן',
+  'player.carrier': 'הפעימה רוכבת על <ltr>{carrier} Hz</ltr> — {relation} לשורש',
+  'player.carrierSame': 'הפעימה רוכבת על השורש עצמו',
+  'relation.octaveDown': 'אוקטבה מתחת',
+  'relation.twoOctavesDown': 'שתי אוקטבות מתחת',
+  'relation.threeOctavesDown': 'שלוש אוקטבות מתחת',
+  'figure.pick': 'דמויות',
+  'figure.pickTitle': 'בחר דמות',
+  'history.title': 'האזנות אחרונות',
+  'history.empty': 'עוד לא האזנת. מה שתנגן יופיע כאן.',
+  'history.clear': 'נקה היסטוריה',
+  'history.minutes': '<ltr>{n}</ltr> דק׳',
+  'history.today': 'היום',
+  'history.yesterday': 'אתמול',
+  'history.daysAgo': 'לפני <ltr>{n}</ltr> ימים',
   'figure.chakras': 'צ׳אקרות',
   'figure.spectrum': 'ספקטרום',
   'figure.violet': 'סגול',
@@ -410,7 +425,22 @@ const EN: Record<StringKey, string> = {
   'tv.enter': 'TV mode',
   'tv.enterHint': 'Full screen with the visualiser alone — from there, screen mirroring puts it on the television.',
   'tv.exit': 'Exit',
-  'tv.figure': 'Change figure',
+  'player.mix': 'Mix',
+  'player.mixTitle': 'Mix and session settings',
+  'player.carrier': 'The pulse rides on <ltr>{carrier} Hz</ltr> — {relation} the root',
+  'player.carrierSame': 'The pulse rides on the root itself',
+  'relation.octaveDown': 'an octave below',
+  'relation.twoOctavesDown': 'two octaves below',
+  'relation.threeOctavesDown': 'three octaves below',
+  'figure.pick': 'Figures',
+  'figure.pickTitle': 'Choose a figure',
+  'history.title': 'Recent sessions',
+  'history.empty': 'Nothing listened to yet. What you play will show up here.',
+  'history.clear': 'Clear history',
+  'history.minutes': '<ltr>{n}</ltr> min',
+  'history.today': 'Today',
+  'history.yesterday': 'Yesterday',
+  'history.daysAgo': '<ltr>{n}</ltr> days ago',
   'figure.chakras': 'Chakras',
   'figure.spectrum': 'Spectrum',
   'figure.violet': 'Violet',
@@ -700,12 +730,28 @@ export function renderRich(text: string): ReactNode {
 }
 
 /** Everything a component needs to render in the current language. */
+const RICH_TAG = /<(b|ltr|accent)>/
+
 export function useT() {
   const lang = useSettings((s) => s.lang)
   return {
     lang,
     dir: DIR[lang],
-    t: (key: StringKey, vars?: Vars) => translate(lang, key, vars),
+    /**
+     * Plain text. In development it complains if the string it resolved still
+     * carries rich-text markup, because that is always a mistake at the call
+     * site and it is invisible in review: the tags simply render as characters,
+     * so a history row read "<ltr>1</ltr> min" in the shipped UI until someone
+     * looked at it. The end-to-end runs already fail on console errors, so this
+     * turns a silent typo into a caught one.
+     */
+    t: (key: StringKey, vars?: Vars) => {
+      const text = translate(lang, key, vars)
+      if (import.meta.env.DEV && RICH_TAG.test(text)) {
+        console.error(`i18n: "${key}" contains rich markup — use rich() rather than t()`)
+      }
+      return text
+    },
     rich: (key: StringKey, vars?: Vars) => renderRich(translate(lang, key, vars)),
   }
 }

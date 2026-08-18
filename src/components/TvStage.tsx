@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { mediaRoute } from '../audio/MediaRoute'
-import { figureAt } from '../data/figures'
+import { FIGURES, figureAt } from '../data/figures'
 import { freqLabel, getFrequency, getJourney, journeyTitle, shortLabel } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { useSession } from '../store/sessionStore'
@@ -39,8 +39,10 @@ const ChakraScene = lazy(() =>
 export function TvStage({ onClose }: { onClose: () => void }) {
   const { t, lang } = useT()
   const { config, isPlaying, elapsed, remaining, activeJourney } = useSession()
-  const figure = figureAt(useSettings((s) => s.figure))
-  const nextFigure = useSettings((s) => s.nextFigure)
+  const figureIndex = useSettings((s) => s.figure)
+  const figure = figureAt(figureIndex)
+  const setFigure = useSettings((s) => s.setFigure)
+  const [pickerOpen, setPickerOpen] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
   const [chromeVisible, setChromeVisible] = useState(true)
   const [portrait, setPortrait] = useState(false)
@@ -188,11 +190,11 @@ export function TvStage({ onClose }: { onClose: () => void }) {
               // The stage itself listens for taps to bring the chrome back; without
               // this the click would also count as that and restart its timer.
               e.stopPropagation()
-              nextFigure()
+              setPickerOpen(true)
             }}
             className="btn h-11 rounded-2xl px-4 text-xs"
           >
-            {t('tv.figure')} · {t(figure.name)}
+            {t('figure.pick')} · {t(figure.name)}
           </button>
         </div>
         <p className="max-w-[22rem] text-end text-[11px] leading-relaxed txt-3">
@@ -200,6 +202,62 @@ export function TvStage({ onClose }: { onClose: () => void }) {
           {portrait && <span className="block mt-1 opacity-80">{t('tv.rotate')}</span>}
         </p>
       </div>
+
+      {/*
+        A grid, not a cycle button.
+        
+        One button that advances by one was right with four figures and wrong
+        with twelve: going back one meant pressing it eleven times, and the only
+        way to know what any of them looked like was to land on it. The pictures
+        are the labels here, so the picker shows them.
+      */}
+      {pickerOpen && (
+        <div
+          className="absolute inset-0 z-20 overflow-y-auto bg-black/85 p-5"
+          style={{ backdropFilter: 'blur(6px)' }}
+          onClick={(e) => {
+            e.stopPropagation()
+            setPickerOpen(false)
+          }}
+        >
+          <p className="mb-4 text-center text-xs font-semibold">{t('figure.pickTitle')}</p>
+          <div className="mx-auto grid max-w-3xl grid-cols-3 gap-3 sm:grid-cols-4">
+            {FIGURES.map((entry, index) => {
+              const chosen = index === ((figureIndex % FIGURES.length) + FIGURES.length) % FIGURES.length
+              return (
+                <button
+                  key={entry.id}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setFigure(index)
+                    setPickerOpen(false)
+                  }}
+                  className="overflow-hidden rounded-xl text-[10px]"
+                  style={{
+                    border: `1px solid ${chosen ? 'var(--accent)' : 'rgba(255,255,255,0.14)'}`,
+                    boxShadow: chosen ? '0 0 18px var(--glow)' : 'none',
+                  }}
+                >
+                  <span className="block aspect-[3/4] bg-black">
+                    {entry.kind === 'image' ? (
+                      <img
+                        src={entry.src}
+                        alt=""
+                        loading="lazy"
+                        className="h-full w-full object-cover opacity-90"
+                      />
+                    ) : (
+                      // The scene has no still to show, so it says so.
+                      <span className="grid h-full w-full place-items-center text-[22px]">◎</span>
+                    )}
+                  </span>
+                  <span className="block truncate px-1 py-1.5">{t(entry.name)}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       <p
         className={`pointer-events-none absolute inset-x-0 bottom-3 z-10 text-center text-[11px] txt-3 transition-opacity duration-500 ${

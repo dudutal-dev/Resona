@@ -140,7 +140,17 @@ export function journeyCover(journey: Journey): string {
     const hue = THEME_HUE[themeOf(journey)]
     const roots = journey.schedule.map((d) => {
       const f = getFrequency(d.frequencyId)
-      return { hz: f?.hz ?? f?.range?.[0] ?? 200, hue: f?.hue ?? hue }
+      // Two journeys can climb the same ladder — the seven chakras are the
+      // seven chakras — so the roots alone cannot tell them apart. What differs
+      // is how the nights *sound*, and that is what the ring is drawn from:
+      // density gives it weight, and pace breaks it into ticks. A held drone is
+      // a solid hairline; a flowing practice is a heavy dashed circle.
+      return {
+        hz: f?.hz ?? f?.range?.[0] ?? 200,
+        hue: f?.hue ?? hue,
+        density: d.density ?? 0.5,
+        pace: d.pace ?? 0.3,
+      }
     })
     const values = roots.map((r) => r.hz)
     const lo = Math.min(...values)
@@ -161,7 +171,17 @@ export function journeyCover(journey: Journey): string {
       // ...and the ring's centre rides the root it plays, so an ascending week
       // spirals up out of the frame and a descending one settles down into it.
       const cy = mid - (norm - 0.5) * 84
-      return { radius, cy, hue: r.hue, norm }
+      // A dash long enough to read as a line below walking pace, and short
+      // enough to read as a run of events above it.
+      const dash = r.pace < 0.18 ? null : Math.max(4, 34 - r.pace * 40)
+      return {
+        radius,
+        cy,
+        hue: r.hue,
+        norm,
+        weight: 0.6 + r.density * 4.4,
+        dash,
+      }
     })
 
     const from = roots[0].hue
@@ -177,7 +197,7 @@ export function journeyCover(journey: Journey): string {
     const lines = rings
       .map(
         (r) =>
-          `<circle cx="${cx}" cy="${r.cy.toFixed(1)}" r="${r.radius.toFixed(1)}" fill="hsl(${r.hue} 88% 58%)" fill-opacity="0.05" stroke="hsl(${r.hue} 96% 74%)" stroke-opacity="0.9" stroke-width="1.5"/>`,
+          `<circle cx="${cx}" cy="${r.cy.toFixed(1)}" r="${r.radius.toFixed(1)}" fill="hsl(${r.hue} 88% 58%)" fill-opacity="0.05" stroke="hsl(${r.hue} 96% 74%)" stroke-opacity="0.9" stroke-width="${r.weight.toFixed(2)}"${r.dash ? ` stroke-dasharray="${r.dash.toFixed(1)} ${(r.dash * 0.6).toFixed(1)}" stroke-linecap="round"` : ''}/>`,
       )
       .join('')
 
@@ -186,8 +206,8 @@ export function journeyCover(journey: Journey): string {
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SIZE} ${SIZE}" width="${SIZE}" height="${SIZE}">
 <defs>
 <linearGradient id="g" x1="0" y1="0" x2="0.4" y2="1">
-<stop offset="0%" stop-color="hsl(${from} 72% 20%)"/>
-<stop offset="55%" stop-color="hsl(${hue} 80% 8%)"/>
+<stop offset="0%" stop-color="hsl(${hue} 76% 21%)"/>
+<stop offset="42%" stop-color="hsl(${from} 74% 11%)"/>
 <stop offset="100%" stop-color="hsl(${to} 86% 4%)"/>
 </linearGradient>
 <linearGradient id="s" x1="0" y1="0" x2="0" y2="1">

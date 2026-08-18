@@ -2851,5 +2851,101 @@
         "beatHz": 40.0
       }
     ]
+  },
+  {
+    "id": "journey-vibrations-7",
+    "title": "רטט האנרגיה — שבע צ׳אקרות",
+    "titleEn": "The energy vibrations — seven chakras",
+    "days": 7,
+    "purpose": "rhythm",
+    "arc": "ascending",
+    "description": "אותם שבעה מרכזים כמו ב״מרחב פנימי״, והשימוש ההפוך: זו לא מוזיקה לשכב אליה אלא לזוז אליה. תרגול של 18 דקות למרכז, עם זרימה קבועה של תווים במקום תו שמחזיק — צפוף פי שניים, מהיר פי חמישה, ורדוד בכוונה: העומק נשאר מתחת לחצי, כלומר על האינטרוולים המוכרים, כי אי אפשר לנוע לתוך משהו שמתפרק. גל אלפא מתחת לרוב הימים, SMR במאניפורה ובאג׳נה — שם התרגול דורש התמקדות — וגמא 40Hz בכתר.",
+    "descriptionEn": "The same seven centres as Inner space, put to the opposite use: this is not music to lie down to, it is music to move to. Eighteen minutes per centre, with a steady flow of notes instead of one tone holding — twice the density, five times the pace, and deliberately shallow: the depth stays under half, which keeps it on familiar intervals, because you cannot move inside something that is coming apart. Alpha underneath most days, SMR at Manipura and Ajna where the practice asks for focus, and 40Hz gamma at the crown.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-396",
+        "durationMin": 18,
+        "note": "מולאדהרה — עמידה על הרגליים",
+        "pace": 0.46,
+        "depth": 0.15,
+        "density": 0.42,
+        "beatId": "bb-alpha",
+        "beatHz": 8.5,
+        "noteEn": "Muladhara — standing on your feet"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-417",
+        "durationMin": 18,
+        "note": "סוואדהישטהאנה — האגן נפתח",
+        "pace": 0.5,
+        "depth": 0.2,
+        "density": 0.46,
+        "beatId": "bb-alpha",
+        "beatHz": 9.5,
+        "noteEn": "Svadhisthana — the hips open"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 18,
+        "note": "מאניפורה — הליבה עובדת",
+        "pace": 0.62,
+        "depth": 0.26,
+        "density": 0.58,
+        "beatId": "bb-smr",
+        "beatHz": 13.0,
+        "noteEn": "Manipura — the core works"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-639",
+        "durationMin": 18,
+        "note": "אנאהטה — פתיחת חזה",
+        "pace": 0.54,
+        "depth": 0.32,
+        "density": 0.5,
+        "beatId": "bb-alpha",
+        "beatHz": 10.5,
+        "noteEn": "Anahata — opening the chest"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-741",
+        "durationMin": 18,
+        "note": "וישודהה — הנשימה מובילה",
+        "pace": 0.5,
+        "depth": 0.36,
+        "density": 0.48,
+        "beatId": "bb-alpha",
+        "beatHz": 11.5,
+        "noteEn": "Vishuddha — the breath leads"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-852",
+        "durationMin": 18,
+        "note": "אג׳נה — מבט אחד",
+        "pace": 0.56,
+        "depth": 0.4,
+        "density": 0.52,
+        "beatId": "bb-smr",
+        "beatHz": 14.0,
+        "noteEn": "Ajna — a single point"
+      },
+      {
+        "day": 7,
+        "frequencyId": "sol-963",
+        "durationMin": 18,
+        "note": "סהסרארה — שבבה־אסנה",
+        "pace": 0.47,
+        "depth": 0.42,
+        "density": 0.44,
+        "beatId": "bb-gamma40",
+        "beatHz": 40.0,
+        "noteEn": "Sahasrara — savasana"
+      }
+    ]
   }
 ]

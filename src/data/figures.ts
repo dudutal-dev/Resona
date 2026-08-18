@@ -7,6 +7,8 @@ import cosmos from '../assets/figures/6-cosmos.webp'
 import crimson from '../assets/figures/7-crimson.webp'
 import forest from '../assets/figures/8-forest.webp'
 import jupiter from '../assets/figures/9-jupiter.webp'
+import emerald from '../assets/figures/10-emerald.webp'
+import amber from '../assets/figures/11-amber.webp'
 import type { StringKey } from '../lib/i18n'
 
 /**
@@ -47,6 +49,8 @@ export const FIGURES: Figure[] = [
   { id: 'crimson', kind: 'image', src: crimson, name: 'figure.crimson' },
   { id: 'forest', kind: 'image', src: forest, name: 'figure.forest' },
   { id: 'jupiter', kind: 'image', src: jupiter, name: 'figure.jupiter' },
+  { id: 'emerald', kind: 'image', src: emerald, name: 'figure.emerald' },
+  { id: 'amber', kind: 'image', src: amber, name: 'figure.amber' },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },
 ]
 

@@ -78,18 +78,26 @@ export function BottomNav({ current }: { current: Route['name'] }) {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 safe-bottom"
-      style={{ paddingInline: '0.75rem' }}
+      className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(0.6rem,env(safe-area-inset-bottom))]"
       aria-label={t('nav.aria')}
     >
       {/* Scrim: the bar floats over scrolling content, and without this the text
-          underneath reads straight through the frosted panel. */}
+          underneath reads straight through it. */}
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-32"
-        style={{ background: 'linear-gradient(to top, var(--bg-deep) 35%, transparent)' }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-28"
+        style={{ background: 'linear-gradient(to top, var(--bg-deep) 30%, transparent)' }}
         aria-hidden
       />
-      <div className="glass-strong mx-auto flex max-w-md items-center justify-between rounded-3xl px-2 py-1.5">
+      {/*
+        Icons only, and the label is the tooltip rather than a caption.
+
+        Five words under five icons is a third of the bar's height spent
+        repeating what the pictograms already say, and it forces every label to
+        be short enough to fit rather than clear. The current tab is marked by a
+        filled shape behind its icon, which is louder than a caption and takes no
+        vertical room.
+      */}
+      <div className="bar mx-auto flex max-w-sm items-center justify-between rounded-full p-1.5">
         {ITEMS.map((item) => {
           const active =
             current === item.route ||
@@ -99,23 +107,20 @@ export function BottomNav({ current }: { current: Route['name'] }) {
               key={item.href}
               onClick={() => navigate(item.href)}
               aria-current={active ? 'page' : undefined}
-              className="relative flex flex-1 flex-col items-center gap-1 rounded-2xl px-1 py-2 transition-all active:scale-95"
-              style={{ color: active ? 'var(--accent)' : 'var(--txt-3)' }}
+              aria-label={t(item.label)}
+              title={t(item.label)}
+              className="relative grid h-12 flex-1 place-items-center rounded-full transition-all active:scale-90"
+              style={{
+                background: active ? 'var(--nav-active-bg)' : 'transparent',
+                color: active ? 'var(--txt)' : 'var(--txt-3)',
+              }}
             >
-              {active && (
-                <span
-                  className="absolute inset-x-2 -top-px h-px"
-                  style={{ background: 'var(--accent)', boxShadow: '0 0 12px var(--glow)' }}
-                  aria-hidden
-                />
-              )}
-              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden>
                 {item.icon}
               </svg>
-              <span className="text-[10px] font-semibold leading-none">{t(item.label)}</span>
               {item.route === 'frequencies' && isPlaying && (
                 <span
-                  className="absolute end-1/2 top-1 h-1.5 w-1.5 translate-x-3 rounded-full"
+                  className="absolute end-2.5 top-2.5 h-1.5 w-1.5 rounded-full"
                   style={{ background: 'var(--accent)', boxShadow: '0 0 8px var(--glow)' }}
                   aria-hidden
                 />

@@ -2375,5 +2375,385 @@
         "noteEn": "The last night. If it worked, you will not remember it"
       }
     ]
+  },
+  {
+    "id": "journey-undertow-6",
+    "title": "זרם תחתי — שישה סטים",
+    "titleEn": "Undertow — six sets",
+    "days": 6,
+    "purpose": "club",
+    "arc": "descending",
+    "description": "סט שמתחיל למעלה ומושך מטה. הלילה הראשון פול-און ב-963Hz על גל גמא; כל לילה אחריו מוריד את הסולם, מאט את הגריד ומעמיק את הפילטר, עד שביום השישי נשאר בס מתגלגל ב-174Hz מתחת לגל תטא. זה לא סט שנגמר — הוא שוקע.",
+    "descriptionEn": "A set that opens at the top and pulls downward. Night one is full-on at 963Hz over gamma; each night after it drops the scale, slows the grid and deepens the filter, until the sixth is nothing but a rolling bass at 174Hz under theta. It does not end — it sinks.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-963",
+        "durationMin": 45,
+        "note": "פול-און, למעלה",
+        "pace": 0.86,
+        "depth": 0.55,
+        "density": 0.82,
+        "style": "psytrance",
+        "noteEn": "Full-on, at the top",
+        "beatId": "bb-gamma"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-852",
+        "durationMin": 50,
+        "note": "הפילטר מתחיל להיסגר",
+        "pace": 0.78,
+        "depth": 0.62,
+        "density": 0.78,
+        "style": "psytrance",
+        "noteEn": "The filter starts to close",
+        "beatId": "bb-gamma"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-741",
+        "durationMin": 55,
+        "note": "הגריד מאט",
+        "pace": 0.68,
+        "depth": 0.7,
+        "density": 0.72,
+        "style": "psytrance",
+        "noteEn": "The grid slows",
+        "beatId": "bb-beta"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-528",
+        "durationMin": 60,
+        "note": "המשיכה מתחת",
+        "pace": 0.56,
+        "depth": 0.78,
+        "density": 0.66,
+        "style": "psytrance",
+        "noteEn": "The pull underneath",
+        "beatId": "bb-alpha"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-396",
+        "durationMin": 65,
+        "note": "רק הבס נשאר",
+        "pace": 0.46,
+        "depth": 0.86,
+        "density": 0.58,
+        "style": "psytrance",
+        "noteEn": "Only the bass is left",
+        "beatId": "bb-alpha"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-174",
+        "durationMin": 70,
+        "note": "שוקע",
+        "pace": 0.36,
+        "depth": 0.92,
+        "density": 0.5,
+        "style": "psytrance",
+        "noteEn": "Sinking",
+        "beatId": "bb-theta"
+      }
+    ]
+  },
+  {
+    "id": "journey-hydra-5",
+    "title": "הידרה — חמישה סטים",
+    "titleEn": "Hydra — five sets",
+    "days": 5,
+    "purpose": "club",
+    "description": "אותו שורש בכל חמשת הסטים, 528Hz — ומה שמשתנה הוא כמה קולות רצים מעליו. הראשון הוא קיק ובס. בכל סט נוסף ראש: אסיד, ליד, קאונטר-ליין, סטאב. השורש לא זז אף פעם, ולכן שומעים בדיוק מה נוסף.",
+    "descriptionEn": "The same root through all five sets, 528Hz — what changes is how many voices run over it. The first is a kick and a bass. Every set adds a head: acid, a lead, a counter-line, a stab. The root never moves, which is exactly why you can hear what was added.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-528",
+        "durationMin": 45,
+        "note": "קיק ובס",
+        "pace": 0.6,
+        "depth": 0.22,
+        "density": 0.48,
+        "style": "psytrance",
+        "noteEn": "Kick and bass"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 50,
+        "note": "אסיד",
+        "pace": 0.66,
+        "depth": 0.38,
+        "density": 0.6,
+        "style": "psytrance",
+        "noteEn": "Acid"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 55,
+        "note": "ליד",
+        "pace": 0.72,
+        "depth": 0.52,
+        "density": 0.72,
+        "style": "psytrance",
+        "noteEn": "A lead"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-528",
+        "durationMin": 60,
+        "note": "קאונטר-ליין",
+        "pace": 0.78,
+        "depth": 0.66,
+        "density": 0.82,
+        "style": "psytrance",
+        "noteEn": "A counter-line",
+        "beatId": "bb-beta"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-528",
+        "durationMin": 65,
+        "note": "כל הראשים",
+        "pace": 0.84,
+        "depth": 0.8,
+        "density": 0.92,
+        "style": "psytrance",
+        "noteEn": "Every head",
+        "beatId": "bb-gamma"
+      }
+    ]
+  },
+  {
+    "id": "journey-psyflux-7",
+    "title": "פסיפלוקס — שבוע מלא",
+    "titleEn": "Psyflux — a full week",
+    "days": 7,
+    "purpose": "club",
+    "arc": "ascending",
+    "description": "שבוע שהוא סט אחד ארוך. מתחיל פרוגרסיב איטי ואפל ב-174Hz, ומטפס לילה אחרי לילה — בטמפו, בצפיפות ובסולם — עד שביום השביעי זה פול-און ב-963Hz על גמא 40Hz. כל לילה מתחיל בערך במקום שבו הקודם נגמר.",
+    "descriptionEn": "A week that is one long set. It opens slow and dark and progressive at 174Hz, and climbs night after night — in tempo, in density, in scale — until the seventh is full-on at 963Hz over 40Hz gamma. Each night starts roughly where the one before it stopped.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-174",
+        "durationMin": 50,
+        "note": "פרוגרסיב, אפל",
+        "pace": 0.4,
+        "depth": 0.24,
+        "density": 0.5,
+        "style": "psytrance",
+        "noteEn": "Progressive, dark",
+        "beatId": "bb-alpha"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-396",
+        "durationMin": 55,
+        "note": "הגריד מתהדק",
+        "pace": 0.5,
+        "depth": 0.34,
+        "density": 0.58,
+        "style": "psytrance",
+        "noteEn": "The grid tightens",
+        "beatId": "bb-alpha"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-432",
+        "durationMin": 55,
+        "note": "הבס מתחיל להתגלגל",
+        "pace": 0.58,
+        "depth": 0.44,
+        "density": 0.64,
+        "style": "psytrance",
+        "noteEn": "The bass starts to roll",
+        "beatId": "bb-beta"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-528",
+        "durationMin": 60,
+        "note": "אסיד ראשון",
+        "pace": 0.66,
+        "depth": 0.54,
+        "density": 0.7,
+        "style": "psytrance",
+        "noteEn": "First acid",
+        "beatId": "bb-beta"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-741",
+        "durationMin": 60,
+        "note": "ברייקדאון ארוך",
+        "pace": 0.74,
+        "depth": 0.66,
+        "density": 0.76,
+        "style": "psytrance",
+        "noteEn": "A long breakdown",
+        "beatId": "bb-gamma"
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-852",
+        "durationMin": 65,
+        "note": "הרול לא נעצר",
+        "pace": 0.84,
+        "depth": 0.76,
+        "density": 0.84,
+        "style": "psytrance",
+        "noteEn": "The roll does not stop",
+        "beatId": "bb-gamma"
+      },
+      {
+        "day": 7,
+        "frequencyId": "sol-963",
+        "durationMin": 70,
+        "note": "פול-און",
+        "pace": 0.94,
+        "depth": 0.86,
+        "density": 0.92,
+        "style": "psytrance",
+        "noteEn": "Full-on",
+        "beatId": "bb-gamma40"
+      }
+    ]
+  },
+  {
+    "id": "journey-nightdive-4",
+    "title": "צלילת לילה — ארבעה סטים",
+    "titleEn": "Night dive — four sets",
+    "days": 4,
+    "purpose": "club",
+    "arc": "descending",
+    "description": "פסיי לשעות שאחרי. טמפו נמוך, בס ארוך, וכמעט בלי לידים — הכול קורה בפילטר. הסולם יורד מ-639Hz ל-174Hz על פני ארבעה לילות, וגל תטא רץ מתחת לכל אחד מהם, כך שהגריד קיים אבל לא דורש כלום.",
+    "descriptionEn": "Psy for the hours after. Low tempo, a long bass and almost no leads — everything happens in the filter. The scale drops from 639Hz to 174Hz across four nights, with theta running under all of them, so the grid is there without asking anything of you.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-639",
+        "durationMin": 60,
+        "note": "הפילטר סגור",
+        "pace": 0.42,
+        "depth": 0.5,
+        "density": 0.44,
+        "style": "psytrance",
+        "noteEn": "The filter is closed",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-528",
+        "durationMin": 65,
+        "note": "הבס מתארך",
+        "pace": 0.38,
+        "depth": 0.6,
+        "density": 0.4,
+        "style": "psytrance",
+        "noteEn": "The bass lengthens",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-417",
+        "durationMin": 70,
+        "note": "כמעט בלי מלודיה",
+        "pace": 0.34,
+        "depth": 0.7,
+        "density": 0.36,
+        "style": "psytrance",
+        "noteEn": "Almost no melody",
+        "beatId": "bb-theta"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-174",
+        "durationMin": 75,
+        "note": "רק הגריד",
+        "pace": 0.3,
+        "depth": 0.8,
+        "density": 0.32,
+        "style": "psytrance",
+        "noteEn": "Only the grid",
+        "beatId": "bb-theta"
+      }
+    ]
+  },
+  {
+    "id": "journey-liquid-5",
+    "title": "אור נוזלי — חמישה סטים",
+    "titleEn": "Liquid light — five sets",
+    "days": 5,
+    "purpose": "club",
+    "arc": "ascending",
+    "description": "הצד המלודי של אותו עולם — גואה יותר מפסיי. טראנס ב-138 פעימות עם ארפג׳ים ארוכים ופדים שנפתחים על פני שמונה תיבות. הסולם עולה מ-396Hz ל-963Hz, וכל סט מוסיף אוקטבה מעל.",
+    "descriptionEn": "The melodic side of the same world — more Goa than psy. Trance at 138 BPM with long arpeggios and pads that open over eight bars. The scale climbs from 396Hz to 963Hz, and every set adds an octave above.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-396",
+        "durationMin": 50,
+        "note": "ארפג׳ נכנס",
+        "pace": 0.5,
+        "depth": 0.3,
+        "density": 0.55,
+        "style": "trance",
+        "noteEn": "The arpeggio comes in",
+        "beatId": "bb-alpha"
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-432",
+        "durationMin": 55,
+        "note": "פד נפתח",
+        "pace": 0.58,
+        "depth": 0.4,
+        "density": 0.62,
+        "style": "trance",
+        "noteEn": "A pad opens",
+        "beatId": "bb-alpha"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 55,
+        "note": "אוקטבה מעל",
+        "pace": 0.66,
+        "depth": 0.52,
+        "density": 0.68,
+        "style": "trance",
+        "noteEn": "An octave above",
+        "beatId": "bb-beta"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-741",
+        "durationMin": 60,
+        "note": "המלודיה מתהפכת",
+        "pace": 0.74,
+        "depth": 0.64,
+        "density": 0.76,
+        "style": "trance",
+        "noteEn": "The melody inverts",
+        "beatId": "bb-beta"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-963",
+        "durationMin": 65,
+        "note": "האור המלא",
+        "pace": 0.82,
+        "depth": 0.76,
+        "density": 0.84,
+        "style": "trance",
+        "noteEn": "The full light",
+        "beatId": "bb-gamma"
+      }
+    ]
   }
 ]

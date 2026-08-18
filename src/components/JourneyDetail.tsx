@@ -12,9 +12,11 @@ import {
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
 import { bandForDay, configForDay } from '../lib/journeyConfig'
-import { hueFill, hueLine, hueText } from '../lib/themes'
+import { hueText } from '../lib/themes'
 import { useJourneys } from '../store/journeyStore'
-import { Card, Screen, TrustBadge } from './ui'
+import { Screen, TrustBadge } from './ui'
+import { ReleaseHeader } from './ReleaseHeader'
+import { coverFor } from '../data/figures'
 
 const MOOD_FACE: Record<number, string> = { 1: '😣', 2: '😕', 3: '😐', 4: '🙂', 5: '😌' }
 
@@ -43,61 +45,85 @@ export function JourneyDetail({ id }: { id: string }) {
   }
 
   return (
-    <Screen title={journeyTitle(journey, lang)} subtitle={journeyDescription(journey, lang)} onBack>
-      {/* Progress header */}
-      <Card glow className="mb-5">
-        <div className="flex items-center gap-4">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="chip">{t(purposeKey(journey.purpose))}</span>
-              {journey.arc && (
-                <span className="chip">
-                  {t(journey.arc === 'ascending' ? 'journey.ascendingMark' : 'journey.descendingMark')}
-                </span>
-              )}
-              <span className="txt-3 text-[11px]">{t('common.daysN', { n: journey.days })}</span>
-            </div>
-            <div className="mt-3 flex items-center gap-2">
-              <div
-                className="meter h-2 flex-1 overflow-hidden rounded-[1px]"
-                style={{ background: 'var(--border)', '--segments': journey.days } as CSSProperties}
-              >
-                <div
-                  className="h-full transition-all duration-500"
-                  style={{
-                    width: `${pct}%`,
-                    background: 'linear-gradient(90deg, hsl(var(--h) 92% 62%), hsl(calc(var(--h) + 40) 90% 60%))',
-                    boxShadow: '0 0 14px var(--glow)',
-                  }}
-                />
-              </div>
-              <span className="txt-2 readout text-xs font-semibold">
-                {done}/{journey.days}
+    <div className="mx-auto w-full max-w-3xl overflow-hidden px-4 pb-40 safe-top">
+      <ReleaseHeader
+        cover={coverFor(journey.id)}
+        eyebrow={t(purposeKey(journey.purpose))}
+        title={journeyTitle(journey, lang)}
+        subtitle={t('journey.byline', { n: journey.days })}
+        meta={
+          <>
+            <span className="chip readout">
+              {done}/{journey.days}
+            </span>
+            {journey.arc && (
+              <span className="chip">
+                {t(journey.arc === 'ascending' ? 'journey.ascendingMark' : 'journey.descendingMark')}
               </span>
-            </div>
-          </div>
-        </div>
-        <button onClick={handleStart} className="btn btn-primary mt-4 w-full">
-          {complete
+            )}
+          </>
+        }
+        primary={{
+          label: complete
             ? t('journey.listenAgain')
             : p
               ? t('journey.continue', { n: p.currentDay })
-              : t('journey.start')}
-        </button>
-        {p && (
-          <button
-            onClick={() => {
-              if (confirm(t('journey.resetConfirm'))) reset(journey.id)
+              : t('journey.start'),
+          onClick: handleStart,
+          icon: (
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <path d="M8 5.5v13a1 1 0 001.5.87l11-6.5a1 1 0 000-1.74l-11-6.5A1 1 0 008 5.5z" />
+            </svg>
+          ),
+        }}
+        secondary={
+          p
+            ? {
+                label: t('journey.reset'),
+                onClick: () => {
+                  if (confirm(t('journey.resetConfirm'))) reset(journey.id)
+                },
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                    <path
+                      d="M4 12a8 8 0 108-8 8 8 0 00-5.7 2.4L4 9"
+                      stroke="currentColor"
+                      strokeWidth="1.9"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path d="M4 4v5h5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ),
+              }
+            : undefined
+        }
+      />
+
+      {/* One line per day, the way a release lists its tracks. */}
+      <p className="txt-2 mt-8 text-[13px] leading-relaxed">{journeyDescription(journey, lang)}</p>
+
+      <div className="mt-4 flex items-center gap-2">
+        <div
+          className="meter h-1.5 flex-1 overflow-hidden rounded-[1px]"
+          style={{ background: 'var(--border)', '--segments': journey.days } as CSSProperties}
+        >
+          <div
+            className="h-full transition-all duration-500"
+            style={{
+              width: `${pct}%`,
+              background: 'linear-gradient(90deg, hsl(var(--h) 92% 62%), hsl(calc(var(--h) + 40) 90% 60%))',
+              boxShadow: '0 0 14px var(--glow)',
             }}
-            className="btn btn-ghost mt-2 w-full text-xs txt-3"
-          >
-            {t('journey.reset')}
-          </button>
-        )}
-      </Card>
+          />
+        </div>
+        <span className="txt-2 readout text-xs font-semibold">
+          {done}/{journey.days}
+        </span>
+      </div>
 
       {/* Day list */}
-      <div className="space-y-2">
+      <div className="mt-4 -mx-1">
         {journey.schedule.map((day) => {
           const freq = getFrequency(day.frequencyId)
           const band = bandForDay(day, journey)
@@ -108,51 +134,48 @@ export function JourneyDetail({ id }: { id: string }) {
           const mood = p?.dailyMood?.[day.day]
 
           return (
-            <Card
+            <button
               key={day.day}
-              glow={isCurrent}
               onClick={() => navigate(`/journey/${journey.id}/day/${day.day}`)}
-              className={isDone ? 'opacity-70' : ''}
+              className={`flex w-full items-center gap-3 rounded-[10px] px-1 py-2.5 text-start transition-colors active:bg-[var(--card)] ${
+                isDone ? 'opacity-55' : ''
+              }`}
             >
-              <div className="flex items-center gap-3">
-                <div
-                  className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-bold"
-                  style={{
-                    background: isDone ? 'var(--accent-soft)' : hueFill(freq?.hue ?? 265, 0.14),
-                    border: `1px solid ${isDone ? 'var(--accent-line)' : hueLine(freq?.hue ?? 265, 0.35)}`,
-                    color: isDone ? 'var(--accent)' : hueText(freq?.hue ?? 265),
-                  }}
-                >
-                  {isDone ? '✓' : <span className="readout">{day.day}</span>}
-                </div>
+              <span
+                className="grid h-10 w-8 shrink-0 place-items-center text-[13px] font-bold"
+                style={{ color: isCurrent ? 'var(--accent)' : hueText(freq?.hue ?? 265) }}
+              >
+                {isDone ? '✓' : <span className="readout">{day.day}</span>}
+              </span>
 
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold">{freq ? freqLabel(freq, lang) : day.frequencyId}</p>
-                    {isCurrent && <span className="chip">{t('journey.today')}</span>}
-                    {mood && <span className="text-sm leading-none">{MOOD_FACE[mood]}</span>}
-                  </div>
-                  <p className="txt-3 mt-0.5 text-[11px]">
-                    <span className="ltr">
-                      <span className="readout">{freq?.hz ? `${freq.hz} Hz` : `${beatHz} Hz`}</span> ·{' '}
-                      <span className="readout">{day.durationMin}</span> {t('common.min')}
-                    </span>{' '}
-                    · {dayNote(day, lang)}
-                    {band && !freq?.range && (
-                      <>
-                        {' '}
-                        · + {shortLabel(band, lang)} <span className="readout">{beatHz} Hz</span>
-                      </>
-                    )}
-                  </p>
-                </div>
+              <span className="min-w-0 flex-1">
+                <span className="flex flex-wrap items-center gap-2">
+                  <span className="truncate text-[14px] font-bold">
+                    {freq ? freqLabel(freq, lang) : day.frequencyId}
+                  </span>
+                  {isCurrent && <span className="chip">{t('journey.today')}</span>}
+                  {mood && <span className="text-sm leading-none">{MOOD_FACE[mood]}</span>}
+                </span>
+                <span className="txt-3 mt-0.5 block truncate text-[11px]">
+                  <span className="ltr">
+                    <span className="readout">{freq?.hz ? `${freq.hz} Hz` : `${beatHz} Hz`}</span> ·{' '}
+                    <span className="readout">{day.durationMin}</span> {t('common.min')}
+                  </span>{' '}
+                  · {dayNote(day, lang)}
+                  {band && !freq?.range && (
+                    <>
+                      {' '}
+                      · + {shortLabel(band, lang)} <span className="readout">{beatHz} Hz</span>
+                    </>
+                  )}
+                </span>
+              </span>
 
-                {freq && <TrustBadge trust={freq.trust} />}
-              </div>
-            </Card>
+              {freq && <TrustBadge trust={freq.trust} />}
+            </button>
           )
         })}
       </div>
-    </Screen>
+    </div>
   )
 }

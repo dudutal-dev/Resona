@@ -56,3 +56,22 @@ export const FIGURES: Figure[] = [
 
 export const figureAt = (index: number): Figure =>
   FIGURES[((index % FIGURES.length) + FIGURES.length) % FIGURES.length]
+
+/**
+ * A cover for anything that needs one — a frequency, a journey, a preset.
+ *
+ * The app has eleven pieces of artwork and no per-item art, which is fine until
+ * the interface starts showing things as releases: a page built around a square
+ * cover looks broken when every square is the same square. Hashing the item's id
+ * gives each one a fixed picture that never changes under it, without anybody
+ * having to assign eleven images to fifty-odd items by hand.
+ *
+ * The scene is excluded — it has no still to show.
+ */
+const COVERS = FIGURES.filter((f): f is Extract<Figure, { kind: 'image' }> => f.kind === 'image')
+
+export function coverFor(id: string): string {
+  let hash = 0
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0
+  return COVERS[hash % COVERS.length].src
+}

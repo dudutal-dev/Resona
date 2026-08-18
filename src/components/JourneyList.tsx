@@ -7,6 +7,7 @@ import { THEME_HUE, hueFill, hueGlow, hueLine, hueText, journeysByTheme, themeBl
 import type { Journey } from '../lib/types'
 import { useJourneys } from '../store/journeyStore'
 import { Card, Screen } from './ui'
+import { coverFor } from '../data/figures'
 
 function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
   const { t, lang } = useT()
@@ -19,15 +20,21 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
   return (
     <Card glow={!!p} onClick={() => navigate(`/journey/${journey.id}`)}>
       <div className="flex items-start gap-4">
-        <div
-          className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl"
-          style={{
-            background: hueFill(hue, 0.16),
-            border: `1px solid ${hueLine(hue, 0.4)}`,
-            color: hueText(hue),
-          }}
-        >
-          <span className="readout text-lg font-bold leading-none">{journey.days}</span>
+        {/* The cover, with the length stamped on it — a badge on artwork is one
+            glance instead of two, and it leaves the row for the words. */}
+        <div className="relative shrink-0">
+          <img
+            src={coverFor(journey.id)}
+            alt=""
+            className="h-16 w-16 rounded-[9px] object-cover"
+            style={{ boxShadow: '0 8px 20px -10px rgba(0,0,0,0.7)' }}
+          />
+          <span
+            className="absolute bottom-1 end-1 rounded-[3px] px-1.5 py-px text-[10px] font-bold leading-tight"
+            style={{ background: 'rgba(0,0,0,0.72)', color: '#fff' }}
+          >
+            <span className="readout">{journey.days}</span>
+          </span>
         </div>
 
         <div className="min-w-0 flex-1">

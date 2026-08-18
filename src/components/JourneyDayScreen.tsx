@@ -15,8 +15,9 @@ import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { useJourneys } from '../store/journeyStore'
 import type { MoodScore } from '../lib/types'
-import { hueFill, hueGlow, hueLine } from '../lib/themes'
-import { Card, Screen, TrustBadge } from './ui'
+import { Screen, TrustBadge } from './ui'
+import { ReleaseHeader } from './ReleaseHeader'
+import { coverFor } from '../data/figures'
 import { MoodPicker } from './MoodPicker'
 import { ListeningMode } from './ListeningMode'
 import { InfoPanel } from './InfoPanel'
@@ -62,79 +63,72 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
   }
 
   return (
-    <Screen title={t('common.dayN', { n: day })} subtitle={journeyTitle(journey, lang)} onBack>
-      <Card glow className="mb-5 text-center">
-        <div
-          className="mx-auto grid h-24 w-24 place-items-center rounded-3xl"
-          style={{
-            background: hueFill(freq?.hue ?? 265, 0.16),
-            border: `1px solid ${hueLine(freq?.hue ?? 265)}`,
-            boxShadow: `0 0 50px ${hueGlow(freq?.hue ?? 265)}`,
-          }}
-        >
-          <div>
-            <div
-              className="readout text-2xl font-bold leading-none"
-              style={{ color: `hsl(${freq?.hue ?? 265} 92% 76%)` }}
-            >
-              {freq?.hz ?? beatHz}
-            </div>
-            <div className="txt-3 readout mt-1 text-[10px] font-semibold">Hz</div>
-          </div>
-        </div>
+    <div className="mx-auto w-full max-w-3xl overflow-hidden px-4 pb-40 safe-top">
+      <ReleaseHeader
+        cover={coverFor(entry.frequencyId)}
+        eyebrow={`${journeyTitle(journey, lang)} · ${t('common.dayN', { n: day })}`}
+        title={freq ? freqLabel(freq, lang) : t('common.dayN', { n: day })}
+        subtitle={dayNote(entry, lang)}
+        meta={
+          <>
+            <span className="chip">
+              <span className="readout">{freq?.hz ?? beatHz}</span> Hz
+            </span>
+            <span className="chip">{`${entry.durationMin} ${t('common.minutes')}`}</span>
+            {freq && <TrustBadge trust={freq.trust} />}
+            {isDone && <span className="chip">{t('common.done')}</span>}
+          </>
+        }
+        primary={{
+          label: isDone ? t('day.again') : t('day.start'),
+          onClick: handleStart,
+          icon: (
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <path d="M8 5.5v13a1 1 0 001.5.87l11-6.5a1 1 0 000-1.74l-11-6.5A1 1 0 008 5.5z" />
+            </svg>
+          ),
+        }}
+        secondary={{
+          label: t('player.credits'),
+          onClick: () => setInfoOpen(true),
+          icon: (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M12 8h.01M11 11h1v5h1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          ),
+        }}
+      />
 
-        <h2 className="mt-4 text-xl font-bold">{freq ? freqLabel(freq, lang) : ''}</h2>
-        <p className="txt-2 mt-1 text-sm">{dayNote(entry, lang)}</p>
+      {band && !bandIsSubject && (
+        <p className="txt-3 mt-8 text-center text-[12px] leading-relaxed">
+          {t('day.supporting')}
+          <span className="font-semibold" style={{ color: 'var(--accent)' }}>
+            {shortLabel(band, lang)}
+          </span>{' '}
+          <span className="readout">({beatHz} Hz)</span>
+          {t('day.supportingTail')}
+        </p>
+      )}
 
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-          <span className="chip">
-            {`${entry.durationMin} ${t('common.minutes')}`}
-          </span>
-          {freq && <TrustBadge trust={freq.trust} />}
-          {isDone && <span className="chip">{t('common.done')}</span>}
-        </div>
-
-        {band && !bandIsSubject && (
-          <p className="txt-3 mt-3 text-[11px] leading-relaxed">
-            {t('day.supporting')}
-            <span className="font-semibold" style={{ color: 'var(--accent)' }}>
-              {shortLabel(band, lang)}
-            </span>{' '}
-            <span className="readout">({beatHz} Hz)</span>
-            {t('day.supportingTail')}
-          </p>
-        )}
-
-        <div className="mt-5 text-start">
-          <ListeningMode compact hasBeatLayer />
-        </div>
-
-        <button onClick={handleStart} className="btn btn-primary mt-4 w-full">
-          {isDone ? t('day.again') : t('day.start')}
-        </button>
-        <button onClick={() => setInfoOpen(true)} className="btn btn-ghost mt-2 w-full text-xs txt-3">
-          {t('day.whatIsClaimed')}
-        </button>
-      </Card>
+      <div className="mt-6">
+        <ListeningMode compact hasBeatLayer />
+      </div>
 
       {freq && (
-        <div className="glass mb-5 rounded-3xl p-4">
+        <div className="glass mt-5 rounded-3xl p-4">
           <p className="txt-2 text-sm leading-relaxed">{freqInfo(freq, lang)}</p>
           <p className="txt-3 mt-2 text-[11px] leading-relaxed">{t(trustNoticeKey(freq.trust))}</p>
         </div>
       )}
 
-      <div className="glass rounded-3xl p-4">
-        <h3 className="mb-1 text-sm font-bold">{t('day.howDidYouFeel')}</h3>
-        <p className="txt-3 mb-3 text-[11px]">
-          {isDone
-            ? t('day.moodDone')
-            : t('day.moodNew')}
-        </p>
+      <div className="glass mt-4 rounded-3xl p-4">
+        <h3 className="rule-label mb-3">{t('day.howDidYouFeel')}</h3>
+        <p className="txt-3 mb-3 text-[11px]">{isDone ? t('day.moodDone') : t('day.moodNew')}</p>
         <MoodPicker value={mood} onPick={handleMood} />
       </div>
 
       <InfoPanel freq={freq ?? null} open={infoOpen} onClose={() => setInfoOpen(false)} />
-    </Screen>
+    </div>
   )
 }

@@ -34,6 +34,16 @@
   --grain: 0.055;
   /* Modals are opaque; see `.sheet-panel`. */
   --sheet-bg: #120a26;
+  /* The floating bars and the two big pills. A transport bar is chrome, not a
+     card: it stays the same near-black in every theme that has a dark ground,
+     and only inverts on daylight. */
+  --bar-bg: rgba(22, 18, 38, 0.86);
+  --bar-line: rgba(255, 255, 255, 0.08);
+  --pill-solid-bg: #ffffff;
+  --pill-solid-fg: #0a0710;
+  --pill-quiet-bg: rgba(255, 255, 255, 0.12);
+  --pill-quiet-fg: var(--txt);
+  --nav-active-bg: rgba(255, 255, 255, 0.12);
   /* Lightness for text set in a frequency's hue — see `hueText`. */
   --tint-s: 90%;
   --tint-l: 74%;
@@ -104,6 +114,13 @@ html.theme-noir {
   --blob-l: 55%;
   --grain: 0.012;
   --sheet-bg: #0b0b0b;
+  --bar-bg: rgba(16, 16, 16, 0.9);
+  --bar-line: rgba(255, 248, 236, 0.09);
+  --pill-solid-bg: #f6f2ea;
+  --pill-solid-fg: #000000;
+  --pill-quiet-bg: rgba(255, 248, 236, 0.09);
+  --pill-quiet-fg: var(--txt);
+  --nav-active-bg: rgba(255, 248, 236, 0.11);
   --tint-s: 45%;
   --tint-l: 70%;
   /* The corner marks are structure, not signal — they stay neutral so the hue
@@ -179,6 +196,14 @@ html.theme-light {
   --blob-l: 85%;
   --grain: 0.01;
   --sheet-bg: #ffffff;
+  --bar-bg: rgba(255, 255, 255, 0.9);
+  --bar-line: rgba(20, 22, 31, 0.1);
+  /* Inverted: a white pill on white is not a button. */
+  --pill-solid-bg: #14161f;
+  --pill-solid-fg: #ffffff;
+  --pill-quiet-bg: rgba(20, 22, 31, 0.07);
+  --pill-quiet-fg: var(--txt);
+  --nav-active-bg: rgba(20, 22, 31, 0.08);
   --tint-s: 85%;
   --tint-l: 38%;
   --trust-l: 34%;
@@ -297,6 +322,54 @@ html.theme-light {
    */
   .sheet-panel {
     background: var(--sheet-bg);
+  }
+
+  /**
+   * The two big actions at the top of a release page.
+   *
+   * One is solid and one is quiet, and that pairing does the whole job: there is
+   * always exactly one obvious thing to press, and the second option is present
+   * without competing. Sized for a thumb reaching up from the bottom of a phone
+   * rather than for a cursor.
+   */
+  .pill {
+    @apply inline-flex h-14 flex-1 items-center justify-center gap-2.5 rounded-[18px] text-[15px] font-bold transition-all active:scale-[0.97];
+  }
+  .pill-solid {
+    background: var(--pill-solid-bg);
+    color: var(--pill-solid-fg);
+  }
+  .pill-quiet {
+    background: var(--pill-quiet-bg);
+    color: var(--pill-quiet-fg);
+  }
+
+  /**
+   * A floating chrome bar — the transport and the navigation.
+   *
+   * Both sit over scrolling content rather than in a fixed strip at the edge, so
+   * they need their own ground; `--bar-bg` is deliberately not `--card`, because
+   * chrome should not re-tint with the frequency the way the content does.
+   */
+  .bar {
+    background: var(--bar-bg);
+    border: 1px solid var(--bar-line);
+    backdrop-filter: blur(26px) saturate(1.4);
+    -webkit-backdrop-filter: blur(26px) saturate(1.4);
+    box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.7);
+  }
+
+  /** Circular translucent control, over artwork rather than over a panel. */
+  .orb-btn {
+    @apply grid h-11 w-11 shrink-0 place-items-center rounded-full transition-all active:scale-95;
+    background: rgba(120, 120, 130, 0.28);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #fff;
+  }
+  html.theme-light .orb-btn {
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--txt);
   }
 
   .txt-2 {

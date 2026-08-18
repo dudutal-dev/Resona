@@ -1,6 +1,4 @@
-import type { CSSProperties } from 'react'
 import {
-  BEAT_FREQUENCIES,
   JOURNEYS,
   ROOT_FREQUENCIES,
   freqLabel,
@@ -10,24 +8,17 @@ import {
 } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
-import { hueFill, hueGlow, hueLine, hueText } from '../lib/themes'
 import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
-import { Card, formatClock } from './ui'
+import { formatClock } from './ui'
+import { Shelf, ShelfCard } from './Shelf'
+import { coverFor } from '../data/figures'
 import { HistoryPanel } from './HistoryPanel'
 
-function ArrowIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden className="flip-ltr shrink-0 txt-3">
-      <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
 export function HomeScreen() {
-  const { t, rich, lang } = useT()
-  const { config, isPlaying, elapsed } = useSession()
+  const { t, lang } = useT()
+  const { config, isPlaying, elapsed, setRoot } = useSession()
   const presets = usePresets((s) => s.presets)
   const progress = useJourneys((s) => s.progress)
 
@@ -46,161 +37,139 @@ export function HomeScreen() {
           ? 'home.greet.afternoon'
           : 'home.greet.evening'
 
+  // Newest first: the club shelf is where new sets land, and a catalogue that
+  // always opens on the same six is a catalogue nobody scrolls twice.
+  const sets = JOURNEYS.filter((j) => j.purpose === 'club').reverse().slice(0, 12)
+  const trips = JOURNEYS.filter((j) => j.purpose === 'psychedelic').slice(0, 10)
+  const starters = JOURNEYS.filter(
+    (j) => j.days <= 5 && j.purpose !== 'club' && j.purpose !== 'psychedelic',
+  ).slice(0, 10)
+
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pb-28 safe-top">
-      <header className="pb-7 pt-6">
-        <p className="txt-3 text-sm font-medium">{t(greeting)}</p>
-        <h1 className="glow-text mt-1 text-4xl font-bold tracking-tight sm:text-5xl">Resona</h1>
-        <p className="txt-2 mt-2 max-w-md text-sm leading-relaxed">
-          {rich('home.tagline')}
-        </p>
+    <div className="mx-auto w-full max-w-3xl px-4 pb-40 safe-top">
+      <header className="pb-5 pt-4">
+        <p className="txt-3 text-[13px] font-semibold">{t(greeting)}</p>
+        <h1 className="glow-text mt-1 text-[32px] font-extrabold tracking-tight">Resona</h1>
       </header>
 
-      {/* Continue listening */}
-      <Card glow onClick={() => navigate('/player')} className="brackets mb-4">
-        <div className="flex items-center gap-4">
-          <div
-            className="relative grid h-16 w-16 shrink-0 place-items-center rounded-2xl"
-            style={{
-              background: hueFill(root?.hue ?? 265),
-              border: `1px solid ${hueLine(root?.hue ?? 265)}`,
-              boxShadow: `0 0 32px ${hueGlow(root?.hue ?? 265)}`,
-            }}
-          >
-            {isPlaying && (
-              <span
-                className="absolute inset-0 animate-pulse-ring rounded-2xl"
-                style={{ border: '1.5px solid hsl(var(--h) 95% 70% / 0.5)' }}
-                aria-hidden
-              />
-            )}
-            <span className="readout text-sm font-bold" style={{ color: hueText(root?.hue ?? 265) }}>
-              {root?.hz}
-            </span>
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="rule-label">{t(isPlaying ? 'home.nowPlaying' : 'home.continue')}</p>
-            <p className="mt-0.5 truncate text-lg font-bold">{root ? freqLabel(root, lang) : ''}</p>
-            <p className="txt-2 readout mt-0.5 text-xs">
-              {isPlaying ? formatClock(elapsed) : `${root?.hz} Hz`}
-            </p>
-          </div>
-          <ArrowIcon />
-        </div>
-      </Card>
+      {/* Continue listening — the one row that is about what you were doing
+          rather than about what there is. */}
+      <button
+        onClick={() => navigate('/player')}
+        className="bar flex w-full items-center gap-3 rounded-[14px] p-2.5 text-start transition-transform active:scale-[0.99]"
+      >
+        <img
+          src={coverFor(config.rootId)}
+          alt=""
+          className="h-14 w-14 shrink-0 rounded-[8px] object-cover"
+          style={{ boxShadow: '0 8px 18px -8px rgba(0,0,0,0.7)' }}
+        />
+        <span className="min-w-0 flex-1">
+          <span className="txt-3 block text-[10px] font-bold uppercase" style={{ letterSpacing: '0.14em' }}>
+            {t(isPlaying ? 'home.nowPlaying' : 'home.continue')}
+          </span>
+          <span className="mt-0.5 block truncate text-[15px] font-bold">
+            {root ? freqLabel(root, lang) : ''}
+          </span>
+          <span className="txt-3 readout block text-[11px]">
+            {isPlaying ? formatClock(elapsed) : `${root?.hz} Hz`}
+          </span>
+        </span>
+        <span
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-full"
+          style={{ background: 'var(--pill-solid-bg)', color: 'var(--pill-solid-fg)' }}
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M8 5.5v13a1 1 0 001.5.87l11-6.5a1 1 0 000-1.74l-11-6.5A1 1 0 008 5.5z" />
+          </svg>
+        </span>
+      </button>
 
       {/* Journey in progress */}
       {inProgress.length > 0 && (
-        <div className="mb-4 space-y-2">
-          {inProgress.map(({ p, journey }) => {
-            const pct = Math.round((p.completedDays.length / journey!.days) * 100)
-            return (
-              <Card key={p.journeyId} onClick={() => navigate(`/journey/${p.journeyId}`)}>
-                <div className="flex items-center gap-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="rule-label">{t('home.activeJourney')}</p>
-                    <p className="mt-0.5 truncate text-base font-bold">{journeyTitle(journey!, lang)}</p>
-                    <div className="mt-2 flex items-center gap-2">
-                      <div
-                        className="meter h-1.5 flex-1 overflow-hidden rounded-[1px]"
-                        style={
-                          { background: 'var(--border)', '--segments': journey!.days } as CSSProperties
-                        }
-                      >
-                        <div
-                          className="h-full transition-all duration-500"
-                          style={{
-                            width: `${pct}%`,
-                            background: 'linear-gradient(90deg, hsl(var(--h) 92% 62%), hsl(calc(var(--h) + 40) 90% 60%))',
-                            boxShadow: '0 0 12px var(--glow)',
-                          }}
-                        />
-                      </div>
-                      <span className="txt-3 readout text-[11px]">
-                        {p.completedDays.length}/{journey!.days}
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowIcon />
-                </div>
-              </Card>
-            )
-          })}
-        </div>
+        <Shelf title={t('home.activeJourney')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')}>
+          {inProgress.map(({ p, journey }) => (
+            <ShelfCard
+              key={p.journeyId}
+              cover={coverFor(p.journeyId)}
+              title={journeyTitle(journey!, lang)}
+              subtitle={`${p.completedDays.length}/${journey!.days}`}
+              onClick={() => navigate(`/journey/${p.journeyId}`)}
+            />
+          ))}
+        </Shelf>
       )}
 
-      {/* Quick tiles */}
-      <div className="grid grid-cols-2 gap-3">
-        <Card onClick={() => navigate('/journeys')} className="!p-5">
-          <div
-            className="mb-3 grid h-11 w-11 place-items-center rounded-2xl"
-            style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-line)' }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--accent)' }} aria-hidden>
-              <path d="M4 6h16M4 12h10M4 18h13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              <circle cx="18.5" cy="12" r="2" stroke="currentColor" strokeWidth="2" />
-            </svg>
-          </div>
-          <p className="text-base font-bold">{t('home.myJourneys')}</p>
-          <p className="txt-3 mt-0.5 text-xs">{t('home.journeyCount', { n: JOURNEYS.length })}</p>
-        </Card>
+      <Shelf title={t('home.shelfSessions')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')}>
+        {sets.map((j) => (
+          <ShelfCard
+            key={j.id}
+            cover={coverFor(j.id)}
+            title={journeyTitle(j, lang)}
+            subtitle={t('common.daysN', { n: j.days })}
+            onClick={() => navigate(`/journey/${j.id}`)}
+          />
+        ))}
+      </Shelf>
 
-        <Card onClick={() => navigate('/presets')} className="!p-5">
-          <div
-            className="mb-3 grid h-11 w-11 place-items-center rounded-2xl"
-            style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-line)' }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--accent)' }} aria-hidden>
-              <path d="M5 4v16M12 4v16M19 4v16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              <circle cx="5" cy="9" r="2.2" fill="currentColor" />
-              <circle cx="12" cy="15" r="2.2" fill="currentColor" />
-              <circle cx="19" cy="8" r="2.2" fill="currentColor" />
-            </svg>
-          </div>
-          <p className="text-base font-bold">{t('home.myPresets')}</p>
-          <p className="txt-3 mt-0.5 text-xs">
-            {presets.length ? t('home.presetCount', { n: presets.length }) : t('home.noPresets')}
-          </p>
-        </Card>
+      <Shelf title={t('home.shelfTrips')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')}>
+        {trips.map((j) => (
+          <ShelfCard
+            key={j.id}
+            cover={coverFor(j.id)}
+            title={journeyTitle(j, lang)}
+            subtitle={t('common.daysN', { n: j.days })}
+            onClick={() => navigate(`/journey/${j.id}`)}
+          />
+        ))}
+      </Shelf>
 
-        <Card onClick={() => navigate('/frequencies')} className="col-span-2 !p-5">
-          <div className="flex items-center gap-4">
-            <div
-              className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl"
-              style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-line)' }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--accent)' }} aria-hidden>
-                <path
-                  d="M3 12h2l2-7 3 14 3-17 3 13 2-3h3"
-                  stroke="currentColor"
-                  strokeWidth="1.9"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-base font-bold">{t('home.browse')}</p>
-              <p className="txt-3 mt-0.5 text-xs">
-                {rich('home.browseSub', {
-                  roots: ROOT_FREQUENCIES.length,
-                  bands: BEAT_FREQUENCIES.length,
-                })}
-              </p>
-            </div>
-            <ArrowIcon />
-          </div>
-        </Card>
-      </div>
+      <Shelf title={t('home.shelfStarters')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')}>
+        {starters.map((j) => (
+          <ShelfCard
+            key={j.id}
+            cover={coverFor(j.id)}
+            title={journeyTitle(j, lang)}
+            subtitle={t('common.daysN', { n: j.days })}
+            onClick={() => navigate(`/journey/${j.id}`)}
+          />
+        ))}
+      </Shelf>
 
-      {/* Below the ways in, because it is a record rather than a destination. */}
-      <div className="mt-4">
+      <Shelf title={t('home.shelfRoots')} onAll={() => navigate('/frequencies')} allLabel={t('home.seeAll')}>
+        {ROOT_FREQUENCIES.slice(0, 12).map((f) => (
+          <ShelfCard
+            key={f.id}
+            cover={coverFor(f.id)}
+            title={freqLabel(f, lang)}
+            subtitle={`${f.hz} Hz`}
+            onClick={() => {
+              setRoot(f.id)
+              navigate('/player')
+            }}
+          />
+        ))}
+      </Shelf>
+
+      {presets.length > 0 && (
+        <Shelf title={t('home.myPresets')} onAll={() => navigate('/presets')} allLabel={t('home.seeAll')}>
+          {presets.slice(0, 10).map((preset) => (
+            <ShelfCard
+              key={preset.id}
+              cover={coverFor(preset.id)}
+              title={preset.name}
+              onClick={() => navigate('/presets')}
+            />
+          ))}
+        </Shelf>
+      )}
+
+      {/* Below the shelves, because it is a record rather than a destination. */}
+      <div className="mt-8">
         <HistoryPanel />
       </div>
 
-      <p className="txt-3 mt-6 px-1 text-[11px] leading-relaxed">
-        {t('home.disclaimer')}
-      </p>
+      <p className="txt-3 mt-6 px-1 text-[11px] leading-relaxed">{t('home.disclaimer')}</p>
     </div>
   )
 }

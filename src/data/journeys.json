@@ -2755,5 +2755,101 @@
         "beatId": "bb-gamma"
       }
     ]
+  },
+  {
+    "id": "journey-innerspace-7",
+    "title": "מרחב פנימי — שבעה מרכזים",
+    "titleEn": "Inner space — seven centres",
+    "days": 7,
+    "purpose": "spiritual",
+    "arc": "ascending",
+    "description": "לא שיעור ולא תרגול — יצירה אחת ארוכה בכל ערב, 34 דקות, באורך של צד מתקליט. הצפיפות נמוכה מכל מסע אחר כאן: תו אחד מחזיק, נפתח, ותו שני נכנס רק אחרי שהראשון כמעט נגמר. הסולם עולה דרך שבעת המרכזים מ-396Hz לשורש ועד 963Hz לכתר, והעומק עולה איתו — עד שבערב השביעי המלודיה כבר מחוץ לסולם המוכר, על הסדרה ההרמונית העליונה. מתחת רץ תטא שיורד לילה אחרי לילה, ומתחלף לאלפא ולגמא בשני הערבים האחרונים.",
+    "descriptionEn": "Not a lesson and not a practice — one long piece each evening, 34 minutes, the length of a side. The density is lower than anything else here: a tone holds, opens, and the next one arrives only once the first has nearly gone. The scale climbs through the seven centres from 396Hz at the root to 963Hz at the crown, and the depth climbs with it — by the seventh evening the melody is off the familiar scale altogether, up on the higher harmonic series. Theta runs underneath and descends night after night, giving way to alpha and gamma for the last two.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-396",
+        "durationMin": 34,
+        "note": "מולאדהרה — השורש",
+        "pace": 0.06,
+        "depth": 0.2,
+        "density": 0.14,
+        "beatId": "bb-theta",
+        "noteEn": "Muladhara — the root",
+        "beatHz": 7.0
+      },
+      {
+        "day": 2,
+        "frequencyId": "sol-417",
+        "durationMin": 34,
+        "note": "סוואדהישטהאנה — המים",
+        "pace": 0.07,
+        "depth": 0.3,
+        "density": 0.17,
+        "beatId": "bb-theta",
+        "noteEn": "Svadhisthana — water",
+        "beatHz": 6.4
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 34,
+        "note": "מאניפורה — האש",
+        "pace": 0.08,
+        "depth": 0.42,
+        "density": 0.2,
+        "beatId": "bb-theta",
+        "noteEn": "Manipura — fire",
+        "beatHz": 5.8
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-639",
+        "durationMin": 34,
+        "note": "אנאהטה — הלב",
+        "pace": 0.1,
+        "depth": 0.54,
+        "density": 0.23,
+        "beatId": "bb-theta",
+        "noteEn": "Anahata — the heart",
+        "beatHz": 5.2
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-741",
+        "durationMin": 34,
+        "note": "וישודהה — הגרון",
+        "pace": 0.11,
+        "depth": 0.66,
+        "density": 0.26,
+        "beatId": "bb-theta",
+        "noteEn": "Vishuddha — the throat",
+        "beatHz": 4.6
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-852",
+        "durationMin": 34,
+        "note": "אג׳נה — העין השלישית",
+        "pace": 0.13,
+        "depth": 0.78,
+        "density": 0.28,
+        "beatId": "bb-alpha",
+        "noteEn": "Ajna — the third eye",
+        "beatHz": 9.5
+      },
+      {
+        "day": 7,
+        "frequencyId": "sol-963",
+        "durationMin": 34,
+        "note": "סהסרארה — הכתר",
+        "pace": 0.14,
+        "depth": 0.9,
+        "density": 0.3,
+        "beatId": "bb-gamma40",
+        "noteEn": "Sahasrara — the crown",
+        "beatHz": 40.0
+      }
+    ]
   }
 ]

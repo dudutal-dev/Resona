@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 import { freqLabel, getFrequency, getJourney, journeyTitle, shortLabel } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { useHistory } from '../store/historyStore'
-import { Card } from './ui'
 
 /** Whole days between a past moment and now, in the device's own timezone. */
 function daysAgo(at: number): number {
@@ -26,17 +25,17 @@ export function HistoryPanel() {
 
   if (!listens.length) {
     return (
-      <Card>
-        <h2 className="rule-label">{t('history.title')}</h2>
+      <section>
+        <h2 className="text-[15px] font-extrabold tracking-tight">{t('history.title')}</h2>
         <p className="txt-3 mt-2 text-[12px] leading-relaxed">{t('history.empty')}</p>
-      </Card>
+      </section>
     )
   }
 
   return (
-    <Card>
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="rule-label">{t('history.title')}</h2>
+    <section>
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 className="text-[15px] font-extrabold tracking-tight">{t('history.title')}</h2>
         <button onClick={clear} className="txt-3 text-[11px] underline underline-offset-2">
           {t('history.clear')}
         </button>
@@ -80,6 +79,6 @@ export function HistoryPanel() {
           )
         })}
       </ul>
-    </Card>
+    </section>
   )
 }

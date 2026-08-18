@@ -44,7 +44,7 @@ export function PresetList() {
           title={t('presets.emptyTitle')}
           body={t('presets.emptyBody')}
           action={
-            <button onClick={() => navigate('/player')} className="btn btn-primary">
+            <button onClick={() => navigate('/player')} className="pill pill-solid flex-none px-6">
               {t('presets.toPlayer')}
             </button>
           }
@@ -135,7 +135,7 @@ export function PresetList() {
             if (editing) rename(editing.id, name)
             setEditing(null)
           }}
-          className="btn btn-primary mt-4 w-full"
+          className="pill pill-solid mt-4 w-full"
         >
           {t('presets.saveName')}
         </button>
@@ -144,7 +144,7 @@ export function PresetList() {
             if (editing) update(editing.id, config)
             setEditing(null)
           }}
-          className="btn mt-2 w-full text-xs"
+          className="pill pill-quiet mt-2 w-full text-[13px]"
         >
           {t('presets.updateToCurrent')}
         </button>

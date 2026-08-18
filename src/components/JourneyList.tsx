@@ -3,10 +3,10 @@ import { useState } from 'react'
 import { freqLabel, getFrequency, journeyDescription, journeyTitle, purposeKey } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
-import { THEME_HUE, hueFill, hueGlow, hueLine, hueText, journeysByTheme, themeBlurbKey, themeKey, type JourneyTheme } from '../lib/themes'
+import { THEME_HUE, hueFill, hueGlow, hueText, journeysByTheme, themeBlurbKey, themeKey, type JourneyTheme } from '../lib/themes'
 import type { Journey } from '../lib/types'
 import { useJourneys } from '../store/journeyStore'
-import { Card, Screen } from './ui'
+import { Screen } from './ui'
 import { journeyCover } from '../lib/cover'
 
 function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
@@ -18,79 +18,82 @@ function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
   const complete = done >= journey.days
 
   return (
-    <Card glow={!!p} onClick={() => navigate(`/journey/${journey.id}`)}>
-      <div className="flex items-start gap-4">
-        {/* The cover, with the length stamped on it — a badge on artwork is one
-            glance instead of two, and it leaves the row for the words. */}
-        <div className="relative shrink-0">
-          <img
-            src={journeyCover(journey)}
-            alt=""
-            className="h-16 w-16 rounded-[9px] object-cover"
-            style={{ boxShadow: '0 8px 20px -10px rgba(0,0,0,0.7)' }}
-          />
+    <button
+      onClick={() => navigate(`/journey/${journey.id}`)}
+      className="flex w-full items-start gap-3 rounded-[12px] p-2 text-start transition-colors duration-200"
+    >
+      {/* The cover, with the length stamped on it — a badge on artwork is one
+          glance instead of two, and it leaves the row for the words. */}
+      <span className="relative shrink-0">
+        <img
+          src={journeyCover(journey)}
+          alt=""
+          className="h-16 w-16 rounded-[9px] object-cover"
+          style={{ boxShadow: '0 8px 20px -10px rgba(0,0,0,0.7)' }}
+        />
+        <span
+          className="absolute bottom-1 end-1 rounded-full px-1.5 py-px text-[10px] font-bold leading-tight"
+          style={{ background: 'rgba(0,0,0,0.72)', color: '#fff' }}
+        >
+          <span className="readout">{journey.days}</span>
+        </span>
+      </span>
+
+      <span className="min-w-0 flex-1">
+        <span className="flex flex-wrap items-center gap-2">
+          <span className="text-[15px] font-bold">{journeyTitle(journey, lang)}</span>
           <span
-            className="absolute bottom-1 end-1 rounded-[3px] px-1.5 py-px text-[10px] font-bold leading-tight"
-            style={{ background: 'rgba(0,0,0,0.72)', color: '#fff' }}
+            className="rounded-full px-2 py-[3px] text-[10px] font-semibold leading-none"
+            style={{ background: hueFill(hue, 0.16), color: hueText(hue) }}
           >
-            <span className="readout">{journey.days}</span>
+            {t(purposeKey(journey.purpose))}
           </span>
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-base font-bold">{journeyTitle(journey, lang)}</h3>
+          {journey.arc && (
             <span
-              className="rounded-[3px] px-2 py-0.5 text-[10px] font-semibold"
-              style={{
-                background: hueFill(hue, 0.14),
-                color: hueText(hue),
-                border: `1px solid ${hueLine(hue, 0.32)}`,
-              }}
+              className="txt-3 text-[10px]"
+              title={t(journey.arc === 'ascending' ? 'journeys.ascending' : 'journeys.descending')}
             >
-              {t(purposeKey(journey.purpose))}
+              {journey.arc === 'ascending' ? '↑' : '↓'}
             </span>
-            {journey.arc && (
-              <span className="txt-3 text-[10px]" title={t(journey.arc === 'ascending' ? 'journeys.ascending' : 'journeys.descending')}>
-                {journey.arc === 'ascending' ? '↑' : '↓'}
-              </span>
-            )}
-            {complete && <span className="chip">{t('common.done')}</span>}
-          </div>
-          <p className="txt-2 mt-1 text-xs leading-relaxed">{journeyDescription(journey, lang)}</p>
-
-          {p ? (
-            <div className="mt-3 flex items-center gap-2">
-              <div
-                className="meter h-1.5 flex-1 overflow-hidden rounded-[1px]"
-                style={{ background: 'var(--border)', '--segments': journey.days } as CSSProperties}
-              >
-                <div
-                  className="h-full transition-all duration-500"
-                  style={{
-                    width: `${pct}%`,
-                    background: `linear-gradient(90deg, hsl(${hue} 92% 62%), hsl(${hue + 40} 90% 62%))`,
-                    boxShadow: `0 0 12px ${hueGlow(hue, 0.5)}`,
-                  }}
-                />
-              </div>
-              <span className="txt-3 readout text-[11px]">
-                {done}/{journey.days}
-              </span>
-            </div>
-          ) : (
-            <p className="txt-3 mt-2 text-[11px]">
-              {t('journeys.startsWith')}
-              {(() => {
-                const first = getFrequency(journey.schedule[0].frequencyId)
-                return first ? freqLabel(first, lang) : '—'
-              })()}{' '}
-              · <span className="readout">{journey.schedule[0].durationMin}</span> {t('common.min')}
-            </p>
           )}
-        </div>
-      </div>
-    </Card>
+          {complete && <span className="chip">{t('common.done')}</span>}
+        </span>
+
+        <span className="txt-2 mt-1 block text-[12px] leading-relaxed">
+          {journeyDescription(journey, lang)}
+        </span>
+
+        {p ? (
+          <span className="mt-2 flex items-center gap-2">
+            <span
+              className="meter h-1.5 flex-1 overflow-hidden rounded-[1px]"
+              style={{ background: 'var(--border)', '--segments': journey.days } as CSSProperties}
+            >
+              <span
+                className="block h-full transition-all duration-500"
+                style={{
+                  width: `${pct}%`,
+                  background: `linear-gradient(90deg, hsl(${hue} 92% 62%), hsl(${hue + 40} 90% 62%))`,
+                  boxShadow: `0 0 12px ${hueGlow(hue, 0.5)}`,
+                }}
+              />
+            </span>
+            <span className="txt-3 readout text-[11px]">
+              {done}/{journey.days}
+            </span>
+          </span>
+        ) : (
+          <span className="txt-3 mt-1.5 block text-[11px]">
+            {t('journeys.startsWith')}
+            {(() => {
+              const first = getFrequency(journey.schedule[0].frequencyId)
+              return first ? freqLabel(first, lang) : '—'
+            })()}{' '}
+            · <span className="readout">{journey.schedule[0].durationMin}</span> {t('common.min')}
+          </span>
+        )}
+      </span>
+    </button>
   )
 }
 
@@ -116,20 +119,13 @@ export function JourneyList() {
               key={g.theme}
               onClick={() => setFilter(g.theme)}
               aria-pressed={active}
-              className="shrink-0 rounded-[4px] px-4 py-2 text-xs font-semibold transition-all active:scale-95"
+              className="shrink-0 rounded-full px-4 py-2.5 text-[13px] font-bold leading-none transition-all active:scale-95"
               style={{
                 background: active
                   ? hue === null
                     ? 'var(--accent-soft)'
-                    : hueFill(hue)
-                  : 'var(--card)',
-                border: `1px solid ${
-                  active
-                    ? hue === null
-                      ? 'var(--accent-line)'
-                      : hueLine(hue)
-                    : 'var(--border)'
-                }`,
+                    : hueFill(hue, 0.16)
+                  : 'var(--pill-quiet-bg)',
                 color: active
                   ? hue === null
                     ? 'var(--accent)'
@@ -158,7 +154,7 @@ export function JourneyList() {
               <h2 className="text-sm font-bold">{t(themeKey(group.theme))}</h2>
               <span className="txt-3 truncate text-[11px]">{t(themeBlurbKey(group.theme))}</span>
             </div>
-            <div className="space-y-2">
+            <div className="-mx-1">
               {group.journeys.map((journey) => (
                 <JourneyCard key={journey.id} journey={journey} hue={THEME_HUE[group.theme]} />
               ))}

@@ -18,7 +18,7 @@ export function FrequenciesScreen() {
       subtitle={t('freq.subtitle')}
       onBack
       action={
-        <button onClick={() => navigate('/player')} className="btn btn-primary h-10 rounded-2xl px-4 text-xs">
+        <button onClick={() => navigate('/player')} className="pill pill-solid h-10 flex-none px-5 text-[13px]">
           {t('freq.play')}
         </button>
       }

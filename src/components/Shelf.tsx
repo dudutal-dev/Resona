@@ -52,7 +52,7 @@ export function ShelfCard({
   badge?: ReactNode
 }) {
   return (
-    <button onClick={onClick} className="w-[8.5rem] shrink-0 text-start transition-transform active:scale-95">
+    <button onClick={onClick} className="w-[7.1rem] shrink-0 text-start transition-transform active:scale-95">
       <span className="relative block">
         <img
           src={cover}
@@ -62,8 +62,8 @@ export function ShelfCard({
         />
         {badge && <span className="absolute bottom-1.5 end-1.5">{badge}</span>}
       </span>
-      <span className="mt-2 block truncate text-[13px] font-bold leading-tight">{title}</span>
-      {subtitle && <span className="txt-3 mt-0.5 block truncate text-[11px]">{subtitle}</span>}
+      <span className="mt-2 block truncate text-[12px] font-bold leading-tight">{title}</span>
+      {subtitle && <span className="txt-3 mt-0.5 block truncate text-[10px]">{subtitle}</span>}
     </button>
   )
 }

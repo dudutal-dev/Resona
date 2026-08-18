@@ -61,7 +61,7 @@ export function HomeScreen() {
         <img
           src={coverForRoot(config.rootId)}
           alt=""
-          className="h-14 w-14 shrink-0 rounded-[8px] object-cover"
+          className="h-12 w-12 shrink-0 rounded-[7px] object-cover"
           style={{ boxShadow: '0 8px 18px -8px rgba(0,0,0,0.7)' }}
         />
         <span className="min-w-0 flex-1">

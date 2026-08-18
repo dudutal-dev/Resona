@@ -82,6 +82,36 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 12 * 1024 * 1024,
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
+        /**
+         * Video is the one thing here that is NOT precached, and the extension
+         * list above leaves it out on purpose.
+         *
+         * The turntables are three and a half megabytes across two figures and
+         * two containers — more than the rest of the app put together, and most
+         * of it is a container the browser will never choose. Precaching them
+         * would make every install pay for footage it may never open, which is
+         * the opposite of the argument for precaching the 3D model: that is one
+         * file, 250KB, and the only alternative for the figure that needs it.
+         *
+         * So they are cached on first use instead. Open a turntable once and it
+         * is offline from then on, and a browser only ever stores the source it
+         * actually picked.
+         */
+        runtimeCaching: [
+          {
+            urlPattern: /\.(?:mp4|webm)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'resona-turntables',
+              expiration: { maxEntries: 12 },
+              // Range requests are how a video element asks for a file it can
+              // start playing before it has all of; without this the cache
+              // cannot answer them and playback falls back to the network.
+              rangeRequests: true,
+              cacheableResponse: { statuses: [0, 200, 206] },
+            },
+          },
+        ],
       },
       devOptions: { enabled: false },
       }),

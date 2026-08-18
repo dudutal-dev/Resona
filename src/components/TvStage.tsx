@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { mediaRoute } from '../audio/MediaRoute'
 import { FIGURES, figureAt } from '../data/figures'
+import { TurntableField } from './TurntableField'
 import { freqLabel, getFrequency, getJourney, journeyTitle, shortLabel } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import { useSession } from '../store/sessionStore'
@@ -105,7 +106,9 @@ export function TvStage({ onClose }: { onClose: () => void }) {
       onClick={() => setChromeVisible(true)}
     >
       {/* The picture is the whole screen: mirroring sends exactly this. */}
-      {figure.kind === 'image' ? (
+      {figure.kind === 'turntable' ? (
+        <TurntableField sources={figure.sources} playing={isPlaying} className="absolute inset-0" />
+      ) : figure.kind === 'image' ? (
         <FigureField src={figure.src} playing={isPlaying} scale={1.6} className="absolute inset-0" />
       ) : (
         <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
@@ -249,6 +252,17 @@ export function TvStage({ onClose }: { onClose: () => void }) {
                         src={entry.src}
                         alt=""
                         loading="lazy"
+                        className="h-full w-full object-cover opacity-90"
+                      />
+                    ) : entry.kind === 'turntable' ? (
+                      // A muted, preload-none video shows its poster frame and
+                      // costs nothing until it is chosen — which is the whole
+                      // point of not precaching these.
+                      <video
+                        src={entry.sources[entry.sources.length - 1].src}
+                        muted
+                        playsInline
+                        preload="metadata"
                         className="h-full w-full object-cover opacity-90"
                       />
                     ) : (

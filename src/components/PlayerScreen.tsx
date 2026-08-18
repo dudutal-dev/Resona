@@ -128,6 +128,24 @@ export function PlayerScreen() {
     <div className="mx-auto w-full max-w-3xl overflow-hidden px-4 pb-40 safe-top">
       <ReleaseHeader
         cover={cover}
+        art={
+          isPlaying ? (
+            <div
+              className="h-full w-full transition-opacity duration-[2500ms]"
+              style={{ opacity: dimmed ? 0.12 : isFading ? 0.45 : 1 }}
+            >
+              <Visualizer playing>
+                <div>
+                  <div className="readout glow-text text-4xl font-bold tracking-tight">
+                    {root?.hz ?? '—'}
+                  </div>
+                  <div className="txt-3 readout -mt-0.5 text-xs font-medium">Hz</div>
+                  <div className="readout mt-2 text-[11px] txt-3">{formatClock(elapsed)}</div>
+                </div>
+              </Visualizer>
+            </div>
+          ) : undefined
+        }
         eyebrow={journey ? t('common.dayN', { n: activeJourney?.day ?? 0 }) : undefined}
         title={journey ? journeyTitle(journey, lang) : root ? freqLabel(root, lang) : 'Resona'}
         subtitle={
@@ -234,29 +252,6 @@ export function PlayerScreen() {
           },
         ]}
       />
-
-      {/*
-        The orb is what a session looks like, so it appears when there is one and
-        not before. Idle, this page is about the thing you are choosing; playing,
-        it is about the thing you are hearing — and the reading slides in under
-        the cover rather than replacing it.
-      */}
-      {isPlaying && (
-        <div
-          className="animate-fade-up mt-8 transition-opacity duration-[2500ms]"
-          style={{ opacity: dimmed ? 0.12 : isFading ? 0.45 : 1 }}
-        >
-          <Visualizer playing={isPlaying}>
-            <div>
-              <div className="readout glow-text text-5xl font-bold tracking-tight sm:text-6xl">
-                {root?.hz ?? '—'}
-              </div>
-              <div className="txt-3 readout -mt-1 text-sm font-medium">Hz</div>
-              <div className="readout mt-3 text-xs txt-3">{formatClock(elapsed)}</div>
-            </div>
-          </Visualizer>
-        </div>
-      )}
 
       {/* What the two layers are doing to each other. */}
       <CarrierNote />

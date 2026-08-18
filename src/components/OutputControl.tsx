@@ -16,6 +16,13 @@ const CastIcon = () => (
   </svg>
 )
 
+const BackgroundIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <rect x="2.5" y="6" width="13" height="12" rx="2" stroke="currentColor" strokeWidth="1.7" />
+    <path d="M18 9v6M21 7.5v9" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+  </svg>
+)
+
 const ScreenIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
     <rect x="6" y="2.5" width="12" height="19" rx="2.5" stroke="currentColor" strokeWidth="1.7" />
@@ -26,7 +33,7 @@ const ScreenIcon = () => (
 /** Playback destination and screen behaviour. */
 export function OutputControl() {
   const { t, rich } = useT()
-  const { keepScreenAwake, setKeepScreenAwake } = useSettings()
+  const { keepScreenAwake, setKeepScreenAwake, backgroundAudio, setBackgroundAudio } = useSettings()
   const isPlaying = useSession((s) => s.isPlaying)
   /** null = not attempted yet, false = asked for and refused. */
   const [wakeHeld, setWakeHeld] = useState<boolean | null>(null)
@@ -107,6 +114,37 @@ export function OutputControl() {
           {rich('output.noPicker')}
         </p>
       )}
+
+      <div className="mt-4 border-t pt-4" style={{ borderColor: 'var(--border)' }}>
+        <button
+          onClick={() => setBackgroundAudio(!backgroundAudio)}
+          role="switch"
+          aria-checked={backgroundAudio}
+          className="flex w-full items-center gap-3 text-start"
+        >
+          <span className="txt-3 shrink-0">
+            <BackgroundIcon />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-semibold">{t('output.background')}</span>
+            <span className="txt-3 mt-0.5 block text-[11px] leading-relaxed">
+              {t(isPlaying ? 'output.backgroundLater' : 'output.backgroundNote')}
+            </span>
+          </span>
+          <span
+            className="relative h-7 w-12 shrink-0 rounded-full transition-colors duration-200"
+            style={{
+              background: backgroundAudio ? 'hsl(var(--h) 92% 62%)' : 'var(--border)',
+              boxShadow: backgroundAudio ? '0 0 18px var(--glow)' : undefined,
+            }}
+          >
+            <span
+              className="absolute top-1 h-5 w-5 rounded-full bg-white transition-all duration-200"
+              style={{ right: backgroundAudio ? '0.25rem' : '1.75rem' }}
+            />
+          </span>
+        </button>
+      </div>
 
       <div className="mt-4 border-t pt-4" style={{ borderColor: 'var(--border)' }}>
         <button

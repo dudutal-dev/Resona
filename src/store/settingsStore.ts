@@ -22,6 +22,13 @@ type Settings = {
   headphoneNoticeSeen: boolean
   /** Holds a screen wake lock while a session plays. */
   keepScreenAwake: boolean
+  /**
+   * Routes the live mix through the system's media player rather than straight
+   * to the speakers, which is the only thing that gives a session a chance of
+   * surviving a switch to another app. On by default; it falls back on its own
+   * if the route does not carry audio.
+   */
+  backgroundAudio: boolean
   /** Which artwork the television stage shows. Index into `FIGURES`. */
   figure: number
 }
@@ -32,6 +39,7 @@ type SettingsState = Settings & {
   toggleTheme: () => void
   setReducedMotion: (v: boolean) => void
   setKeepScreenAwake: (v: boolean) => void
+  setBackgroundAudio: (v: boolean) => void
   setFigure: (index: number) => void
   dismissHeadphoneNotice: () => void
   resetAllData: () => void
@@ -43,6 +51,7 @@ const DEFAULTS: Settings = {
   reducedMotion: false,
   headphoneNoticeSeen: false,
   keepScreenAwake: false,
+  backgroundAudio: true,
   figure: 0,
 }
 
@@ -86,6 +95,7 @@ export const useSettings = create<SettingsState>((set, get) => {
       reducedMotion: get().reducedMotion,
       headphoneNoticeSeen: get().headphoneNoticeSeen,
       keepScreenAwake: get().keepScreenAwake,
+      backgroundAudio: get().backgroundAudio,
       figure: get().figure,
       ...next,
     }
@@ -113,6 +123,11 @@ export const useSettings = create<SettingsState>((set, get) => {
     setKeepScreenAwake: (v) => {
       void mediaRoute.setWakeLock(v)
       persist({ keepScreenAwake: v })
+    },
+    setBackgroundAudio: (v) => {
+      // Takes effect on the next play: moving the route under a running session
+      // means a moment of silence while the element spins up.
+      persist({ backgroundAudio: v })
     },
     setFigure: (index) => persist({ figure: index }),
     dismissHeadphoneNotice: () => persist({ headphoneNoticeSeen: true }),

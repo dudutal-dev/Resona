@@ -18,10 +18,16 @@ import { Tone, engine } from './ToneEngine'
  * 3. **Screen wake lock**, so a session left running on a nightstand is not cut
  *    short by the screen turning off.
  *
- * What is deliberately NOT here: a trick to keep synthesised audio running
- * after the user leaves the tab on iOS. Safari suspends the AudioContext when
- * the page is backgrounded and offers web pages no way to opt out. Rather than
- * ship a hack that half-works, `resumeIfNeeded` makes coming back seamless.
+ * On background playback: for a long time the element here held a *silent*
+ * loop while the synthesised audio went straight to the speakers. That is the
+ * worst of both worlds — the system sees media playing, shows the card, and
+ * keeps the session alive, while the thing it is keeping alive is two seconds
+ * of silence and the actual music is on a path the OS suspends the moment the
+ * page stops being frontmost. So the live master is now routed *through* the
+ * element by default: the same MediaStream path that casting already used and
+ * that was already proven to carry real audio. It is the only mechanism a web
+ * page is given, and `resumeIfNeeded` still covers the case where the platform
+ * suspends anyway.
  */
 
 type SessionHandlers = {
@@ -125,7 +131,7 @@ class MediaRoute {
    * with no error to catch. So the signal is measured before committing, and
    * anything short of real audio puts the direct path straight back.
    */
-  async setExternal(enabled: boolean): Promise<boolean> {
+  async setExternal(enabled: boolean, settleMs = 350): Promise<boolean> {
     if (!engine.isStarted) return this.external
     if (enabled === this.external) return this.external
 
@@ -158,7 +164,7 @@ class MediaRoute {
     el.srcObject = this.streamDest.stream
     el.volume = 1
 
-    const ok = await this.startAndVerify(el)
+    const ok = await this.startAndVerify(el, settleMs)
     if (!ok) {
       limiter.disconnect()
       limiter.toDestination()
@@ -173,14 +179,17 @@ class MediaRoute {
   }
 
   /** Plays, then confirms the element is really running on a live signal. */
-  private async startAndVerify(el: HTMLMediaElement): Promise<boolean> {
+  private async startAndVerify(el: HTMLMediaElement, settleMs: number): Promise<boolean> {
     try {
       await el.play()
     } catch {
       return false
     }
-    // Give the element a moment to actually start rendering.
-    await new Promise((r) => setTimeout(r, 350))
+    // Give the element a moment to actually start rendering. A session opening
+    // on an 18-second fade needs longer than a cast switched on mid-track, or
+    // the measurement lands in the part of the fade that is still silence and
+    // the route gets rejected for working correctly.
+    await new Promise((r) => setTimeout(r, settleMs))
     if (el.paused || el.ended) return false
     return this.streamHasSignal()
   }
@@ -243,10 +252,18 @@ class MediaRoute {
 
   // ------------------------------------------------------- now-playing claim
 
-  /** Takes the Now Playing session so the system shows this app's name. */
-  async claimNowPlaying() {
-    if (this.external) return // the live route already holds it
+  /**
+   * Takes the Now Playing session so the system shows this app's name.
+   *
+   * `live` asks for the real mix to go through the element rather than a silent
+   * placeholder, which is what gives the session any chance of surviving a
+   * switch to another app. It is verified and falls back to the direct path, so
+   * the worst case is the behaviour this app had before.
+   */
+  async claimNowPlaying(live = false) {
+    if (this.external) return
     await this.playSilence()
+    if (live) await this.setExternal(true, 1400)
   }
 
   releaseNowPlaying() {

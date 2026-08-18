@@ -137,7 +137,12 @@ class SessionPlayer {
     this.scheduleTimer(config)
     // Claim first, then describe: the metadata only displays once the system
     // has handed this page the now-playing session.
-    void mediaRoute.claimNowPlaying()
+    //
+    // `backgroundAudio` decides whether the element holds the session with the
+    // real mix or with silence. With silence the system keeps a session alive
+    // that contains nothing, which is what made switching apps stop the music
+    // while the lock screen still claimed it was playing.
+    void mediaRoute.claimNowPlaying(useSettings.getState().backgroundAudio)
     this.publishNowPlaying(config)
     mediaRoute.setPlaybackState('playing')
     this.emit()

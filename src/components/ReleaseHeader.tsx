@@ -27,6 +27,7 @@ export type ReleaseAction = {
  */
 export function ReleaseHeader({
   cover,
+  art,
   eyebrow,
   title,
   subtitle,
@@ -38,6 +39,12 @@ export function ReleaseHeader({
   menu,
 }: {
   cover: string
+  /**
+   * Drawn in the square instead of the cover, when there is something live to
+   * put there. The cover still paints the backdrop, so the page keeps its
+   * colour — see the note in `PlayerScreen`.
+   */
+  art?: ReactNode
   eyebrow?: string
   title: string
   subtitle: string
@@ -73,12 +80,16 @@ export function ReleaseHeader({
         {menu}
       </div>
 
-      <img
-        src={cover}
-        alt=""
-        className="mx-auto mt-3 block aspect-square w-1/2 max-w-[240px] rounded-[12px] object-cover"
-        style={{ boxShadow: '0 24px 50px -18px rgba(0,0,0,0.75)' }}
-      />
+      <div className="mx-auto mt-3 aspect-square w-[62%] max-w-[268px]">
+        {art ?? (
+          <img
+            src={cover}
+            alt=""
+            className="block h-full w-full rounded-[12px] object-cover"
+            style={{ boxShadow: '0 24px 50px -18px rgba(0,0,0,0.75)' }}
+          />
+        )}
+      </div>
 
       {eyebrow && (
         <p
@@ -122,15 +133,18 @@ export function ReleaseHeader({
       </div>
 
       {actions && actions.length > 0 && (
-        <div className="mt-6 flex items-start justify-around gap-1">
+        <div className="mt-5 flex items-start justify-around gap-1">
           {actions.map((a) => (
             <button
               key={a.key}
               onClick={a.onClick}
-              className="flex min-w-0 flex-1 flex-col items-center gap-1.5 py-1 transition-transform active:scale-90"
+              data-on={a.on ? 'true' : 'false'}
+              className="act"
               style={{ color: a.on ? 'var(--accent)' : 'var(--txt-2)' }}
             >
-              <span aria-hidden>{a.icon}</span>
+              <span className="act-glyph" aria-hidden>
+                {a.icon}
+              </span>
               <span className="w-full truncate text-center text-[11px] font-semibold">{a.label}</span>
             </button>
           ))}

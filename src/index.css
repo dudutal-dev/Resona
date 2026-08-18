@@ -332,16 +332,69 @@ html.theme-light {
    * without competing. Sized for a thumb reaching up from the bottom of a phone
    * rather than for a cursor.
    */
+  /**
+   * The two big actions at the top of a release page.
+   *
+   * One is solid and one is quiet, and that pairing does the whole job: there is
+   * always exactly one obvious thing to press, and the second option is present
+   * without competing.
+   *
+   * The first pass was two flat rectangles of colour. Flat is fine on paper and
+   * cheap on a black screen — with nothing catching light along the top edge and
+   * nothing underneath, both pills sat *in* the background rather than on it.
+   * The solid one now has a highlight along its top edge and a shadow beneath,
+   * and the quiet one has a hairline, which is the least a control can have and
+   * still be an object.
+   */
   .pill {
-    @apply inline-flex h-14 flex-1 items-center justify-center gap-2.5 rounded-[18px] text-[15px] font-bold transition-all active:scale-[0.97];
+    @apply relative inline-flex h-[3.6rem] flex-1 items-center justify-center gap-2.5 rounded-[16px] text-[16px] font-extrabold transition-all duration-150;
+    letter-spacing: -0.01em;
+  }
+  .pill:active {
+    transform: scale(0.975);
   }
   .pill-solid {
     background: var(--pill-solid-bg);
     color: var(--pill-solid-fg);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 10px 26px -12px rgba(0, 0, 0, 0.85),
+      0 2px 6px -2px rgba(0, 0, 0, 0.5);
+  }
+  .pill-solid:hover {
+    filter: brightness(1.04);
   }
   .pill-quiet {
     background: var(--pill-quiet-bg);
     color: var(--pill-quiet-fg);
+    border: 1px solid var(--bar-line);
+    box-shadow: inset 0 1px 0 var(--glass-top);
+  }
+  .pill-quiet:hover {
+    filter: brightness(1.25);
+  }
+
+  /**
+   * The row of small actions under the pills. Each one gets a real target — a
+   * circle behind the glyph — so pressing it lands somewhere instead of on bare
+   * background, and so the saved state has something to fill.
+   */
+  .act {
+    @apply flex min-w-0 flex-1 flex-col items-center gap-1.5 transition-transform duration-150;
+  }
+  .act:active {
+    transform: scale(0.92);
+  }
+  .act > .act-glyph {
+    @apply grid h-11 w-11 place-items-center rounded-full transition-colors duration-200;
+    border: 1px solid transparent;
+  }
+  .act:hover > .act-glyph {
+    background: var(--pill-quiet-bg);
+  }
+  .act[data-on='true'] > .act-glyph {
+    background: var(--accent-soft);
+    border-color: var(--accent-line);
   }
 
   /**

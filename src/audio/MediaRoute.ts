@@ -261,7 +261,20 @@ class MediaRoute {
    * the worst case is the behaviour this app had before.
    */
   async claimNowPlaying(live = false) {
-    if (this.external) return
+    // The element is paused on every stop, and the route survives it — so a
+    // second session finds `external` already true with a paused element
+    // underneath. This used to return early on exactly that state, which left
+    // the live mix routed into something that was not playing: full level at
+    // the limiter, a running clock, a moving orb, and silence. Whatever the
+    // route is, the element has to be started again.
+    if (this.external) {
+      try {
+        await this.el?.play()
+      } catch {
+        /* needs a gesture; the direct fallback below is not reachable here */
+      }
+      return
+    }
     await this.playSilence()
     if (live) await this.setExternal(true, 1400)
   }

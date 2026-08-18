@@ -14,6 +14,7 @@ import { navigate } from '../lib/router'
 import { bandForDay, configForDay } from '../lib/journeyConfig'
 import { hueText } from '../lib/themes'
 import { useJourneys } from '../store/journeyStore'
+import { useCustomJourneys } from '../store/customJourneyStore'
 import { Screen, TrustBadge } from './ui'
 import { ReleaseHeader } from './ReleaseHeader'
 import { journeyCover } from '../lib/cover'
@@ -24,6 +25,8 @@ export function JourneyDetail({ id }: { id: string }) {
   const { t, lang } = useT()
   const journey = getJourney(id)
   const { progress, start, reset } = useJourneys()
+  const removeCustom = useCustomJourneys((s) => s.remove)
+  const built = useCustomJourneys((s) => s.journeys.some((j) => j.id === id))
 
   if (!journey) {
     return (
@@ -179,6 +182,22 @@ export function JourneyDetail({ id }: { id: string }) {
           )
         })}
       </div>
+
+      {/* Only a built journey can be deleted — the catalogue is not the
+          person's to remove, and a week they composed accumulates otherwise. */}
+      {built && (
+        <button
+          onClick={() => {
+            if (!confirm(t('build.deleteConfirm'))) return
+            reset(journey.id)
+            removeCustom(journey.id)
+            navigate('/journeys')
+          }}
+          className="txt-3 mt-6 w-full py-3 text-center text-[12px] font-semibold underline underline-offset-4"
+        >
+          {t('build.delete')}
+        </button>
+      )}
     </div>
   )
 }

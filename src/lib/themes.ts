@@ -1,5 +1,5 @@
 import type { StringKey } from './i18n'
-import { JOURNEYS } from './catalog'
+import { allJourneys } from './catalog'
 import type { Journey, JourneyPurpose } from './types'
 
 /**
@@ -75,7 +75,7 @@ export function themeOf(journey: Journey): JourneyTheme {
 export function journeysByTheme(): { theme: JourneyTheme; journeys: Journey[] }[] {
   return THEME_ORDER.map((theme) => ({
     theme,
-    journeys: JOURNEYS.filter((j) => THEME_OF[j.purpose] === theme),
+    journeys: allJourneys().filter((j) => THEME_OF[j.purpose] === theme),
   })).filter((g) => g.journeys.length > 0)
 }
 

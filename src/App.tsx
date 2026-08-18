@@ -11,6 +11,7 @@ import { HomeScreen } from './components/HomeScreen'
 import { PlayerScreen } from './components/PlayerScreen'
 import { FrequenciesScreen } from './components/FrequenciesScreen'
 import { JourneyList } from './components/JourneyList'
+import { JourneyBuilder } from './components/JourneyBuilder'
 import { JourneyDetail } from './components/JourneyDetail'
 import { JourneyDayScreen } from './components/JourneyDayScreen'
 import { PresetList } from './components/PresetList'
@@ -19,6 +20,7 @@ import { HeadphoneNotice } from './components/HeadphoneNotice'
 import { SplashScreen } from './components/SplashScreen'
 import { AboutScreen } from './components/AboutScreen'
 import { player } from './audio/SessionPlayer'
+import { useCustomJourneys } from './store/customJourneyStore'
 
 export default function App() {
   const route = useRoute()
@@ -30,6 +32,9 @@ export default function App() {
   const tick = useSession((s) => s.tick)
   const theme = useSettings((s) => s.theme)
   const { t, lang } = useT()
+  // Subscribing here is what registers built journeys with the catalogue before
+  // any route resolves one, and what re-renders the lists when one is saved.
+  useCustomJourneys((s) => s.journeys)
 
   // Re-tint the whole interface from the selected frequency.
   useEffect(() => {
@@ -65,6 +70,7 @@ export default function App() {
         {route.name === 'player' && <PlayerScreen />}
         {route.name === 'frequencies' && <FrequenciesScreen />}
         {route.name === 'journeys' && <JourneyList />}
+        {route.name === 'build' && <JourneyBuilder />}
         {route.name === 'journey' && <JourneyDetail id={route.id} />}
         {route.name === 'journeyDay' && <JourneyDayScreen id={route.id} day={route.day} />}
         {route.name === 'presets' && <PresetList />}

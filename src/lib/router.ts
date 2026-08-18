@@ -10,6 +10,7 @@ export type Route =
   | { name: 'player' }
   | { name: 'frequencies' }
   | { name: 'journeys' }
+  | { name: 'build' }
   | { name: 'journey'; id: string }
   | { name: 'journeyDay'; id: string; day: number }
   | { name: 'presets' }
@@ -33,6 +34,8 @@ export function parseHash(hash: string): Route {
       return { name: 'about' }
     case 'journeys':
       return { name: 'journeys' }
+    case 'build':
+      return { name: 'build' }
     case 'journey':
       if (parts[2] === 'day' && parts[3]) {
         const day = Number(parts[3])

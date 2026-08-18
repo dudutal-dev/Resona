@@ -83,8 +83,30 @@ export const BEAT_FREQUENCIES = FREQUENCIES.filter(
   (f): f is Frequency & { range: [number, number] } => Array.isArray(f.range),
 )
 
+/**
+ * Journeys the person built themselves.
+ *
+ * Kept here rather than imported, because everything that resolves a journey —
+ * the detail page, the day page, the player card, the covers — goes through
+ * `getJourney`, and a built journey that half the app cannot find is worse than
+ * no builder at all. The store pushes its list in on load and on every change;
+ * this module deliberately knows nothing about where they are stored.
+ */
+let extraJourneys: Journey[] = []
+
+export function setExtraJourneys(list: Journey[]) {
+  extraJourneys = list
+}
+
+/** The catalogue plus anything built locally. */
+export function allJourneys(): Journey[] {
+  return extraJourneys.length ? [...JOURNEYS, ...extraJourneys] : JOURNEYS
+}
+
+export const isCustomJourney = (id: string) => extraJourneys.some((j) => j.id === id)
+
 export function getJourney(id: string): Journey | undefined {
-  return JOURNEYS.find((j) => j.id === id)
+  return JOURNEYS.find((j) => j.id === id) ?? extraJourneys.find((j) => j.id === id)
 }
 
 /**

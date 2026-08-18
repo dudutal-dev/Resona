@@ -106,6 +106,30 @@ export function JourneyList() {
 
   return (
     <Screen title={t('journeys.title')} subtitle={t('journeys.subtitle', { n: total })} onBack>
+      {/* Above the shelves, because it is the one thing here that is not a
+          shelf: everything else is chosen, this one is made. */}
+      <button
+        onClick={() => navigate('/build')}
+        className="mb-5 flex w-full items-center gap-3 rounded-[14px] p-3 text-start transition-transform active:scale-[0.99]"
+        style={{ background: 'var(--pill-quiet-bg)' }}
+      >
+        <span
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full"
+          style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+          </svg>
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[15px] font-bold">{t('build.entry')}</span>
+          <span className="txt-3 mt-0.5 block text-[12px]">{t('build.entryNote')}</span>
+        </span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden className="flip-ltr txt-3 shrink-0">
+          <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
       {/* The shelves are few and fixed, so they sit in the open as a scroll
           strip — a dropdown would hide the whole taxonomy behind a tap. */}
       <div className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1">

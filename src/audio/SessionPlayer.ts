@@ -210,6 +210,8 @@ class SessionPlayer {
     this.melody.setPace(config.pace)
     this.melody.setDepth(config.depth)
     this.melody.setStyle(config.style ?? 'ambient')
+    // Each engine sits at a different natural level; see OUTPUT_TRIM.
+    engine.setOutputTrim(config.style ?? 'ambient')
     this.beat.setRoot(rootHz)
     this.beat.setBeatHz(config.beatHz)
     this.beat.setMode(config.beatMode)

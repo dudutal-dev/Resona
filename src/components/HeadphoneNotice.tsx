@@ -51,7 +51,7 @@ export function HeadphoneNotice() {
               setBeatMode('binaural')
               dismissHeadphoneNotice()
             }}
-            className="btn flex-1 text-xs"
+            className="obj flex-1 rounded-full px-4 py-3.5 text-[13px] font-extrabold"
           >
             {t('notice.chooseBinaural')}
           </button>
@@ -60,7 +60,7 @@ export function HeadphoneNotice() {
               setBeatMode('isochronic')
               dismissHeadphoneNotice()
             }}
-            className="btn btn-primary flex-1 text-xs"
+            className="cta flex-1 px-4 py-3.5 text-[13px]"
           >
             {t('notice.chooseIso')}
           </button>

@@ -10,6 +10,7 @@ import { MiniPlayer } from './components/MiniPlayer'
 import { HomeScreen } from './components/HomeScreen'
 import { PlayerScreen } from './components/PlayerScreen'
 import { FrequenciesScreen } from './components/FrequenciesScreen'
+import { SearchScreen } from './components/SearchScreen'
 import { JourneyList } from './components/JourneyList'
 import { JourneyBuilder } from './components/JourneyBuilder'
 import { JourneyDetail } from './components/JourneyDetail'
@@ -69,6 +70,7 @@ export default function App() {
         {route.name === 'home' && <HomeScreen />}
         {route.name === 'player' && <PlayerScreen />}
         {route.name === 'frequencies' && <FrequenciesScreen />}
+        {route.name === 'search' && <SearchScreen />}
         {route.name === 'journeys' && <JourneyList />}
         {route.name === 'build' && <JourneyBuilder />}
         {route.name === 'journey' && <JourneyDetail id={route.id} />}

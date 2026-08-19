@@ -9,6 +9,7 @@ export type Route =
   | { name: 'home' }
   | { name: 'player' }
   | { name: 'frequencies' }
+  | { name: 'search' }
   | { name: 'journeys' }
   | { name: 'build' }
   | { name: 'journey'; id: string }
@@ -26,6 +27,8 @@ export function parseHash(hash: string): Route {
       return { name: 'player' }
     case 'frequencies':
       return { name: 'frequencies' }
+    case 'search':
+      return { name: 'search' }
     case 'presets':
       return { name: 'presets' }
     case 'settings':

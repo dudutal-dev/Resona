@@ -220,7 +220,7 @@ export function SplashScreen({ onDone }: { onDone: () => void }) {
           e.stopPropagation()
           dismiss()
         }}
-        className="btn btn-primary mt-9 w-full max-w-[240px]"
+        className="cta mt-9 w-full max-w-[240px]"
         style={{
           animation: reducedMotion ? undefined : 'fade-up 800ms cubic-bezier(0.16,1,0.3,1) 1500ms both',
         }}

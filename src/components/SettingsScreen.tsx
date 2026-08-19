@@ -82,9 +82,9 @@ export function SettingsScreen() {
                   dir={code === 'he' ? 'rtl' : 'ltr'}
                   className="rounded-2xl px-3 py-2.5 text-sm font-semibold transition-all active:scale-95"
                   style={{
-                    background: active ? 'var(--accent-soft)' : 'var(--card)',
-                    border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,
-                    color: active ? 'var(--accent)' : 'var(--txt-2)',
+                    background: active ? 'var(--gold-soft)' : 'var(--obj)',
+                    border: `1px solid ${active ? 'var(--gold)' : 'var(--obj-line)'}`,
+                    color: active ? 'var(--gold)' : 'var(--txt-2)',
                   }}
                 >
                   {LANG_LABEL[code]}
@@ -111,9 +111,9 @@ export function SettingsScreen() {
                   aria-pressed={active}
                   className="rounded-2xl px-2 py-3 text-xs font-semibold transition-all active:scale-95"
                   style={{
-                    background: active ? 'var(--accent-soft)' : 'var(--card)',
-                    border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,
-                    color: active ? 'var(--accent)' : 'var(--txt-2)',
+                    background: active ? 'var(--gold-soft)' : 'var(--obj)',
+                    border: `1px solid ${active ? 'var(--gold)' : 'var(--obj-line)'}`,
+                    color: active ? 'var(--gold)' : 'var(--txt-2)',
                   }}
                 >
                   {/* A swatch of the actual ground, so the choice is visible
@@ -122,7 +122,7 @@ export function SettingsScreen() {
                     className="mx-auto mb-2 block h-7 w-7 rounded-full"
                     style={{
                       background: THEME_COLOR[name],
-                      border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border-strong)'}`,
+                      border: `1px solid ${active ? 'var(--gold)' : 'var(--border-strong)'}`,
                       boxShadow: active ? '0 0 16px var(--glow)' : undefined,
                     }}
                   />

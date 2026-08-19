@@ -78,13 +78,13 @@ export function ListeningMode({
                 active ? 'rim' : ''
               }`}
               style={{
-                background: active ? 'var(--accent-soft)' : 'var(--card)',
-                border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,
+                background: active ? 'var(--gold-soft)' : 'var(--obj)',
+                border: `1px solid ${active ? 'var(--gold)' : 'var(--obj-line)'}`,
               }}
             >
               <span
                 className="mb-1.5 block"
-                style={{ color: active ? 'var(--accent)' : 'var(--txt-3)' }}
+                style={{ color: active ? 'var(--gold)' : 'var(--txt-3)' }}
               >
                 {opt.icon}
               </span>

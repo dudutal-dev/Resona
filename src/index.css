@@ -333,47 +333,6 @@ html.theme-light {
    * rather than for a cursor.
    */
   /**
-   * The two big actions at the top of a release page.
-   *
-   * One is solid and one is quiet, and that pairing does the whole job: there is
-   * always exactly one obvious thing to press, and the second option is present
-   * without competing.
-   *
-   * The first pass was two flat rectangles of colour. Flat is fine on paper and
-   * cheap on a black screen — with nothing catching light along the top edge and
-   * nothing underneath, both pills sat *in* the background rather than on it.
-   * The solid one now has a highlight along its top edge and a shadow beneath,
-   * and the quiet one has a hairline, which is the least a control can have and
-   * still be an object.
-   */
-  .pill {
-    @apply relative inline-flex h-[3.25rem] flex-1 items-center justify-center gap-2 rounded-full text-[15px] font-bold transition-all duration-150;
-    letter-spacing: -0.01em;
-  }
-  .pill:active {
-    transform: scale(0.97);
-  }
-  .pill-solid {
-    background: var(--pill-solid-bg);
-    color: var(--pill-solid-fg);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.5),
-      0 8px 22px -12px rgba(0, 0, 0, 0.8);
-  }
-  .pill-solid:hover {
-    filter: brightness(1.04);
-  }
-  /* No border. A hairline around a filled shape reads as a disabled control —
-     the fill is already the edge. */
-  .pill-quiet {
-    background: var(--pill-quiet-bg);
-    color: var(--pill-quiet-fg);
-  }
-  .pill-quiet:hover {
-    filter: brightness(1.3);
-  }
-
-  /**
    * The row of small actions under the pills. Each one gets a real target — a
    * circle behind the glyph — so pressing it lands somewhere instead of on bare
    * background, and so the saved state has something to fill.
@@ -394,21 +353,6 @@ html.theme-light {
   .act[data-on='true'] > .act-glyph {
     background: var(--accent-soft);
     border-color: var(--accent-line);
-  }
-
-  /**
-   * A floating chrome bar — the transport and the navigation.
-   *
-   * Both sit over scrolling content rather than in a fixed strip at the edge, so
-   * they need their own ground; `--bar-bg` is deliberately not `--card`, because
-   * chrome should not re-tint with the frequency the way the content does.
-   */
-  .bar {
-    background: var(--bar-bg);
-    border: 1px solid var(--bar-line);
-    backdrop-filter: blur(26px) saturate(1.4);
-    -webkit-backdrop-filter: blur(26px) saturate(1.4);
-    box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.7);
   }
 
   /** Circular translucent control, over artwork rather than over a panel. */
@@ -513,28 +457,6 @@ html.theme-light {
     opacity: 0.85;
   }
 
-  .brackets {
-    position: relative;
-  }
-  .brackets::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    pointer-events: none;
-    border: 1px solid var(--bracket-line, var(--accent-line));
-    /* Keep only the corners: the mask is opaque in two L-shaped bands and
-       transparent along the middle of each edge. */
-    -webkit-mask:
-      linear-gradient(to right, #000 var(--bracket, 14px), transparent var(--bracket, 14px) calc(100% - var(--bracket, 14px)), #000 calc(100% - var(--bracket, 14px))),
-      linear-gradient(to bottom, #000 var(--bracket, 14px), transparent var(--bracket, 14px) calc(100% - var(--bracket, 14px)), #000 calc(100% - var(--bracket, 14px)));
-    -webkit-mask-composite: source-in;
-    mask:
-      linear-gradient(to right, #000 var(--bracket, 14px), transparent var(--bracket, 14px) calc(100% - var(--bracket, 14px)), #000 calc(100% - var(--bracket, 14px))),
-      linear-gradient(to bottom, #000 var(--bracket, 14px), transparent var(--bracket, 14px) calc(100% - var(--bracket, 14px)), #000 calc(100% - var(--bracket, 14px)));
-    mask-composite: intersect;
-  }
-
   /**
    * A section heading as a ruled label: the words, then a hairline that runs out
    * to the edge of the panel. Cheaper than a boxed header and it gives the
@@ -560,40 +482,6 @@ html.theme-light {
   }
   [dir='ltr'] .rule-label::after {
     background: linear-gradient(to right, var(--border-strong), transparent);
-  }
-
-  /**
-   * The transport control, as a dial.
-   *
-   * A filled circle with a triangle in it is the play button every media app
-   * has had since 2013, and next to an orb drawn from concentric rings it was
-   * the one element on the screen that looked bought rather than built. The
-   * disc stays — it is the target, and it has to look pressable — but it now
-   * sits inside a hairline ring with four cardinal ticks outside it, which is
-   * the same geometry the orb is made of, at the size of a thumb.
-   *
-   * Both rings are pseudo-elements outside the button box, so they change
-   * nothing about the hit area.
-   */
-  .dial::before {
-    content: '';
-    position: absolute;
-    inset: -7px;
-    border-radius: 999px;
-    border: 1px solid var(--accent-line);
-    pointer-events: none;
-  }
-  .dial::after {
-    content: '';
-    position: absolute;
-    inset: -14px;
-    border-radius: 999px;
-    pointer-events: none;
-    background:
-      linear-gradient(var(--accent-line), var(--accent-line)) 50% 0 / 1px 5px no-repeat,
-      linear-gradient(var(--accent-line), var(--accent-line)) 50% 100% / 1px 5px no-repeat,
-      linear-gradient(var(--accent-line), var(--accent-line)) 0 50% / 5px 1px no-repeat,
-      linear-gradient(var(--accent-line), var(--accent-line)) 100% 50% / 5px 1px no-repeat;
   }
 
   .btn {
@@ -769,4 +657,281 @@ html.theme-noir .dark-only {
    this theme is that it is bright. */
 html.theme-light .vignette {
   background: radial-gradient(120% 90% at 50% 30%, transparent 62%, hsl(var(--h) 45% 45% / 0.05));
+}
+
+/* ---------------------------------------------------------------------------
+   The Resonance layer.
+
+   A second, louder design language laid over the tokens above. The app used to
+   look like a utility with a tint; this is the thing it is actually for — a
+   black stage, one warm metal for the chrome, and colour rationed to the
+   objects themselves.
+
+   Three ideas carry it, and they are the reason these are tokens rather than
+   classes with values baked in:
+
+   - **Gold is the interface, hue is the content.** Every piece of chrome — the
+     wordmark, the active tab, the section marks — is one warm metal that never
+     changes. The frequency's own hue appears only on the thing it belongs to:
+     its badge, its card, its ring. Before this, the accent hue drove both, so
+     picking a green frequency turned the navigation green and the app lost its
+     identity every time you changed tone.
+   - **One CTA, and it glows.** The peach-to-lilac pill is the only saturated
+     fill in the app. It means "this starts sound", and nothing else uses it.
+   - **Objects are circles.** A frequency, a band, a journey — each is a disc
+     with a ring in its hue and a line-drawn glyph inside. Square artwork read
+     as a music library; a disc reads as a tone.
+--------------------------------------------------------------------------- */
+:root {
+  /* The one warm metal. Fixed — it is deliberately not derived from `--h`. */
+  --gold: #e3b271;
+  --gold-hi: #f6dcb0;
+  --gold-soft: rgba(227, 178, 113, 0.14);
+  /* The only saturated fill in the app. */
+  --cta-from: #f8cba4;
+  --cta-to: #c8b4f2;
+  --cta-fg: #15111d;
+  --cta-glow: rgba(226, 186, 214, 0.42);
+  /* The featured card: a lit purple bloom over near-black. */
+  --hero-from: #2b2150;
+  --hero-to: #171326;
+  --hero-line: rgba(255, 255, 255, 0.1);
+  /* Flat object surfaces. Deliberately not `--card`: these are opaque, because
+     a translucent tile over a bloom is how the old grid turned to mud. */
+  --obj: #121215;
+  --obj-line: rgba(255, 255, 255, 0.07);
+  --obj-hover: #17171c;
+  /* The disc behind a glyph. */
+  --disc: #0d0d10;
+  --chrome: #0a0a0c;
+  /* The two stops of a journey card's fill, in the shelf's own hue. Held as
+     tokens so noir can mute the whole set without touching a component. */
+  --jc-s1: 40%;
+  --jc-l1: 45%;
+  --jc-s2: 34%;
+  --jc-l2: 30%;
+  /* The aurora, pulled almost all the way down.
+
+     It was built for a screen made of translucent panels floating over a lit
+     ground. This design has none: the surfaces are opaque and the ground is
+     black, so a coloured cloud behind them no longer reads as depth — it reads
+     as fog over the top third of every screen. What is left is barely a tint,
+     enough to keep the starfield from sitting on a dead flat. */
+  --wash: 0.1;
+  --wash-l: 15%;
+  --blob-l: 26%;
+}
+
+html.theme-noir {
+  --gold: #d8ab72;
+  --gold-hi: #f2d6ab;
+  --gold-soft: rgba(216, 171, 114, 0.1);
+  --cta-from: #f0c6a4;
+  --cta-to: #c4b2e6;
+  --cta-fg: #0a0a0a;
+  --cta-glow: rgba(214, 178, 200, 0.28);
+  --hero-from: #1b1726;
+  --hero-to: #0a0a0c;
+  --hero-line: rgba(255, 248, 236, 0.08);
+  --obj: #0c0c0d;
+  --obj-line: rgba(255, 248, 236, 0.07);
+  --obj-hover: #111112;
+  --disc: #000000;
+  --chrome: #000000;
+  /* Half the colour. On black a saturated card is the cheapest thing there is. */
+  --jc-s1: 26%;
+  --jc-l1: 27%;
+  --jc-s2: 20%;
+  --jc-l2: 15%;
+}
+
+html.theme-light {
+  /* Gold on white is invisible, so the metal darkens to a bronze that still
+     reads as the same material. */
+  --gold: #a9762c;
+  --gold-hi: #d8a45c;
+  --gold-soft: rgba(169, 118, 44, 0.12);
+  /* Ink, not white: on a peach-to-lilac gradient this light, white type fails
+     contrast at the warm end — which is exactly where the label sits in RTL. */
+  --cta-from: #f0b482;
+  --cta-to: #a892e8;
+  --cta-fg: #23182f;
+  --cta-glow: rgba(168, 146, 232, 0.4);
+  --hero-from: #efe6ff;
+  --hero-to: #fdf6ef;
+  --hero-line: rgba(20, 22, 31, 0.1);
+  --obj: #ffffff;
+  --obj-line: rgba(20, 22, 31, 0.09);
+  --obj-hover: #fbf9ff;
+  --disc: #f4f1fb;
+  --chrome: #ffffff;
+  /* Kept deep enough that the white type on the card still clears contrast. */
+  --jc-s1: 62%;
+  --jc-l1: 58%;
+  --jc-s2: 52%;
+  --jc-l2: 45%;
+}
+
+@layer components {
+  /* The wordmark. Letterspaced to the point of being a texture rather than a
+     word, which is what keeps it from competing with the screen title. */
+  .wordmark {
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.34em;
+    background: linear-gradient(100deg, var(--gold-hi), var(--gold) 55%, #b98ed6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    white-space: nowrap;
+  }
+
+  /* The round ghost buttons in the top bar. */
+  .circle-btn {
+    display: grid;
+    place-items: center;
+    height: 2.75rem;
+    width: 2.75rem;
+    border-radius: 999px;
+    background: var(--obj);
+    border: 1px solid var(--obj-line);
+    color: var(--txt-2);
+    transition: transform 0.15s, background 0.15s, color 0.15s;
+  }
+  .circle-btn:active {
+    transform: scale(0.92);
+  }
+  .circle-btn[data-on='true'] {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: var(--gold-soft);
+  }
+
+  /* The featured card at the top of the home screen. */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    background: linear-gradient(155deg, var(--hero-from), var(--hero-to) 78%);
+    border: 1px solid var(--hero-line);
+    box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9);
+  }
+  /* The bloom. A radial in the frequency's own hue, so the featured card is the
+     one place where content colour and chrome meet. */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: -40% -10% auto -10%;
+    height: 90%;
+    background: radial-gradient(60% 60% at 50% 50%, hsl(var(--hero-h, var(--h)) 80% 60% / 0.34), transparent 70%);
+    filter: blur(30px);
+    pointer-events: none;
+  }
+  html.theme-light .hero::before {
+    background: radial-gradient(60% 60% at 50% 50%, hsl(var(--hero-h, var(--h)) 90% 70% / 0.45), transparent 70%);
+  }
+
+  /* The one saturated control. */
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    border-radius: 999px;
+    padding: 1rem 1.6rem;
+    font-weight: 800;
+    font-size: 1.0625rem;
+    color: var(--cta-fg);
+    background: linear-gradient(100deg, var(--cta-from), var(--cta-to));
+    box-shadow: 0 14px 40px -12px var(--cta-glow);
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+  .cta:active {
+    transform: scale(0.97);
+  }
+  .cta:disabled {
+    opacity: 0.5;
+    box-shadow: none;
+  }
+
+  /* Flat object surface: tiles, rows, panels that hold a thing rather than
+     describe one. */
+  .obj {
+    background: var(--obj);
+    border: 1px solid var(--obj-line);
+    border-radius: 20px;
+    transition: background 0.15s, transform 0.15s;
+  }
+  button.obj:active {
+    transform: scale(0.985);
+  }
+  @media (hover: hover) {
+    button.obj:hover {
+      background: var(--obj-hover);
+    }
+  }
+
+  /* The section mark — a four-point star in the metal, then the heading. */
+  .mark {
+    color: var(--gold);
+    flex: none;
+  }
+
+  /* A journey card: saturated gradient in the shelf's hue, with its days laid
+     along the bottom as segments. */
+  .jcard {
+    position: relative;
+    overflow: hidden;
+    border-radius: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 24px 60px -34px rgba(0, 0, 0, 0.85);
+    transition: transform 0.18s;
+  }
+  .jcard:active {
+    transform: scale(0.99);
+  }
+  html.theme-light .jcard {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* One bar per day. Filled bars are days already walked. */
+  .seg {
+    height: 5px;
+    flex: 1;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.26);
+  }
+  .seg[data-done='true'] {
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  /* The docked transport. */
+  .dock {
+    background: var(--obj);
+    border: 1px solid var(--obj-line);
+    border-radius: 26px;
+    box-shadow: 0 20px 50px -24px rgba(0, 0, 0, 0.9);
+  }
+
+  /* The bottom bar is chrome: flat, opaque, hairline on top. Not a floating
+     pill — the design it belongs to puts the navigation on the ground. */
+  .navbar {
+    background: var(--chrome);
+    border-top: 1px solid var(--obj-line);
+  }
+  .navitem {
+    display: grid;
+    justify-items: center;
+    gap: 0.3rem;
+    padding: 0.6rem 0 0.2rem;
+    color: var(--txt-3);
+    transition: color 0.15s;
+  }
+  .navitem[data-on='true'] {
+    color: var(--gold);
+  }
+  .navlab {
+    font-size: 11px;
+    font-weight: 700;
+  }
 }

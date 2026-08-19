@@ -20,14 +20,16 @@ export function TimerControl() {
   const { config, setTimerMode, remaining, isPlaying, isFading } = useSession()
   const { t } = useT()
 
+  // Gold marks the chosen one, as it does in the navigation and on every other
+  // chip in the app. The frequency's hue is reserved for the object itself.
   const chip = (active: boolean) =>
-    `rounded-full px-4 py-2.5 text-[13px] font-bold leading-none transition-all active:scale-95 ${
+    `obj rounded-full px-4 py-2.5 text-[13px] font-bold leading-none transition-all active:scale-95 ${
       active ? '' : 'txt-2'
     }`
   const chipStyle = (active: boolean) =>
     active
-      ? { background: 'var(--accent-soft)', color: 'var(--accent)' }
-      : { background: 'var(--pill-quiet-bg)' }
+      ? { background: 'var(--gold-soft)', borderColor: 'var(--gold)', color: 'var(--gold)' }
+      : undefined
 
   return (
     <section>

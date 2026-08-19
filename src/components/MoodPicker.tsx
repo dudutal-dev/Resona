@@ -29,8 +29,8 @@ export function MoodPicker({
             aria-pressed={active}
             className={`rounded-2xl px-1 py-3 transition-all active:scale-95 ${active ? 'rim' : ''}`}
             style={{
-              background: active ? 'var(--accent-soft)' : 'var(--card)',
-              border: `1px solid ${active ? 'var(--accent-line)' : 'var(--border)'}`,
+              background: active ? 'var(--gold-soft)' : 'var(--obj)',
+              border: `1px solid ${active ? 'var(--gold)' : 'var(--obj-line)'}`,
             }}
           >
             <span className="block text-2xl leading-none">{m.face}</span>

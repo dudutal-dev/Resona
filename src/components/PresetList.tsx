@@ -38,13 +38,13 @@ export function PresetList() {
   }
 
   return (
-    <Screen title={t('presets.title')} subtitle={t('presets.subtitle')} onBack>
+    <Screen title={t('presets.title')} subtitle={t('presets.subtitle')}>
       {presets.length === 0 ? (
         <EmptyState
           title={t('presets.emptyTitle')}
           body={t('presets.emptyBody')}
           action={
-            <button onClick={() => navigate('/player')} className="pill pill-solid flex-none px-6">
+            <button onClick={() => navigate('/player')} className="cta flex-none px-5 py-2.5 text-[13.5px]">
               {t('presets.toPlayer')}
             </button>
           }
@@ -135,7 +135,7 @@ export function PresetList() {
             if (editing) rename(editing.id, name)
             setEditing(null)
           }}
-          className="pill pill-solid mt-4 w-full"
+          className="cta mt-4 w-full"
         >
           {t('presets.saveName')}
         </button>
@@ -144,7 +144,7 @@ export function PresetList() {
             if (editing) update(editing.id, config)
             setEditing(null)
           }}
-          className="pill pill-quiet mt-2 w-full text-[13px]"
+          className="obj mt-2 w-full rounded-full py-3.5 text-[13px] font-extrabold"
         >
           {t('presets.updateToCurrent')}
         </button>

@@ -1,97 +1,80 @@
-import type { CSSProperties } from 'react'
 import { useState } from 'react'
-import { freqLabel, getFrequency, journeyDescription, journeyTitle, purposeKey } from '../lib/catalog'
+import { journeyDescription, journeyTitle } from '../lib/catalog'
+import { GLYPH_FOR_THEME, Glyph } from '../lib/glyphs'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
-import { THEME_HUE, hueFill, hueGlow, hueText, journeysByTheme, themeBlurbKey, themeKey, type JourneyTheme } from '../lib/themes'
+import {
+  THEME_HUE,
+  hueFill,
+  hueText,
+  journeysByTheme,
+  themeKey,
+  themeOf,
+  type JourneyTheme,
+} from '../lib/themes'
 import type { Journey } from '../lib/types'
 import { useJourneys } from '../store/journeyStore'
-import { Screen } from './ui'
-import { journeyCover } from '../lib/cover'
+import { AppBar, SectionHead } from './AppBar'
 
-function JourneyCard({ journey, hue }: { journey: Journey; hue: number }) {
+/**
+ * A journey, as a plate rather than a row.
+ *
+ * The list this replaced was a stack of thumbnails and two lines of type — a
+ * playlist, in other words, and a journey is not one. It is a week of evenings
+ * with a direction, and the card has to say that before it says anything else:
+ * the whole surface is filled in the shelf's colour, the days lie along the
+ * bottom as segments you can count, and the mark in the corner is the same one
+ * the shelf carries everywhere.
+ *
+ * All the type on it is white in every theme, because the card is saturated in
+ * every theme. That is the one place in the app where the colour is the ground
+ * rather than the accent.
+ */
+function JourneyCard({ journey }: { journey: Journey }) {
   const { t, lang } = useT()
   const progress = useJourneys((s) => s.progress)
-  const p = progress[journey.id]
-  const done = p?.completedDays.length ?? 0
-  const pct = Math.round((done / journey.days) * 100)
-  const complete = done >= journey.days
+  const done = progress[journey.id]?.completedDays.length ?? 0
+  const theme = themeOf(journey)
+  const hue = THEME_HUE[theme]
+  const first = journey.schedule[0]
 
   return (
     <button
       onClick={() => navigate(`/journey/${journey.id}`)}
-      className="flex w-full items-start gap-3 rounded-[12px] p-2 text-start transition-colors duration-200"
+      className="jcard w-full p-5 text-start"
+      style={{
+        background: `linear-gradient(152deg, hsl(${hue} var(--jc-s1) var(--jc-l1)), hsl(${hue + 32} var(--jc-s2) var(--jc-l2)))`,
+        color: '#fff',
+      }}
     >
-      {/* The cover, with the length stamped on it — a badge on artwork is one
-          glance instead of two, and it leaves the row for the words. */}
-      <span className="relative shrink-0">
-        <img
-          src={journeyCover(journey)}
-          alt=""
-          className="h-16 w-16 rounded-[9px] object-cover"
-          style={{ boxShadow: '0 8px 20px -10px rgba(0,0,0,0.7)' }}
-        />
-        <span
-          className="absolute bottom-1 end-1 rounded-full px-1.5 py-px text-[10px] font-bold leading-tight"
-          style={{ background: 'rgba(0,0,0,0.72)', color: '#fff' }}
-        >
-          <span className="readout">{journey.days}</span>
-        </span>
+      {/* The shelf's mark, big and barely there — texture, not an icon. */}
+      <span
+        className="pointer-events-none absolute end-5 top-5"
+        style={{ color: 'rgba(255,255,255,0.34)' }}
+        aria-hidden
+      >
+        <Glyph id={GLYPH_FOR_THEME[theme]} size={40} />
       </span>
 
-      <span className="min-w-0 flex-1">
-        <span className="flex flex-wrap items-center gap-2">
-          <span className="text-[15px] font-bold">{journeyTitle(journey, lang)}</span>
-          <span
-            className="rounded-full px-2 py-[3px] text-[10px] font-semibold leading-none"
-            style={{ background: hueFill(hue, 0.16), color: hueText(hue) }}
-          >
-            {t(purposeKey(journey.purpose))}
-          </span>
-          {journey.arc && (
-            <span
-              className="txt-3 text-[10px]"
-              title={t(journey.arc === 'ascending' ? 'journeys.ascending' : 'journeys.descending')}
-            >
-              {journey.arc === 'ascending' ? '↑' : '↓'}
-            </span>
-          )}
-          {complete && <span className="chip">{t('common.done')}</span>}
-        </span>
+      <h3 className="pe-14 text-[23px] font-extrabold leading-tight">{journeyTitle(journey, lang)}</h3>
 
-        <span className="txt-2 mt-1 block text-[12px] leading-relaxed">
-          {journeyDescription(journey, lang)}
-        </span>
+      <p className="mt-2 text-[13px] font-bold" style={{ color: 'rgba(255,255,255,0.82)' }}>
+        {t('common.daysN', { n: journey.days })}
+        {' · '}
+        <span className="readout">{first.durationMin}</span> {t('common.minutes')}
+        {' · ♬ '}
+        {t('journeys.withMelody')}
+      </p>
 
-        {p ? (
-          <span className="mt-2 flex items-center gap-2">
-            <span
-              className="meter h-1.5 flex-1 overflow-hidden rounded-[1px]"
-              style={{ background: 'var(--border)', '--segments': journey.days } as CSSProperties}
-            >
-              <span
-                className="block h-full transition-all duration-500"
-                style={{
-                  width: `${pct}%`,
-                  background: `linear-gradient(90deg, hsl(${hue} 92% 62%), hsl(${hue + 40} 90% 62%))`,
-                  boxShadow: `0 0 12px ${hueGlow(hue, 0.5)}`,
-                }}
-              />
-            </span>
-            <span className="txt-3 readout text-[11px]">
-              {done}/{journey.days}
-            </span>
-          </span>
-        ) : (
-          <span className="txt-3 mt-1.5 block text-[11px]">
-            {t('journeys.startsWith')}
-            {(() => {
-              const first = getFrequency(journey.schedule[0].frequencyId)
-              return first ? freqLabel(first, lang) : '—'
-            })()}{' '}
-            · <span className="readout">{journey.schedule[0].durationMin}</span> {t('common.min')}
-          </span>
-        )}
+      <p className="mt-3 text-[13.5px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.86)' }}>
+        {journeyDescription(journey, lang)}
+      </p>
+
+      {/* One bar per day. Counting them is how you know what you are agreeing to. */}
+      <span className="mt-5 flex gap-1.5" aria-hidden>
+        {Array.from({ length: journey.days }, (_, i) => (
+          <span key={i} className="seg" data-done={i < done} />
+        ))}
       </span>
     </button>
   )
@@ -102,94 +85,68 @@ export function JourneyList() {
   const [filter, setFilter] = useState<JourneyTheme | 'all'>('all')
   const groups = journeysByTheme()
   const shown = filter === 'all' ? groups : groups.filter((g) => g.theme === filter)
-  const total = groups.reduce((n, g) => n + g.journeys.length, 0)
 
   return (
-    <Screen title={t('journeys.title')} subtitle={t('journeys.subtitle', { n: total })} onBack>
-      {/* Above the shelves, because it is the one thing here that is not a
-          shelf: everything else is chosen, this one is made. */}
-      <button
-        onClick={() => navigate('/build')}
-        className="mb-5 flex w-full items-center gap-3 rounded-[14px] p-3 text-start transition-transform active:scale-[0.99]"
-        style={{ background: 'var(--pill-quiet-bg)' }}
-      >
+    <div className="mx-auto w-full max-w-3xl px-4 pb-44 safe-top">
+      <AppBar title={t('journeys.title')} />
+
+      <SectionHead title={t('journeys.guided')} blurb={t('journeys.guidedBlurb')} tight />
+
+      {/* The one thing here that is made rather than chosen. */}
+      <button onClick={() => navigate('/build')} className="obj mb-6 flex w-full items-center gap-3 p-4 text-start">
+        <span className="min-w-0 flex-1">
+          <span className="block text-[16px] font-extrabold">{t('build.entry')}</span>
+          <span className="txt-3 mt-0.5 block text-[12.5px]">{t('build.entryNote')}</span>
+        </span>
         <span
           className="grid h-11 w-11 shrink-0 place-items-center rounded-full"
-          style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}
+          style={{ background: 'var(--gold-soft)', color: 'var(--gold)', border: '1px solid var(--gold)' }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-[15px] font-bold">{t('build.entry')}</span>
-          <span className="txt-3 mt-0.5 block text-[12px]">{t('build.entryNote')}</span>
-        </span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden className="flip-ltr txt-3 shrink-0">
-          <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
       </button>
 
-      {/* The shelves are few and fixed, so they sit in the open as a scroll
-          strip — a dropdown would hide the whole taxonomy behind a tap. */}
-      <div className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1">
-        {[{ theme: 'all' as const }, ...groups].map((g) => {
-          const isAll = g.theme === 'all'
-          const active = filter === g.theme
-          const hue = isAll ? null : THEME_HUE[g.theme]
-          const count = isAll ? total : groups.find((x) => x.theme === g.theme)!.journeys.length
+      {/* Shelf filter. Chips rather than a menu: there are eight of them and the
+          count on each is half the reason to tap it. */}
+      <div className="-mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1">
+        {(['all', ...groups.map((g) => g.theme)] as const).map((key) => {
+          const active = filter === key
+          const hue = key === 'all' ? null : THEME_HUE[key as JourneyTheme]
+          const count =
+            key === 'all'
+              ? groups.reduce((n, g) => n + g.journeys.length, 0)
+              : (groups.find((g) => g.theme === key)?.journeys.length ?? 0)
           return (
             <button
-              key={g.theme}
-              onClick={() => setFilter(g.theme)}
-              aria-pressed={active}
-              className="shrink-0 rounded-full px-4 py-2.5 text-[13px] font-bold leading-none transition-all active:scale-95"
+              key={key}
+              onClick={() => setFilter(key as JourneyTheme | 'all')}
+              className="shrink-0 rounded-full px-3.5 py-2 text-[12.5px] font-bold transition-colors"
               style={{
                 background: active
                   ? hue === null
-                    ? 'var(--accent-soft)'
-                    : hueFill(hue, 0.16)
-                  : 'var(--pill-quiet-bg)',
-                color: active
-                  ? hue === null
-                    ? 'var(--accent)'
-                    : hueText(hue)
-                  : 'var(--txt-2)',
+                    ? 'var(--gold-soft)'
+                    : hueFill(hue, 0.2)
+                  : 'var(--obj)',
+                border: `1px solid ${active ? (hue === null ? 'var(--gold)' : hueText(hue)) : 'var(--obj-line)'}`,
+                color: active ? (hue === null ? 'var(--gold)' : hueText(hue)) : 'var(--txt-3)',
               }}
             >
-              {isAll ? t('journeys.all') : t(themeKey(g.theme))} · <span className="readout">{count}</span>
+              {key === 'all' ? t('journeys.all') : t(themeKey(key as JourneyTheme))}{' '}
+              <span className="readout">{count}</span>
             </button>
           )
         })}
       </div>
 
-      <div className="space-y-7">
-        {shown.map((group) => (
-          <section key={group.theme}>
-            <div className="mb-2 flex items-baseline gap-2 px-1">
-              <span
-                className="h-2 w-2 shrink-0 self-center rounded-full"
-                style={{
-                  background: `hsl(${THEME_HUE[group.theme]} 90% 62%)`,
-                  boxShadow: `0 0 10px ${hueGlow(THEME_HUE[group.theme], 0.7)}`,
-                }}
-                aria-hidden
-              />
-              <h2 className="text-sm font-bold">{t(themeKey(group.theme))}</h2>
-              <span className="txt-3 truncate text-[11px]">{t(themeBlurbKey(group.theme))}</span>
-            </div>
-            <div className="-mx-1">
-              {group.journeys.map((journey) => (
-                <JourneyCard key={journey.id} journey={journey} hue={THEME_HUE[group.theme]} />
-              ))}
-            </div>
-          </section>
+      <div className="space-y-4">
+        {shown.flatMap((g) => g.journeys).map((journey) => (
+          <JourneyCard key={journey.id} journey={journey} />
         ))}
       </div>
 
-      <p className="txt-3 mt-6 px-1 text-[11px] leading-relaxed">
-        {rich('journeys.footer')}
-      </p>
-    </Screen>
+      <p className="txt-3 mt-8 px-1 text-[11px] leading-relaxed">{rich('journeys.footer')}</p>
+    </div>
   )
 }

@@ -39,6 +39,28 @@ const HE = {
   'nav.frequencies': 'תדרים',
   'nav.presets': 'פריסטים',
   'nav.settings': 'הגדרות',
+  'nav.search': 'חיפוש',
+  'nav.library': 'ספרייה',
+  'nav.favourites': 'מועדפים',
+  'nav.about': 'אודות',
+
+  'search.title': 'חיפוש',
+  'search.placeholder': 'תדר, מסע, או תחושה',
+  'search.prompt': 'חפש לפי שם, לפי מספר, או לפי מה שאתה מחפש לעשות.',
+  'search.none': 'אין תוצאות ל־{q}',
+  'search.freqs': 'תדרים',
+  'search.journeys': 'מסעות',
+  'search.resultsN': '{n} תוצאות',
+
+  'home.featured': 'יצירת היום',
+  'home.startListening': 'התחל האזנה',
+  'home.quick': 'התחל עכשיו',
+  'home.bands': 'גלי מוח',
+
+  'journeys.guided': 'מסעות מודרכים',
+  'journeys.guidedBlurb': 'רצפים אוצרים שמחליפים תדרים אוטומטית — שכב, עצום עיניים, והמסע ינווט לבדו.',
+  'journeys.stepsN': '{n} שלבים',
+  'journeys.withMelody': 'עם מלודיה',
 
   // ------------------------------------------------------------------ splash
   'splash.aria': 'מסך פתיחה',
@@ -442,6 +464,28 @@ const EN: Record<StringKey, string> = {
   'nav.frequencies': 'Frequencies',
   'nav.presets': 'Presets',
   'nav.settings': 'Settings',
+  'nav.search': 'Search',
+  'nav.library': 'Library',
+  'nav.favourites': 'Favourites',
+  'nav.about': 'About',
+
+  'search.title': 'Search',
+  'search.placeholder': 'A frequency, a journey, a feeling',
+  'search.prompt': 'Search by name, by number, or by what you are trying to do.',
+  'search.none': 'Nothing matches {q}',
+  'search.freqs': 'Frequencies',
+  'search.journeys': 'Journeys',
+  'search.resultsN': '{n} results',
+
+  'home.featured': 'Today’s piece',
+  'home.startListening': 'Start listening',
+  'home.quick': 'Start now',
+  'home.bands': 'Brainwaves',
+
+  'journeys.guided': 'Guided journeys',
+  'journeys.guidedBlurb': 'Curated sequences that change frequency on their own — lie down, close your eyes, and the journey steers itself.',
+  'journeys.stepsN': '{n} steps',
+  'journeys.withMelody': 'with melody',
 
   'splash.aria': 'Opening screen',
   'splash.tagline': 'Every ring is a harmonic interval of the same root frequency — and so is every note you hear.',

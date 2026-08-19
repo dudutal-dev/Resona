@@ -40,22 +40,22 @@ export function AboutScreen() {
       {/* Credit */}
       <Card glow className="mb-5 text-center">
         <div
-          className="mx-auto grid h-16 w-16 place-items-center rounded-2xl"
+          className="mx-auto grid h-[74px] w-[74px] place-items-center rounded-full"
           style={{
-            background: 'var(--accent-soft)',
-            border: '1px solid var(--accent-line)',
-            boxShadow: '0 0 40px -8px var(--glow)',
+            background: 'var(--gold-soft)',
+            border: '1px solid var(--gold)',
+            boxShadow: '0 0 44px -10px var(--gold)',
           }}
         >
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--accent)' }} aria-hidden>
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--gold)' }} aria-hidden>
             <circle cx="12" cy="12" r="3" fill="currentColor" />
             <circle cx="12" cy="12" r="7" stroke="currentColor" strokeWidth="1.4" opacity="0.65" />
             <circle cx="12" cy="12" r="10.5" stroke="currentColor" strokeWidth="1.2" opacity="0.35" />
           </svg>
         </div>
-        <h2 className="glow-text mt-3 text-2xl font-bold">Resona</h2>
+        <h2 className="mt-4 text-[26px] font-extrabold tracking-tight">Resona</h2>
         <p className="txt-3 mt-1 text-[11px]">{t('about.byline')}</p>
-        <p className="mt-0.5 text-lg font-bold" style={{ color: 'var(--accent)' }}>
+        <p className="mt-0.5 text-lg font-extrabold" style={{ color: 'var(--gold)' }}>
           {t('about.author')}
         </p>
       </Card>

@@ -72,20 +72,22 @@ export function ReleaseHeader({
       </div>
 
       <div className="flex items-center justify-between pt-2">
-        <button onClick={back} aria-label={t('common.back')} className="orb-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden className="flip-ltr">
+        <button onClick={back} aria-label={t('common.back')} className="circle-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden className="flip-ltr">
             <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
         {menu}
       </div>
 
-      <div className="mx-auto mt-3 aspect-square w-[62%] max-w-[268px]">
+      {/* Round, like every other object in the app. The square plate this used
+          to be was the last thing on screen still claiming to be a record. */}
+      <div className="mx-auto mt-3 aspect-square w-[64%] max-w-[276px] overflow-hidden rounded-full">
         {art ?? (
           <img
             src={cover}
             alt=""
-            className="block h-full w-full rounded-[12px] object-cover"
+            className="block h-full w-full rounded-full object-cover"
             style={{ boxShadow: '0 24px 50px -18px rgba(0,0,0,0.75)' }}
           />
         )}
@@ -125,13 +127,16 @@ export function ReleaseHeader({
         </div>
       )}
 
-      <div className="mt-6 flex items-stretch gap-3">
-        <button onClick={primary.onClick} className="pill pill-solid">
+      <div className="mt-7 flex items-stretch gap-3">
+        <button onClick={primary.onClick} className="cta flex-1">
           {primary.icon}
           {primary.label}
         </button>
         {secondary && (
-          <button onClick={secondary.onClick} className="pill pill-quiet">
+          <button
+            onClick={secondary.onClick}
+            className="obj flex flex-1 items-center justify-center gap-2 rounded-full px-5 text-[15px] font-extrabold"
+          >
             {secondary.icon}
             {secondary.label}
           </button>
@@ -146,7 +151,7 @@ export function ReleaseHeader({
               onClick={a.onClick}
               data-on={a.on ? 'true' : 'false'}
               className="act"
-              style={{ color: a.on ? 'var(--accent)' : 'var(--txt-2)' }}
+              style={{ color: a.on ? 'var(--gold)' : 'var(--txt-2)' }}
             >
               <span className="act-glyph" aria-hidden>
                 {a.icon}

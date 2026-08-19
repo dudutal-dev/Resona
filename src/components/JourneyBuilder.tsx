@@ -51,13 +51,14 @@ function Choice({
     <button
       onClick={onClick}
       aria-pressed={active}
-      className="w-full rounded-[14px] px-4 py-3.5 text-start transition-all active:scale-[0.98]"
-      style={{
-        background: active ? 'var(--accent-soft)' : 'var(--pill-quiet-bg)',
-        color: active ? 'var(--accent)' : 'var(--txt)',
-      }}
+      className="obj w-full px-4 py-4 text-start transition-all active:scale-[0.98]"
+      style={
+        active
+          ? { background: 'var(--gold-soft)', borderColor: 'var(--gold)', color: 'var(--gold)' }
+          : undefined
+      }
     >
-      <span className="block text-[15px] font-bold leading-tight">{label}</span>
+      <span className="block text-[15.5px] font-extrabold leading-tight">{label}</span>
       {note && (
         <span className="txt-3 mt-0.5 block text-[12px] leading-relaxed">{note}</span>
       )}
@@ -114,7 +115,7 @@ export function JourneyBuilder() {
               className="h-1.5 rounded-full transition-all duration-300"
               style={{
                 width: i === step ? 18 : 6,
-                background: i <= step ? 'var(--accent)' : 'var(--border-strong)',
+                background: i <= step ? 'var(--gold)' : 'var(--border-strong)',
               }}
             />
           ))}
@@ -210,13 +211,13 @@ export function JourneyBuilder() {
           </p>
 
           <div className="mt-6 flex items-stretch gap-3">
-            <button onClick={accept} className="pill pill-solid">
+            <button onClick={accept} className="cta flex-1">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {t('build.keep')}
             </button>
-            <button onClick={() => setStep(0)} className="pill pill-quiet">
+            <button onClick={() => setStep(0)} className="obj flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-4 text-[15px] font-extrabold">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path d="M4 12a8 8 0 108-8 8 8 0 00-5.7 2.4L4 9" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M4 4v5h5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />

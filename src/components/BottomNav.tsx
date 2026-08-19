@@ -2,72 +2,74 @@ import { navigate, type Route } from '../lib/router'
 import { useT, type StringKey } from '../lib/i18n'
 import { useSession } from '../store/sessionStore'
 
+/**
+ * Five destinations, on the ground.
+ *
+ * The previous bar was a floating rounded pill with icons and no words, on the
+ * argument that five captions are a third of the bar spent repeating the
+ * pictograms. That argument is right about a bar of five *similar* things and
+ * wrong here: "journeys" and "library" are not guessable from a shape, and the
+ * first thing anyone did was tap the wrong one. So the labels are back, and the
+ * bar sits flat against the bottom edge like a piece of the device rather than
+ * a card floating over the page.
+ *
+ * The current tab is marked in the metal — no pill behind it. On black, colour
+ * alone is a stronger signal than a filled shape, and it costs no height.
+ */
 const ITEMS: { route: Route['name']; href: string; label: StringKey; icon: JSX.Element }[] = [
   {
     route: 'home',
     href: '/',
     label: 'nav.home',
-    icon: (
-      <path
-        d="M4 11l8-6 8 6v8a1 1 0 01-1 1h-4v-6h-6v6H5a1 1 0 01-1-1v-8z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-    ),
+    icon: <path d="M4 10.6l8-6.2 8 6.2V19a1.4 1.4 0 01-1.4 1.4H5.4A1.4 1.4 0 014 19z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />,
   },
   {
     route: 'journeys',
     href: '/journeys',
     label: 'nav.journeys',
     icon: (
+      <path
+        d="M12 2.6l1.85 6.2a1.9 1.9 0 001.35 1.35L21.4 12l-6.2 1.85a1.9 1.9 0 00-1.35 1.35L12 21.4l-1.85-6.2a1.9 1.9 0 00-1.35-1.35L2.6 12l6.2-1.85a1.9 1.9 0 001.35-1.35z"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+    ),
+  },
+  {
+    route: 'search',
+    href: '/search',
+    label: 'nav.search',
+    icon: (
       <>
-        <path d="M4 7h16M4 12h9M4 17h13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-        <circle cx="18" cy="12" r="2" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="11" cy="11" r="6.6" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M16 16l4.2 4.2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
       </>
     ),
   },
   {
     route: 'frequencies',
     href: '/frequencies',
-    label: 'nav.frequencies',
+    label: 'nav.library',
     icon: (
-      <path
-        d="M3 12h2l2-7 3 14 3-17 3 13 2-3h3"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <>
+        <path d="M9.4 17.6V5.2l9-1.8v12.4" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+        <circle cx="7" cy="17.8" r="2.6" stroke="currentColor" strokeWidth="1.7" />
+        <circle cx="16" cy="15.8" r="2.6" stroke="currentColor" strokeWidth="1.7" />
+      </>
     ),
   },
   {
     route: 'presets',
     href: '/presets',
-    label: 'nav.presets',
+    label: 'nav.favourites',
     icon: (
-      <>
-        <path d="M6 4v16M12 4v16M18 4v16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-        <circle cx="6" cy="9" r="2" fill="currentColor" />
-        <circle cx="12" cy="15" r="2" fill="currentColor" />
-        <circle cx="18" cy="8" r="2" fill="currentColor" />
-      </>
-    ),
-  },
-  {
-    route: 'settings',
-    href: '/settings',
-    label: 'nav.settings',
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
-        <path
-          d="M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6l1.4 1.4m10 10l1.4 1.4m0-12.8l-1.4 1.4m-10 10l-1.4 1.4"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        />
-      </>
+      <path
+        d="M12 20.2S3.8 15.1 3.8 9.5A4.6 4.6 0 0112 6.9a4.6 4.6 0 018.2 2.6c0 5.6-8.2 10.7-8.2 10.7z"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
     ),
   },
 ]
@@ -78,50 +80,30 @@ export function BottomNav({ current }: { current: Route['name'] }) {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[max(0.6rem,env(safe-area-inset-bottom))]"
+      className="navbar fixed inset-x-0 bottom-0 z-40 pb-[max(0.35rem,env(safe-area-inset-bottom))]"
       aria-label={t('nav.aria')}
     >
-      {/* Scrim: the bar floats over scrolling content, and without this the text
-          underneath reads straight through it. */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-28"
-        style={{ background: 'linear-gradient(to top, var(--bg-deep) 30%, transparent)' }}
-        aria-hidden
-      />
-      {/*
-        Icons only, and the label is the tooltip rather than a caption.
-
-        Five words under five icons is a third of the bar's height spent
-        repeating what the pictograms already say, and it forces every label to
-        be short enough to fit rather than clear. The current tab is marked by a
-        filled shape behind its icon, which is louder than a caption and takes no
-        vertical room.
-      */}
-      <div className="bar mx-auto flex max-w-sm items-center justify-between rounded-full p-1.5">
+      <div className="mx-auto flex max-w-md items-stretch justify-between px-3">
         {ITEMS.map((item) => {
           const active =
             current === item.route ||
-            (item.route === 'journeys' && (current === 'journey' || current === 'journeyDay'))
+            (item.route === 'journeys' && (current === 'journey' || current === 'journeyDay' || current === 'build'))
           return (
             <button
               key={item.href}
               onClick={() => navigate(item.href)}
               aria-current={active ? 'page' : undefined}
-              aria-label={t(item.label)}
-              title={t(item.label)}
-              className="relative grid h-12 flex-1 place-items-center rounded-full transition-all active:scale-90"
-              style={{
-                background: active ? 'var(--nav-active-bg)' : 'transparent',
-                color: active ? 'var(--txt)' : 'var(--txt-3)',
-              }}
+              className="navitem relative flex-1 transition-transform active:scale-90"
+              data-on={active}
             >
               <svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden>
                 {item.icon}
               </svg>
+              <span className="navlab">{t(item.label)}</span>
               {item.route === 'frequencies' && isPlaying && (
                 <span
-                  className="absolute end-2.5 top-2.5 h-1.5 w-1.5 rounded-full"
-                  style={{ background: 'var(--accent)', boxShadow: '0 0 8px var(--glow)' }}
+                  className="absolute end-[22%] top-1.5 h-1.5 w-1.5 rounded-full"
+                  style={{ background: 'var(--gold)' }}
                   aria-hidden
                 />
               )}

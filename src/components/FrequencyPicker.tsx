@@ -8,9 +8,11 @@ import {
 } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import type { Frequency, TrustLevel } from '../lib/types'
-import { hueGlow } from '../lib/themes'
-import { frequencyCover } from '../lib/cover'
+import { hueFill, hueLine, hueText } from '../lib/themes'
+import { glyphForFrequency } from '../lib/glyphs'
+import { Badge } from './Badge'
 import { TrustBadge } from './ui'
+import { SectionHead } from './AppBar'
 
 /**
  * The transparency sentences a set of entries actually needs.
@@ -51,28 +53,25 @@ function FrequencyRow({
   const { t, lang } = useT()
   return (
     <div
-      className="relative flex items-center gap-3 rounded-[12px] p-2 transition-colors duration-200"
-      style={selected ? { background: 'var(--accent-soft)' } : undefined}
+      className="obj relative flex items-center gap-3 p-3 transition-colors duration-200"
+      style={
+        selected
+          ? { background: hueFill(freq.hue, 0.12), borderColor: hueLine(freq.hue, 0.55) }
+          : undefined
+      }
     >
       <button onClick={onSelect} className="flex min-w-0 flex-1 items-center gap-3 text-start">
-        {/* The frequency's own plate, at thumbnail size. It carries the number,
-            so the row does not have to print it twice. */}
-        <img
-          src={frequencyCover(freq)}
-          alt=""
-          className="h-12 w-12 shrink-0 rounded-[8px] object-cover"
-          style={{ boxShadow: selected ? `0 0 20px ${hueGlow(freq.hue, 0.45)}` : undefined }}
-        />
+        <Badge hue={freq.hue} glyph={glyphForFrequency(freq)} size={44} playing={selected} />
         <span className="min-w-0 flex-1">
           {/* Not truncated: several English labels share an opening phrase and
               would clip to the same stub, which is worse than two lines. */}
           <span
-            className="block text-[14px] font-bold leading-snug"
-            style={selected ? { color: 'var(--accent)' } : undefined}
+            className="block text-[14.5px] font-extrabold leading-snug"
+            style={selected ? { color: hueText(freq.hue) } : undefined}
           >
             {freqLabel(freq, lang)}
           </span>
-          <span className="txt-3 readout mt-0.5 block text-[11px]">
+          <span className="txt-3 readout mt-0.5 block text-[11.5px]">
             {freq.hz ? `${freq.hz} Hz` : `${freq.range?.[0]}–${freq.range?.[1]} Hz`}
           </span>
         </span>
@@ -115,10 +114,7 @@ export function FrequencyPicker({
   return (
     <div className="space-y-6">
       <section>
-        <div className="mb-3 flex items-baseline justify-between">
-          <h3 className="text-sm font-bold">{t('freq.rootTitle')}</h3>
-          <span className="txt-3 text-[11px]">{t('freq.rootHint')}</span>
-        </div>
+        <SectionHead title={t('freq.rootTitle')} blurb={t('freq.rootHint')} tight />
 
         <div className="space-y-5">
           {ROOT_GROUPS.map((group) => (
@@ -147,17 +143,16 @@ export function FrequencyPicker({
 
       {showBeats && (
         <section>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h3 className="text-sm font-bold">{t('freq.beatsTitle')}</h3>
-            <span className="txt-3 text-[11px]">{t('freq.beatsHint')}</span>
-          </div>
+          <SectionHead title={t('freq.beatsTitle')} blurb={t('freq.beatsHint')} />
           <div className="space-y-2">
             <button
               onClick={() => onSelectBeat(null)}
-              className={`glass w-full rounded-2xl p-3 text-start text-sm font-semibold transition-all ${
-                selectedBeat === null ? 'rim' : ''
-              }`}
-              style={{ background: selectedBeat === null ? 'var(--accent-soft)' : undefined }}
+              className="obj w-full p-3.5 text-start text-[14px] font-extrabold"
+              style={
+                selectedBeat === null
+                  ? { background: 'var(--gold-soft)', borderColor: 'var(--gold)', color: 'var(--gold)' }
+                  : undefined
+              }
             >
               {t('freq.noBeat')}
             </button>

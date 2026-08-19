@@ -16,9 +16,8 @@ export function FrequenciesScreen() {
     <Screen
       title={t('freq.title')}
       subtitle={t('freq.subtitle')}
-      onBack
       action={
-        <button onClick={() => navigate('/player')} className="pill pill-solid h-10 flex-none px-5 text-[13px]">
+        <button onClick={() => navigate('/player')} className="cta flex-none px-5 py-2.5 text-[13.5px]">
           {t('freq.play')}
         </button>
       }

@@ -1,171 +1,160 @@
 import {
+  BEAT_FREQUENCIES,
   JOURNEYS,
   ROOT_FREQUENCIES,
+  freqInfo,
   freqLabel,
   getFrequency,
   getJourney,
   journeyTitle,
 } from '../lib/catalog'
+import { GLYPH_FOR_THEME, glyphForFrequency } from '../lib/glyphs'
 import { useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
+import { themeOf } from '../lib/themes'
 import { useSession } from '../store/sessionStore'
-import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
-import { formatClock } from './ui'
-import { Shelf, ShelfCard } from './Shelf'
-import { coverForRoot, frequencyCover, journeyCover } from '../lib/cover'
+import { AppBar, SectionHead } from './AppBar'
 import { HistoryPanel } from './HistoryPanel'
+import { Tile } from './Tile'
+
+/**
+ * The piece of the day.
+ *
+ * Deterministic from the date rather than random: the home screen has to be the
+ * same all day, or the thing you meant to come back to after lunch is gone. It
+ * changes at midnight and it is the same for the whole catalogue rotation, so
+ * over a couple of weeks it walks the whole shelf.
+ */
+function featuredFor(date: Date) {
+  const day = Math.floor(date.getTime() / 86_400_000)
+  return ROOT_FREQUENCIES[day % ROOT_FREQUENCIES.length]
+}
 
 export function HomeScreen() {
   const { t, lang } = useT()
-  const { config, isPlaying, elapsed, setRoot } = useSession()
-  const presets = usePresets((s) => s.presets)
+  const { config, isPlaying, setRoot, toggle } = useSession()
   const progress = useJourneys((s) => s.progress)
 
-  const root = getFrequency(config.rootId)
+  const featured = featuredFor(new Date())
   const inProgress = Object.values(progress)
     .map((p) => ({ p, journey: getJourney(p.journeyId) }))
     .filter((x) => x.journey && x.p.completedDays.length < x.journey.days)
 
-  const hour = new Date().getHours()
-  const greeting =
-    hour < 5
-      ? 'home.greet.night'
-      : hour < 12
-        ? 'home.greet.morning'
-        : hour < 18
-          ? 'home.greet.afternoon'
-          : 'home.greet.evening'
+  const sets = JOURNEYS.filter((j) => j.purpose === 'club').reverse().slice(0, 6)
+  const quick = ROOT_FREQUENCIES.slice(0, 8)
+  const bands = BEAT_FREQUENCIES.slice(0, 6)
 
-  // Newest first: the club shelf is where new sets land, and a catalogue that
-  // always opens on the same six is a catalogue nobody scrolls twice.
-  const sets = JOURNEYS.filter((j) => j.purpose === 'club').reverse().slice(0, 12)
-  const trips = JOURNEYS.filter((j) => j.purpose === 'psychedelic').slice(0, 10)
-  const starters = JOURNEYS.filter(
-    (j) => j.days <= 5 && j.purpose !== 'club' && j.purpose !== 'psychedelic',
-  ).slice(0, 10)
+  const playFeatured = async () => {
+    setRoot(featured.id)
+    if (!isPlaying || config.rootId !== featured.id) {
+      navigate('/player')
+      // A fresh session, not a resume: the hero is an invitation to start this
+      // particular piece, so it restarts rather than picking up whatever was
+      // already running under a different root.
+      if (isPlaying) await toggle()
+      await toggle()
+    } else {
+      navigate('/player')
+    }
+  }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pb-40 safe-top">
-      <header className="pb-5 pt-4">
-        <p className="txt-3 text-[13px] font-semibold">{t(greeting)}</p>
-        <h1 className="glow-text mt-1 text-[32px] font-extrabold tracking-tight">Resona</h1>
-      </header>
+    <div className="mx-auto w-full max-w-3xl px-4 pb-44 safe-top">
+      <AppBar title={t('nav.home')} />
 
-      {/* Continue listening — the one row that is about what you were doing
-          rather than about what there is. */}
-      <button
-        onClick={() => navigate('/player')}
-        className="bar flex w-full items-center gap-3 rounded-[14px] p-2.5 text-start transition-transform active:scale-[0.99]"
-      >
-        <img
-          src={coverForRoot(config.rootId)}
-          alt=""
-          className="h-12 w-12 shrink-0 rounded-[7px] object-cover"
-          style={{ boxShadow: '0 8px 18px -8px rgba(0,0,0,0.7)' }}
-        />
-        <span className="min-w-0 flex-1">
-          <span className="txt-3 block text-[10px] font-bold uppercase" style={{ letterSpacing: '0.14em' }}>
-            {t(isPlaying ? 'home.nowPlaying' : 'home.continue')}
-          </span>
-          <span className="mt-0.5 block truncate text-[15px] font-bold">
-            {root ? freqLabel(root, lang) : ''}
-          </span>
-          <span className="txt-3 readout block text-[11px]">
-            {isPlaying ? formatClock(elapsed) : `${root?.hz} Hz`}
-          </span>
-        </span>
-        <span
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-full"
-          style={{ background: 'var(--pill-solid-bg)', color: 'var(--pill-solid-fg)' }}
+      {/* The one thing on this screen that is a proposal rather than a list. */}
+      <section className="hero p-6" style={{ ['--hero-h' as string]: String(featured.hue) }}>
+        <p
+          className="relative flex items-center gap-1.5 text-[12px] font-extrabold"
+          style={{ color: 'var(--gold)', letterSpacing: '0.16em' }}
         >
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-            <path d="M8 5.5v13a1 1 0 001.5.87l11-6.5a1 1 0 000-1.74l-11-6.5A1 1 0 008 5.5z" />
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M12 2l1.9 6.4a2 2 0 001.7 1.7L22 12l-6.4 1.9a2 2 0 00-1.7 1.7L12 22l-1.9-6.4a2 2 0 00-1.7-1.7L2 12l6.4-1.9a2 2 0 001.7-1.7z" />
           </svg>
-        </span>
-      </button>
+          {t('home.featured')}
+        </p>
+        <h2 className="relative mt-3 text-[34px] font-extrabold leading-[1.1] tracking-tight">
+          {freqLabel(featured, lang)} — <span className="readout">{featured.hz}Hz</span>
+        </h2>
+        <p className="txt-2 relative mt-3 line-clamp-2 text-[14px] leading-relaxed">
+          {freqInfo(featured, lang)}
+        </p>
+        <div className="relative mt-6 flex justify-start">
+          <button onClick={() => void playFeatured()} className="cta">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <path d="M8 5.5v13a1 1 0 001.5.87l11-6.5a1 1 0 000-1.74l-11-6.5A1 1 0 008 5.5z" />
+            </svg>
+            {t('home.startListening')}
+          </button>
+        </div>
+      </section>
 
-      {/* Journey in progress */}
       {inProgress.length > 0 && (
-        <Shelf title={t('home.activeJourney')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')}>
-          {inProgress.map(({ p, journey }) => (
-            <ShelfCard
-              key={p.journeyId}
-              cover={journeyCover(journey!)}
-              title={journeyTitle(journey!, lang)}
-              subtitle={`${p.completedDays.length}/${journey!.days}`}
-              onClick={() => navigate(`/journey/${p.journeyId}`)}
-            />
-          ))}
-        </Shelf>
+        <>
+          <SectionHead title={t('home.activeJourney')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')} />
+          <div className="grid grid-cols-2 gap-3">
+            {inProgress.slice(0, 4).map(({ p, journey }) => (
+              <Tile
+                key={p.journeyId}
+                hue={featured.hue}
+                glyph={GLYPH_FOR_THEME[themeOf(journey!)]}
+                title={journeyTitle(journey!, lang)}
+                meta={`${p.completedDays.length}/${journey!.days}`}
+                onClick={() => navigate(`/journey/${p.journeyId}`)}
+              />
+            ))}
+          </div>
+        </>
       )}
 
-      <Shelf title={t('home.shelfSessions')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')}>
-        {sets.map((j) => (
-          <ShelfCard
-            key={j.id}
-            cover={journeyCover(j)}
-            title={journeyTitle(j, lang)}
-            subtitle={t('common.daysN', { n: j.days })}
-            onClick={() => navigate(`/journey/${j.id}`)}
-          />
-        ))}
-      </Shelf>
-
-      <Shelf title={t('home.shelfTrips')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')}>
-        {trips.map((j) => (
-          <ShelfCard
-            key={j.id}
-            cover={journeyCover(j)}
-            title={journeyTitle(j, lang)}
-            subtitle={t('common.daysN', { n: j.days })}
-            onClick={() => navigate(`/journey/${j.id}`)}
-          />
-        ))}
-      </Shelf>
-
-      <Shelf title={t('home.shelfStarters')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')}>
-        {starters.map((j) => (
-          <ShelfCard
-            key={j.id}
-            cover={journeyCover(j)}
-            title={journeyTitle(j, lang)}
-            subtitle={t('common.daysN', { n: j.days })}
-            onClick={() => navigate(`/journey/${j.id}`)}
-          />
-        ))}
-      </Shelf>
-
-      <Shelf title={t('home.shelfRoots')} onAll={() => navigate('/frequencies')} allLabel={t('home.seeAll')}>
-        {ROOT_FREQUENCIES.slice(0, 12).map((f) => (
-          <ShelfCard
+      <SectionHead title={t('home.quick')} onAll={() => navigate('/frequencies')} allLabel={t('home.seeAll')} />
+      <div className="grid grid-cols-2 gap-3">
+        {quick.map((f) => (
+          <Tile
             key={f.id}
-            cover={frequencyCover(f)}
+            hue={f.hue}
+            glyph={glyphForFrequency(f)}
             title={freqLabel(f, lang)}
-            subtitle={`${f.hz} Hz`}
+            meta={`${f.hz} Hz`}
+            playing={isPlaying && config.rootId === f.id}
             onClick={() => {
               setRoot(f.id)
               navigate('/player')
             }}
           />
         ))}
-      </Shelf>
+      </div>
 
-      {presets.length > 0 && (
-        <Shelf title={t('home.myPresets')} onAll={() => navigate('/presets')} allLabel={t('home.seeAll')}>
-          {presets.slice(0, 10).map((preset) => (
-            <ShelfCard
-              key={preset.id}
-              cover={coverForRoot(preset.config.rootId)}
-              title={preset.name}
-              onClick={() => navigate('/presets')}
-            />
-          ))}
-        </Shelf>
-      )}
+      <SectionHead title={t('home.shelfSessions')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')} />
+      <div className="grid grid-cols-2 gap-3">
+        {sets.map((j) => (
+          <Tile
+            key={j.id}
+            hue={getFrequency(j.schedule[0].frequencyId)?.hue ?? 265}
+            glyph={GLYPH_FOR_THEME[themeOf(j)]}
+            title={journeyTitle(j, lang)}
+            meta={t('common.daysN', { n: j.days })}
+            onClick={() => navigate(`/journey/${j.id}`)}
+          />
+        ))}
+      </div>
 
-      {/* Below the shelves, because it is a record rather than a destination. */}
-      <div className="mt-8">
+      <SectionHead title={t('home.bands')} onAll={() => navigate('/frequencies')} allLabel={t('home.seeAll')} />
+      <div className="grid grid-cols-2 gap-3">
+        {bands.map((f) => (
+          <Tile
+            key={f.id}
+            hue={f.hue}
+            glyph={glyphForFrequency(f)}
+            title={freqLabel(f, lang)}
+            meta={f.range ? `${f.range[0]}–${f.range[1]} Hz` : ''}
+            onClick={() => navigate('/frequencies')}
+          />
+        ))}
+      </div>
+
+      <div className="mt-10">
         <HistoryPanel />
       </div>
 

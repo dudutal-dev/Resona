@@ -2,9 +2,16 @@ import { useEffect, type ReactNode } from 'react'
 import { trustNoticeKey, trustShortKey } from '../lib/catalog'
 import { useT } from '../lib/i18n'
 import type { TrustLevel } from '../lib/types'
-import { back } from '../lib/router'
+import { AppBar } from './AppBar'
 
-/** Page shell: sticky glass header with a back affordance, then content. */
+/**
+ * Page shell.
+ *
+ * Everything that is not the home screen or the journeys shelf goes through
+ * here, which is why the top bar lives in `AppBar` rather than in this file: it
+ * has to be identical on the screens that build their own body and on the ones
+ * that do not.
+ */
 export function Screen({
   title,
   subtitle,
@@ -18,37 +25,15 @@ export function Screen({
   action?: ReactNode
   children: ReactNode
 }) {
-  const { t } = useT()
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pb-28 safe-top">
-      <header className="mb-6 flex items-start justify-between gap-3 pt-2">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            {onBack && (
-              <button
-                onClick={back}
-                aria-label={t('common.back')}
-                className="btn btn-ghost -ms-2 h-9 w-9 rounded-full p-0"
-              >
-                {/* The chevron points the way back, which is the opposite of
-                    the reading direction — so it has to flip with it. */}
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden className="flip-ltr">
-                  <path
-                    d="M9 6l6 6-6 6"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-            )}
-            <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">{title}</h1>
-          </div>
-          {subtitle && <p className="txt-2 mt-1 text-sm">{subtitle}</p>}
+    <div className="mx-auto w-full max-w-3xl px-4 pb-44 safe-top">
+      <AppBar title={title} onBack={onBack} />
+      {(subtitle || action) && (
+        <div className="mb-6 flex items-start justify-between gap-3">
+          {subtitle && <p className="txt-2 min-w-0 flex-1 text-[13.5px] leading-relaxed">{subtitle}</p>}
+          {action && <div className="shrink-0">{action}</div>}
         </div>
-        {action}
-      </header>
+      )}
       {children}
     </div>
   )
@@ -69,8 +54,8 @@ export function Card({
   return (
     <Tag
       onClick={onClick}
-      className={`glass ${glow ? 'rim' : ''} w-full rounded-3xl p-4 text-start transition-all duration-200 ${
-        onClick ? 'hover:-translate-y-0.5 active:scale-[0.99]' : ''
+      className={`obj w-full rounded-3xl p-4 text-start transition-all duration-200 ${
+        onClick ? 'active:scale-[0.99]' : ''
       } ${className}`}
       style={glow ? { boxShadow: '0 18px 50px -22px var(--glow)' } : undefined}
     >
@@ -215,23 +200,23 @@ export function Sheet({
 
 export function EmptyState({ title, body, action }: { title: string; body: string; action?: ReactNode }) {
   return (
-    <div className="glass rounded-3xl px-6 py-12 text-center">
+    <div className="obj px-6 py-14 text-center">
       <div
-        className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl"
-        style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-line)' }}
+        className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-full"
+        style={{ background: 'var(--gold-soft)', border: '1px solid var(--gold)', color: 'var(--gold)' }}
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden style={{ color: 'var(--accent)' }}>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path
             d="M12 3v18M5 8v8M19 8v8M8.5 5.5v13M15.5 5.5v13"
             stroke="currentColor"
-            strokeWidth="1.8"
+            strokeWidth="1.7"
             strokeLinecap="round"
           />
         </svg>
       </div>
-      <h3 className="text-base font-semibold">{title}</h3>
-      <p className="txt-2 mx-auto mt-1 max-w-xs text-sm">{body}</p>
-      {action && <div className="mt-5">{action}</div>}
+      <h3 className="text-[17px] font-extrabold">{title}</h3>
+      <p className="txt-2 mx-auto mt-2 max-w-xs text-[13.5px] leading-relaxed">{body}</p>
+      {action && <div className="mt-6 flex justify-center">{action}</div>}
     </div>
   )
 }

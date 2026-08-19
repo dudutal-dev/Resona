@@ -314,7 +314,7 @@ export function PlayerScreen() {
         <p className="txt-3 mt-3 text-[11px] leading-relaxed">
           {t('player.saveNote')}
         </p>
-        <button onClick={handleSave} className="btn btn-primary mt-4 w-full">
+        <button onClick={handleSave} className="cta mt-4 w-full">
           {t('common.save')}
         </button>
       </Sheet>

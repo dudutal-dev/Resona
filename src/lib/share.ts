@@ -42,17 +42,24 @@ export function shareMessage(target: Shareable, lang: Lang): string {
   const t = (key: Parameters<typeof translate>[1], vars?: Record<string, string>) =>
     translate(lang, key, vars)
   const link = shareLink(target)
-  if (target.kind === 'journey') {
-    const journey = getJourney(target.id)
-    if (!journey) return link
-    return `${t('share.journeyLine', {
-      title: journeyTitle(journey, lang),
-      n: String(journey.days),
-    })}\n${link}`
-  }
-  const freq = getFrequency(target.id)
-  if (!freq) return link
-  return `${t('share.freqLine', { name: freqLabel(freq, lang), hz: String(freq.hz) })}\n${link}`
+  // The invitation first, the link, then the ask — in that order, and the ask
+  // last on purpose. A message that opens by asking for bug reports tells the
+  // person to evaluate before they have heard anything, and what is worth
+  // knowing first is whether they listen at all.
+  const opening =
+    target.kind === 'journey'
+      ? (() => {
+          const journey = getJourney(target.id)
+          return journey
+            ? t('share.journeyLine', { title: journeyTitle(journey, lang), n: String(journey.days) })
+            : ''
+        })()
+      : (() => {
+          const freq = getFrequency(target.id)
+          return freq ? t('share.freqLine', { name: freqLabel(freq, lang), hz: String(freq.hz) }) : ''
+        })()
+  if (!opening) return link
+  return `${opening}\n${link}\n\n${t('share.ask')}`
 }
 
 export type ShareOutcome = 'shared' | 'whatsapp' | 'copied' | 'failed'

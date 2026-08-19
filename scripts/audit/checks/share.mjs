@@ -65,11 +65,20 @@ export async function run(browser) {
   if (!links.journey.startsWith(`http://localhost:${PORT}/`)) failures.push('the link does not point at this app')
   if (!links.message.includes(links.journey)) failures.push('the message does not carry the link')
   if (!links.message.includes(links.title)) failures.push('the message does not name the journey')
+  // The ask for reports is the point of sending it to anyone yet, and it has to
+  // come after the link rather than before it.
+  if (!links.message.includes('ספר לי')) failures.push('the message does not ask for reports')
+  if (links.message.indexOf('ספר לי') < links.message.indexOf(links.journey)) {
+    failures.push('the message asks for bug reports before it says what it is')
+  }
 
   if (!journeyVisit.text.includes(links.title)) failures.push('a stranger opening the journey link does not see the journey')
   // The invitation is the reason for sharing: it is how the receiver learns
   // this is an app they can keep.
   if (!journeyVisit.text.includes('נשלח אליך')) failures.push('the shared-with-you invitation is missing')
+  // Asking for a report without naming a channel is decoration; the log is the
+  // channel, and the card has to say so.
+  if (!journeyVisit.text.includes('יומן אבחון')) failures.push('the invitation does not say where to report')
 
   if (!freqVisit.text.includes('639')) failures.push('a stranger opening the frequency link does not get that frequency')
   // The invitation has to survive the address being cleaned up, which happens

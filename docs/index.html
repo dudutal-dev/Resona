@@ -11,10 +11,26 @@
          keeps the content below it, and black matches the app's ground. -->
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="apple-mobile-web-app-title" content="Resona" />
+    <!-- What a shared link looks like in a chat.
+         WhatsApp, Telegram and the rest read Open Graph tags and nothing else,
+         and they resolve them against nothing: relative paths are ignored, so
+         these have to be absolute, which means naming the host the app is
+         published to. On any other host the preview simply falls back to the
+         link itself, which is what it did everywhere before this. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Resona" />
+    <meta property="og:title" content="Resona — תדרים ומסעות" />
+    <meta property="og:description" content="מוזיקה גנרטיבית שמולחנת סביב תדר אחד: כל תו הוא יחס הרמוני טהור שלו. פועל בדפדפן, בלי הרשמה." />
+    <meta property="og:url" content="https://dudutal-dev.github.io/Resona/" />
+    <meta property="og:image" content="https://dudutal-dev.github.io/Resona/icons/icon-512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:locale" content="he_IL" />
+    <meta name="twitter:card" content="summary" />
     <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
     <link rel="apple-touch-icon" href="./icons/icon-192.png" />
     <title>Resona — תדרים ומסעות</title>
-    <script type="module" crossorigin src="./assets/index-D9NrxkOK.js"></script>
+    <script type="module" crossorigin src="./assets/index-C9uVn8dr.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-CUqr-81A.css">
   <link rel="manifest" href="./manifest.webmanifest"></head>
   <body>

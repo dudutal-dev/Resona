@@ -82,6 +82,7 @@ export function SharedInvite() {
             {t('shared.title')}
           </h3>
           <p className="txt-2 mt-1 text-[11.5px] leading-relaxed">{renderRich(t('shared.body'))}</p>
+          <p className="txt-3 mt-2 text-[11px] leading-relaxed">{renderRich(t('shared.report'))}</p>
           <button onClick={() => navigate('/about')} className="btn mt-3 text-[11px]">
             {t('shared.what')}
           </button>

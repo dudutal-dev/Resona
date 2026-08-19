@@ -1,31 +1,49 @@
 /**
  * Transcodes turntable footage into what the app actually ships.
  *
+ *   npm i -D ffmpeg-static      (once, if the machine has no ffmpeg)
  *   node scripts/pack-turntables.mjs
  *
- * A turntable is a short clip of a figure making one full revolution, shot
- * against a locked camera. The stage plays it as a loop and drives its rate
- * from the session, so the figure turns in time with the brainwave layer — see
- * `TurntableField`.
+ * A turntable is a clip of a figure making one full revolution against a locked
+ * camera. The stage plays it as a loop and drives its rate from the session, so
+ * the figure turns on the music's own clock — see `TurntableField`.
  *
- * The sources in `assets/turntables` come off a phone at around 12Mbit and
- * eight megabytes for five seconds, which is not something to put in an app.
- * They are re-encoded here to roughly a tenth of that, and two things about
- * the encode are deliberate:
+ * Two clips of the same figure are expected, named by the shape of the screen
+ * they are for:
  *
- * - **The audio track is stripped.** A second media element with audio would
- *   contend for the system's Now Playing session, and on iOS the route follows
- *   whichever element wins — which is how a silent element once silenced
- *   casting. See the note at the top of `MediaRoute`. No audio track, no
- *   contention.
- * - **Two containers.** H.264 is what iOS decodes in hardware and is what a
- *   phone will actually play; VP9/WebM is smaller and is what every other
- *   browser — including the headless one these are verified in — will pick.
- *   A browser downloads only the source it selects, so nobody pays for both.
+ *   assets/turntables/figure-portrait.mp4   a phone held upright
+ *   assets/turntables/figure-wide.mp4       a phone turned, or a television
  *
- * There is no ffmpeg in this project's dependencies and no reason to add one to
- * a normal build: the encoded files are committed, so this only has to run when
- * footage changes. If ffmpeg is missing the script says so and changes nothing.
+ * Four things about the encode are deliberate.
+ *
+ * **The audio track is stripped.** A second media element with audio contends
+ * for the system's Now Playing session, and on iOS the route follows whichever
+ * element wins — which is how a silent element once silenced casting. See the
+ * note at the top of `MediaRoute`. No audio track, no contention.
+ *
+ * **The clip is stretched with real intermediate frames.** This is the
+ * important one. A revolution here takes twenty to sixty seconds because it is
+ * locked to the music, and the source is ten seconds long — so the element
+ * plays at roughly a third speed, holding each frame for an eighth of a second.
+ * Eight frames a second reads as a slideshow of a turning figure rather than as
+ * a turning figure. `minterpolate` synthesises the frames in between, so a
+ * twenty-four-second clip played over a twenty-four-second revolution runs at
+ * its own twenty-four. The frame count nearly triples and the encoder cannot
+ * compress synthesised frames as cheaply as real ones, so the quality settings
+ * below are pulled down to pay for it.
+ *
+ * **H.264 only.** The earlier pass shipped VP9/WebM alongside on the argument
+ * that it would be smaller everywhere that is not iOS. Measured twice, at two
+ * different resolutions, it came out *larger* than the H.264 it was supposed to
+ * undercut — so it was paying for a second copy of every clip and getting
+ * nothing. H.264 is also what the phone this was built for decodes in hardware.
+ *
+ * **`+faststart`.** The index goes first so playback can begin before the whole
+ * file has arrived, which matters because these are fetched on demand rather
+ * than precached.
+ *
+ * The encoded files are committed, so a normal build never runs this. If ffmpeg
+ * is missing the script says so and changes nothing.
  */
 import { createRequire } from 'node:module'
 import { execFileSync } from 'node:child_process'
@@ -38,16 +56,30 @@ const SOURCE_DIR = resolve(HERE, '../assets/turntables')
 const OUT_DIR = resolve(HERE, '../src/assets/turntables')
 
 /**
- * 900px tall at crf 30. Checked against the source frame by frame on the darker
- * of the two clips, which is the one that would band first: no visible
- * difference, at a third of the bytes of crf 26.
+ * Seconds one revolution lasts after stretching. Chosen against the two cases
+ * that actually occur — a club engine at 16 bars is about 31 seconds, the
+ * ambient engine at 24 notes about 22 — so both land near a playback rate of 1
+ * and run at something close to the clip's own frame rate.
  *
- * VP9's scale is not x264's — at crf 36 it came out twice the size of the H.264
- * it was supposed to undercut. 44 is where it lands beside it.
+ * Every second here is paid for twice, in bytes and in encode time, and the
+ * gain flattens out: past this the rate is already above 1 for most of the
+ * range and the extra frames are never seen.
  */
-const HEIGHT = 900
-const CRF_H264 = 30
-const CRF_VP9 = 44
+const TARGET_SECONDS = 24
+const FPS = 24
+/**
+ * Height, per orientation, and the quality. Both sources are 720p on their
+ * short edge, so nothing here upscales.
+ *
+ * These are lower than they look like they should be, and that is the trade
+ * this file exists to make: interpolation triples the frame count, so at the
+ * settings the five-second clips used the pair came to 5.6MB. The figure is a
+ * slow silhouette against black seen from across a room — it survives crf 35
+ * far better than a detailed still would.
+ */
+const PORTRAIT_HEIGHT = 900
+const WIDE_HEIGHT = 660
+const CRF = 35
 
 function findFfmpeg() {
   const fromEnv = process.env.FFMPEG_PATH
@@ -86,6 +118,24 @@ if (!ffmpeg) {
   process.exit(1)
 }
 
+const run = (args) => execFileSync(ffmpeg, ['-hide_banner', '-loglevel', 'error', ...args])
+const kb = (p) => `${Math.round(statSync(p).size / 1024)}KB`
+
+/** Seconds of video, read back from the container. */
+function duration(file) {
+  // ffprobe is not shipped with ffmpeg-static, so this asks ffmpeg itself and
+  // reads the duration off the stream summary it prints to stderr.
+  let out = ''
+  try {
+    execFileSync(ffmpeg, ['-hide_banner', '-i', file], { stdio: ['ignore', 'ignore', 'pipe'] })
+  } catch (err) {
+    out = String(err.stderr ?? '')
+  }
+  const m = out.match(/Duration:\s*(\d+):(\d+):([\d.]+)/)
+  if (!m) throw new Error(`could not read the duration of ${file}`)
+  return Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3])
+}
+
 const sources = readdirSync(SOURCE_DIR).filter((f) => /\.(mp4|mov|webm|m4v)$/i.test(f))
 if (sources.length === 0) {
   console.error(`No footage in ${SOURCE_DIR}`)
@@ -93,34 +143,35 @@ if (sources.length === 0) {
 }
 mkdirSync(OUT_DIR, { recursive: true })
 
-const run = (args) => execFileSync(ffmpeg, ['-hide_banner', '-loglevel', 'error', ...args])
-const kb = (p) => `${Math.round(statSync(p).size / 1024)}KB`
-
 for (const file of sources.sort()) {
   const stem = file.replace(/\.[^.]+$/, '')
   const input = join(SOURCE_DIR, file)
-  const mp4 = join(OUT_DIR, `${stem}.mp4`)
-  const webm = join(OUT_DIR, `${stem}.webm`)
+  const out = join(OUT_DIR, `${stem}.mp4`)
+  const height = /wide/i.test(stem) ? WIDE_HEIGHT : PORTRAIT_HEIGHT
 
-  // `-an` is the no-audio flag; see the note above about the Now Playing session.
-  // `+faststart` puts the index first so playback can begin before the whole
-  // file has arrived, which matters when these are fetched on demand.
+  const seconds = duration(input)
+  const stretch = TARGET_SECONDS / seconds
+  // Interpolate up to `stretch` times the frame rate first, then slow the
+  // presentation timestamps by the same factor: every frame of the result is
+  // either a source frame or one synthesised between two of them, and none is
+  // repeated.
+  const filter = [
+    `scale=-2:${height}`,
+    `minterpolate=fps=${Math.round(FPS * stretch)}:mi_mode=mci:mc_mode=aobmc:vsbmc=1`,
+    `setpts=${stretch.toFixed(4)}*PTS`,
+  ].join(',')
+
   run([
     '-i', input, '-an',
-    '-vf', `scale=-2:${HEIGHT}`,
+    '-vf', filter,
+    '-r', String(FPS),
     '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
-    '-crf', String(CRF_H264), '-preset', 'slow', '-g', '30',
+    '-crf', String(CRF), '-preset', 'slow', '-g', String(FPS * 2),
     '-movflags', '+faststart',
-    mp4, '-y',
+    out, '-y',
   ])
 
-  run([
-    '-i', input, '-an',
-    '-vf', `scale=-2:${HEIGHT}`,
-    '-c:v', 'libvpx-vp9', '-pix_fmt', 'yuv420p',
-    '-crf', String(CRF_VP9), '-b:v', '0', '-row-mt', '1', '-deadline', 'good',
-    webm, '-y',
-  ])
-
-  console.log(`${stem}  ${kb(input)} in  →  ${kb(mp4)} mp4, ${kb(webm)} webm`)
+  console.log(
+    `${stem}  ${kb(input)} / ${seconds.toFixed(1)}s in  →  ${kb(out)} / ${TARGET_SECONDS}s at ${height}p`,
+  )
 }

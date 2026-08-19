@@ -7,10 +7,12 @@ import { useSettings } from '../store/settingsStore'
 /**
  * A figure making one revolution, turning on the music's own clock.
  *
- * The clip is five seconds of a locked-camera turntable. Left alone it would be
- * a loop playing at whatever speed it was shot at, which is wallpaper. What
- * makes it belong to this app is that the rate is derived from what is
- * actually sounding:
+ * The clip is one revolution of a locked-camera turntable, encoded at
+ * twenty-four seconds so the usual rates land near 1 and it runs at its own
+ * frame rate
+ * — see `pack-turntables.mjs`. Left alone it would be a loop playing at whatever
+ * speed it was shot at, which is wallpaper. What makes it belong to this app is
+ * that the rate is derived from what is actually sounding:
  *
  *  - On a **club engine** there is a real tempo, so a revolution takes sixteen
  *    bars of it. The turn completes on a phrase boundary rather than drifting
@@ -63,20 +65,6 @@ const STRIPS = 96
 const warmed = new Set<string>()
 
 /**
- * Picks the source this browser can actually decode, rather than leaving it to
- * `<source>` children. The URL has to be known here so the cache can be warmed
- * with it — see `warm`.
- */
-function pickSource(sources: { src: string; type: string }[]) {
-  const probe = document.createElement('video')
-  return (
-    sources.find((s) => probe.canPlayType(s.type) === 'probably') ??
-    sources.find((s) => probe.canPlayType(s.type)) ??
-    sources[0]
-  )
-}
-
-/**
  * Pulls the clip through `fetch` once, purely so the service worker keeps a copy.
  *
  * A video element asks for its file with a `Range` header, and a ranged media
@@ -99,13 +87,13 @@ function warm(url: string) {
 }
 
 type Props = {
-  /** Candidates; only the one this browser can decode is ever requested. */
-  sources: { src: string; type: string }[]
+  /** The cut to play. Swapping it mid-session reloads the element. */
+  src: string
   playing: boolean
   className?: string
 }
 
-export function TurntableField({ sources, playing, className = '' }: Props) {
+export function TurntableField({ src, playing, className = '' }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const reducedMotion = useSettings((s) => s.reducedMotion)
@@ -134,7 +122,7 @@ export function TurntableField({ sources, playing, className = '' }: Props) {
       SLOWEST_TURN_SECONDS,
       Math.max(FASTEST_TURN_SECONDS, musicalPeriod()),
     )
-    const clip = video.duration || 5.04
+    const clip = video.duration || 24
     video.playbackRate = Math.min(MAX_RATE, Math.max(MIN_RATE, clip / period))
     // Development only, beside `window.__audio`: what the figure is doing and
     // why, in one object. Worth keeping — it is what caught a measurement of
@@ -168,11 +156,8 @@ export function TurntableField({ sources, playing, className = '' }: Props) {
     const ro = new ResizeObserver(resize)
     ro.observe(canvas)
 
-    const chosen = pickSource(sources)
-    if (chosen) {
-      video.src = chosen.src
-      warm(chosen.src)
-    }
+    video.src = src
+    warm(src)
 
     void video.play().catch(() => {
       /* autoplay of a muted, sourceless-audio element is allowed; if a platform
@@ -245,7 +230,7 @@ export function TurntableField({ sources, playing, className = '' }: Props) {
       video.removeAttribute('src')
       video.load()
     }
-  }, [sources, playing, reducedMotion])
+  }, [src, playing, reducedMotion])
 
   return (
     <div className={className}>

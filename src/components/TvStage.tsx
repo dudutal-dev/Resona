@@ -69,9 +69,17 @@ export function TvStage({ onClose }: { onClose: () => void }) {
     }
   }, [])
 
-  // Mirroring sends the phone's screen as it is, so a portrait phone puts a
-  // tall picture on a wide television. Worth saying once, rather than leaving
-  // someone looking at two black bars.
+  /**
+   * Which shape the stage is, right now.
+   *
+   * This is what picks the cut of the figure. There is no way for a page to be
+   * told that a television is attached — mirroring sends the phone's screen as
+   * it is, and the browser is not informed — so the honest signal is the only
+   * one that is actually true: the shape of the surface being drawn on. Upright
+   * in a hand, that is the tall cut. Turned sideways, or rendered onto a
+   * television, it is the wide one. It re-measures on rotation, so the picture
+   * changes with the phone rather than needing a setting.
+   */
   useEffect(() => {
     const read = () => setPortrait(window.innerHeight > window.innerWidth * 1.1)
     read()
@@ -107,7 +115,11 @@ export function TvStage({ onClose }: { onClose: () => void }) {
     >
       {/* The picture is the whole screen: mirroring sends exactly this. */}
       {figure.kind === 'turntable' ? (
-        <TurntableField sources={figure.sources} playing={isPlaying} className="absolute inset-0" />
+        <TurntableField
+          src={portrait ? figure.portrait : figure.wide}
+          playing={isPlaying}
+          className="absolute inset-0"
+        />
       ) : figure.kind === 'image' ? (
         <FigureField src={figure.src} playing={isPlaying} scale={1.6} className="absolute inset-0" />
       ) : (
@@ -259,7 +271,7 @@ export function TvStage({ onClose }: { onClose: () => void }) {
                       // costs nothing until it is chosen — which is the whole
                       // point of not precaching these.
                       <video
-                        src={entry.sources[entry.sources.length - 1].src}
+                        src={portrait ? entry.portrait : entry.wide}
                         muted
                         playsInline
                         preload="metadata"

@@ -1,7 +1,5 @@
-import seraphMp4 from '../assets/turntables/1-seraph.mp4?url'
-import seraphWebm from '../assets/turntables/1-seraph.webm?url'
-import cosmosMp4 from '../assets/turntables/2-cosmos.mp4?url'
-import cosmosWebm from '../assets/turntables/2-cosmos.webm?url'
+import figurePortrait from '../assets/turntables/figure-portrait.mp4?url'
+import figureWide from '../assets/turntables/figure-wide.mp4?url'
 import type { StringKey } from '../lib/i18n'
 
 /**
@@ -21,10 +19,10 @@ import type { StringKey } from '../lib/i18n'
  * whose only other figure needs the network would be worse than one that costs
  * more to install.
  *
- * **There is no artwork here at the moment.** The eleven renders that used to
- * ship were pulled out of the bundle to make room for better ones; they are not
- * lost — every original is still in `assets/figures`, and the round trip back
- * in is three steps:
+ * **There is no still artwork here at the moment.** The eleven renders that
+ * used to ship were pulled out of the bundle to make room for better ones; they
+ * are not lost — every original is still in `assets/figures`, and the round trip
+ * back in is three steps:
  *
  *   1. drop the PNGs in `assets/figures`
  *   2. `npm run pack-figures` — encodes them into `src/assets/figures`
@@ -38,33 +36,29 @@ export type Figure =
   | { id: string; kind: 'scene'; name: StringKey }
   /**
    * A figure making one revolution, played as a loop at a rate derived from the
-   * session — see `TurntableField`. WebM first because every browser that can
-   * take it prefers it; H.264 second because it is what iOS decodes in
-   * hardware. Only the chosen one is downloaded.
+   * session — see `TurntableField`.
+   *
+   * Two cuts of the same performance, because the stage is two different shapes
+   * and neither crop of the other one is acceptable: a wide frame cropped to a
+   * phone loses the figure's hands, and a tall frame letterboxed onto a
+   * television is two black thirds. Which one plays is decided by the shape of
+   * the screen at the moment, not by a setting — see `TvStage`.
+   *
+   * H.264 with no audio track, and only that: the note at the top of
+   * `pack-turntables.mjs` has the reasoning for both.
    */
-  | { id: string; kind: 'turntable'; sources: { src: string; type: string }[]; name: StringKey }
+  | { id: string; kind: 'turntable'; portrait: string; wide: string; name: StringKey }
 
 // The scene stays last, so the artwork reads as one run and the odd one out is
 // at the end. Inserting into the middle shifts what a saved index points at,
 // which is a tap to correct and not worth reordering the list to avoid.
 export const FIGURES: Figure[] = [
   {
-    id: 'cosmos-turn',
+    id: 'chakra-turn',
     kind: 'turntable',
-    sources: [
-      { src: cosmosWebm, type: 'video/webm' },
-      { src: cosmosMp4, type: 'video/mp4' },
-    ],
-    name: 'figure.cosmosTurn',
-  },
-  {
-    id: 'seraph-turn',
-    kind: 'turntable',
-    sources: [
-      { src: seraphWebm, type: 'video/webm' },
-      { src: seraphMp4, type: 'video/mp4' },
-    ],
-    name: 'figure.seraphTurn',
+    portrait: figurePortrait,
+    wide: figureWide,
+    name: 'figure.chakraTurn',
   },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },
 ]

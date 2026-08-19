@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { BUILTIN_AMBIENCE, type AmbienceOption } from '../audio/Ambience'
 import { clubBpm } from '../audio/ClubGroove'
+import { BASS_MAX_DB, BASS_MIN_DB } from '../audio/ToneEngine'
 import { player } from '../audio/SessionPlayer'
 import { getFrequency, shortLabel, styleKey, styleNoteKey } from '../lib/catalog'
 import { useT } from '../lib/i18n'
@@ -30,6 +31,17 @@ const BrainIcon = () => (
     />
   </svg>
 )
+const BassIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <path
+      d="M3 12c1.6-6 3.2-6 4.8 0s3.2 6 4.8 0"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+    <path d="M14 12h7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" opacity="0.45" />
+  </svg>
+)
 const CloudIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
     <path
@@ -43,7 +55,7 @@ const CloudIcon = () => (
 
 /** Per-layer volume plus the controls that shape each layer (§4.5). */
 export function MixerPanel() {
-  const { config, setLevel, setAmbience, setBeatHz, setDensity, setPace, setDepth, setStyle } =
+  const { config, setLevel, setAmbience, setBeatHz, setDensity, setPace, setDepth, setStyle, setBass } =
     useSession()
   const { t, rich, lang } = useT()
   const [ambienceOptions, setAmbienceOptions] = useState<AmbienceOption[]>(BUILTIN_AMBIENCE)
@@ -79,7 +91,7 @@ export function MixerPanel() {
   return (
     <div className="space-y-5">
       {/* Melody layer */}
-      <div className="glass rounded-3xl p-4">
+      <div className="obj rounded-3xl p-4">
         <Slider
           label={t('mixer.melody')}
           icon={<WaveIcon />}
@@ -184,7 +196,7 @@ export function MixerPanel() {
       </div>
 
       {/* Brainwave layer */}
-      <div className="glass rounded-3xl p-4">
+      <div className="obj rounded-3xl p-4">
         <Slider
           label={t('mixer.beat')}
           icon={<BrainIcon />}
@@ -216,7 +228,7 @@ export function MixerPanel() {
       <ListeningMode hasBeatLayer={!!beat} />
 
       {/* Ambience layer */}
-      <div className="glass rounded-3xl p-4">
+      <div className="obj rounded-3xl p-4">
         <Slider
           label={t('mixer.ambience')}
           icon={<CloudIcon />}
@@ -245,13 +257,26 @@ export function MixerPanel() {
         </div>
       </div>
 
-      {/* Master */}
-      <div className="glass rounded-3xl p-4">
+      {/* Output: how loud, and how much weight underneath it. */}
+      <div className="obj rounded-3xl p-4">
         <Slider
           label={t('mixer.master')}
           value={config.levels.master}
           onChange={(v) => setLevel('master', v)}
         />
+        <div className="mt-4">
+          <Slider
+            label={t('mixer.bass')}
+            icon={<BassIcon />}
+            min={BASS_MIN_DB}
+            max={BASS_MAX_DB}
+            step={1}
+            value={config.bass ?? 0}
+            onChange={setBass}
+            display={`${(config.bass ?? 0) > 0 ? '+' : ''}${config.bass ?? 0} dB`}
+          />
+          <p className="txt-3 mt-2 text-[11px] leading-relaxed">{t('mixer.bassNote')}</p>
+        </div>
       </div>
     </div>
   )

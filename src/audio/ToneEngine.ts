@@ -48,9 +48,32 @@ const OUTPUT_TRIM: Record<string, number> = {
 }
 const DEFAULT_TRIM = 1.2
 
+/**
+ * The low shelf the listener controls, and where it is placed.
+ *
+ * 120Hz is chosen against what is actually down there rather than by
+ * convention. The kick sits at 66Hz, the club engines' sub an octave or two
+ * under whatever root is playing, and the ambient drone's own weight below
+ * about a hundred — all of that is under the corner and moves in full. What is
+ * deliberately left alone is the target tone: the lowest roots in the catalogue
+ * are 111 and 128Hz, so a shelf any higher would start turning down the very
+ * frequency the session was chosen for, which is the one thing a control in
+ * this app must not quietly do.
+ *
+ * The range is asymmetric on purpose. Cut goes deep because the common complaint
+ * on a phone speaker is mud, and a speaker that cannot reproduce 60Hz still
+ * wastes excursion trying. Boost stops at +6 because the makeup stage above
+ * already puts the loudest material near -2dBFS, and more than this would make
+ * the limiter part of the sound rather than a safety net.
+ */
+export const BASS_HZ = 120
+export const BASS_MIN_DB = -12
+export const BASS_MAX_DB = 6
+
 class ToneEngine {
   private started = false
   private masterGain: Tone.Gain | null = null
+  private bassShelf: Tone.Filter | null = null
   private makeup: Tone.Gain | null = null
   private limiter: Tone.Limiter | null = null
   private analyserNode: Tone.Analyser | null = null
@@ -98,7 +121,12 @@ class ToneEngine {
      * normally engage, which is verified rather than assumed.
      */
     this.makeup = new Tone.Gain(DEFAULT_TRIM).connect(this.limiter)
-    this.masterGain = new Tone.Gain(0.9).connect(this.makeup)
+    // Between the mix and the makeup, so the limiter is still downstream of a
+    // boost and still catches it.
+    this.bassShelf = new Tone.Filter({ type: 'lowshelf', frequency: BASS_HZ, gain: 0 }).connect(
+      this.makeup,
+    )
+    this.masterGain = new Tone.Gain(0.9).connect(this.bassShelf)
 
     // 1024 bins puts a bin every ~21 Hz at 44.1 kHz, which is fine enough to
     // separate the scale's intervals — 528 and its 9/8 are 66 Hz apart. The old
@@ -106,8 +134,12 @@ class ToneEngine {
     this.analyserNode = new Tone.Analyser('fft', 1024)
     this.analyserNode.smoothing = 0.72
     this.waveformNode = new Tone.Analyser('waveform', 512)
-    this.masterGain.connect(this.analyserNode)
-    this.masterGain.connect(this.waveformNode)
+    // Tapped after the shelf rather than before it: the visualiser and the
+    // figure's shear are meant to be a picture of what is being heard, and
+    // pulling the bass out from under the sound while the picture kept dancing
+    // to it would make them a picture of something else.
+    this.bassShelf.connect(this.analyserNode)
+    this.bassShelf.connect(this.waveformNode)
 
     const transport = Tone.getTransport()
     transport.bpm.value = 60
@@ -128,6 +160,7 @@ class ToneEngine {
       ;(window as unknown as Record<string, unknown>).__audio = {
         context: Tone.getContext(),
         master: this.masterGain,
+        bass: this.bassShelf,
         makeup: this.makeup,
         limiter: this.limiter,
         Tone,
@@ -181,6 +214,15 @@ class ToneEngine {
 
   setMasterVolume(value: number, ramp = 0.15) {
     this.masterGain?.gain.rampTo(Math.max(0, Math.min(1, value)), ramp)
+  }
+
+  /**
+   * Shelf gain in decibels. Ramped rather than set, for the same reason every
+   * other control here is: a step in the low end is a thump.
+   */
+  setBassDb(db: number, ramp = 0.25) {
+    const clamped = Math.max(BASS_MIN_DB, Math.min(BASS_MAX_DB, db))
+    this.bassShelf?.gain.rampTo(clamped, ramp)
   }
 
   /** Frequency-domain magnitudes in dB, or null before the engine starts. */

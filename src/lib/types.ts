@@ -162,6 +162,13 @@ export type SessionConfig = {
   depth: number
   /** Which melody engine composes the session. */
   style: MelodyStyle
+  /**
+   * Low-shelf gain in decibels, applied to the whole mix under 120Hz. Zero is
+   * flat and is the default, so a session that never touches it sounds exactly
+   * as it did before this existed. See `BASS_HZ` in `ToneEngine` for why the
+   * corner sits where it does.
+   */
+  bass: number
 }
 
 /** Persisted preset. `layers` matches the schema in the build spec (§5.3). */

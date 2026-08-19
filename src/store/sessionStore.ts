@@ -17,6 +17,7 @@ export const DEFAULT_CONFIG: SessionConfig = {
   pace: 0.25,
   depth: 0,
   style: 'ambient',
+  bass: 0,
 }
 
 type SessionState = {
@@ -40,6 +41,7 @@ type SessionState = {
   setPace: (value: number) => void
   setDepth: (value: number) => void
   setStyle: (style: MelodyStyle) => void
+  setBass: (db: number) => void
   loadConfig: (config: SessionConfig, journey?: { journeyId: string; day: number } | null) => void
 
   toggle: () => Promise<void>
@@ -112,6 +114,9 @@ export const useSession = create<SessionState>((set, get) => {
     setPace: (value) => commit({ ...get().config, pace: value }),
     setDepth: (value) => commit({ ...get().config, depth: value }),
     setStyle: (style) => commit({ ...get().config, style }),
+    // Whole decibels: a shelf resolves finer than anyone can hear, and a
+    // readout that says "+2.4 dB" invites fiddling instead of listening.
+    setBass: (db) => commit({ ...get().config, bass: Math.round(db) }),
 
     loadConfig: (config, journey = null) => {
       set({ activeJourney: journey })

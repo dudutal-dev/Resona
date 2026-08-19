@@ -226,6 +226,7 @@ class SessionPlayer {
     this.mixer.setLevel('beat', config.beatId ? config.levels.beat : 0)
     this.mixer.setLevel('ambience', config.levels.ambience)
     engine.setMasterVolume(config.levels.master)
+    engine.setBassDb(config.bass ?? 0)
 
     if (this.playing) this.publishNowPlaying(config)
 

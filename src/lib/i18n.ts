@@ -359,6 +359,8 @@ const HE = {
   'mixer.noBeat': 'שכבת הגל המוחי כבויה בהאזנה הזו. אפשר להוסיף טווח במסך התדרים.',
   'mixer.ambience': 'סאונד סביבה',
   'mixer.master': 'עוצמה כללית',
+  'mixer.bass': 'בס',
+  'mixer.bassNote': 'מדף נמוך מתחת ל־120Hz על כל המיקס — הקיק, הסאב והכובד של הדרון. תדר היסוד עצמו נשאר מעליו, אז זה לא מנמיך את התדר שבחרת.',
 
   'style.ambient': 'אמביינט',
   'style.techno': 'טכנו',
@@ -773,6 +775,8 @@ const EN: Record<StringKey, string> = {
   'mixer.noBeat': 'The brainwave layer is off for this session. You can add a band on the frequencies screen.',
   'mixer.ambience': 'Ambience',
   'mixer.master': 'Master volume',
+  'mixer.bass': 'Bass',
+  'mixer.bassNote': 'A low shelf under 120Hz across the whole mix — the kick, the sub and the weight under the drone. The root tone itself sits above it, so this does not turn down the frequency you chose.',
 
   'style.ambient': 'Ambient',
   'style.techno': 'Techno',

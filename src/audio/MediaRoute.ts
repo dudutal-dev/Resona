@@ -77,6 +77,7 @@ class MediaRoute {
   private el: AirPlayElement | null = null
   private external = false
   private streamDest: MediaStreamAudioDestinationNode | null = null
+  private stallHandlers: { ended: () => void; error: () => void } | null = null
   private streamProbe: AnalyserNode | null = null
   private silentUrl: string | null = null
 
@@ -100,7 +101,8 @@ class MediaRoute {
   private element(): AirPlayElement {
     if (!this.el) {
       const el = document.createElement('audio') as AirPlayElement
-      el.loop = true
+      // `loop` is set per source, not here. It belongs to the silent holder and
+      // is actively wrong for the live stream — see `setExternal`.
       el.setAttribute('playsinline', '')
       el.style.display = 'none'
       document.body.appendChild(el)
@@ -140,6 +142,7 @@ class MediaRoute {
     const el = this.element()
 
     if (!enabled) {
+      this.clearStallWatch()
       limiter.disconnect()
       limiter.toDestination()
       this.external = false
@@ -161,6 +164,20 @@ class MediaRoute {
 
     el.pause()
     el.removeAttribute('src')
+    /**
+     * Never loop a live stream.
+     *
+     * This element is also the one that holds the now-playing session with two
+     * seconds of silence, which has to loop or the session lapses — and `loop`
+     * used to be set once when the element was created and never cleared. A
+     * MediaStream has no end to loop at, so on the phone's own output that was
+     * merely meaningless. On a remote speaker it is not: the receiver is fed
+     * from this element, and if the stream ever stalls long enough for the
+     * element to consider itself finished, `loop` sends it back to the start of
+     * what it has and plays that again — a chunk of the tone repeating over the
+     * live melody, which is exactly what a stuck cast sounds like.
+     */
+    el.loop = false
     el.srcObject = this.streamDest.stream
     el.volume = 1
 
@@ -174,8 +191,32 @@ class MediaRoute {
       return false
     }
 
+    // A live stream has no end and should never stall for long. If it does, the
+    // route is broken in a way the element cannot report — so rather than let it
+    // sit there feeding a receiver whatever it has, fall back to the phone's own
+    // output. Silence that recovers beats a tone repeating over the music.
+    this.watchExternalStall(el)
+
     this.external = true
     return true
+  }
+
+  private watchExternalStall(el: HTMLMediaElement) {
+    this.clearStallWatch()
+    const recover = () => {
+      if (!this.external) return
+      void this.setExternal(false)
+    }
+    this.stallHandlers = { ended: recover, error: recover }
+    el.addEventListener('ended', recover)
+    el.addEventListener('error', recover)
+  }
+
+  private clearStallWatch() {
+    if (!this.el || !this.stallHandlers) return
+    this.el.removeEventListener('ended', this.stallHandlers.ended)
+    this.el.removeEventListener('error', this.stallHandlers.error)
+    this.stallHandlers = null
   }
 
   /** Plays, then confirms the element is really running on a live signal. */
@@ -208,6 +249,8 @@ class MediaRoute {
   private async playSilence() {
     const el = this.element()
     el.srcObject = null
+    // Two seconds of silence has to repeat, or the session it is holding lapses.
+    el.loop = true
     if (!this.silentUrl) this.silentUrl = silentWavUrl()
     if (el.getAttribute('src') !== this.silentUrl) el.src = this.silentUrl
     // Not muted: a muted element does not count as playing media, which is the

@@ -42,6 +42,13 @@ const HE = {
   'nav.search': 'חיפוש',
   'nav.library': 'ספרייה',
   'nav.favourites': 'מועדפים',
+
+  'fav.add': 'הוסף למועדפים',
+  'fav.remove': 'הסר מהמועדפים',
+  'fav.journeys': 'מסעות שמורים',
+  'fav.emptyTitle': 'עוד אין מועדפים',
+  'fav.emptyBody': 'הקש על הלב שעל כל מסע כדי לשמור אותו כאן, או שמור פריסט מהנגן.',
+  'fav.toJourneys': 'לכל המסעות',
   'nav.about': 'אודות',
 
   'search.title': 'חיפוש',
@@ -270,10 +277,6 @@ const HE = {
 
   // ----------------------------------------------------------------- presets
   'presets.title': 'הפריסטים שלי',
-  'presets.subtitle': 'שילובים שמורים, נטענים בדיוק כפי שנשמרו',
-  'presets.emptyTitle': 'עדיין אין פריסטים',
-  'presets.emptyBody': 'בנה שילוב במסך הנגן — תדר, שכבות, עוצמות וטיימר — ושמור אותו בשם.',
-  'presets.toPlayer': 'למסך הנגן',
   'presets.playAria': 'נגן את {name}',
   'presets.editAria': 'עריכת {name}',
   'presets.deleteAria': 'מחיקת {name}',
@@ -471,6 +474,13 @@ const EN: Record<StringKey, string> = {
   'nav.search': 'Search',
   'nav.library': 'Library',
   'nav.favourites': 'Favourites',
+
+  'fav.add': 'Add to favourites',
+  'fav.remove': 'Remove from favourites',
+  'fav.journeys': 'Saved journeys',
+  'fav.emptyTitle': 'Nothing saved yet',
+  'fav.emptyBody': 'Tap the heart on any journey to keep it here, or save a preset from the player.',
+  'fav.toJourneys': 'All journeys',
   'nav.about': 'About',
 
   'search.title': 'Search',
@@ -692,10 +702,6 @@ const EN: Record<StringKey, string> = {
   'day.moodNew': 'Rating marks the day complete and moves you to the next one.',
 
   'presets.title': 'My presets',
-  'presets.subtitle': 'Saved combinations, reloaded exactly as they were',
-  'presets.emptyTitle': 'No presets yet',
-  'presets.emptyBody': 'Build a combination in the player — frequency, layers, levels and timer — and save it under a name.',
-  'presets.toPlayer': 'Go to the player',
   'presets.playAria': 'Play {name}',
   'presets.editAria': 'Edit {name}',
   'presets.deleteAria': 'Delete {name}',

@@ -1,12 +1,17 @@
 import { useState } from 'react'
 import { useT, type StringKey } from '../lib/i18n'
 import { BUILTIN_AMBIENCE } from '../audio/Ambience'
-import { getFrequency } from '../lib/catalog'
+import { getFrequency, getJourney, journeyTitle } from '../lib/catalog'
+import { GLYPH_FOR_THEME } from '../lib/glyphs'
+import { themeOf } from '../lib/themes'
+import { useFavourites } from '../store/favouritesStore'
 import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
-import type { Preset } from '../lib/types'
+import type { Journey, Preset } from '../lib/types'
 import { hueFill, hueLine, hueText } from '../lib/themes'
+import { SectionHead } from './AppBar'
+import { Tile } from './Tile'
 import { Card, EmptyState, Screen, Sheet } from './ui'
 
 function describe(preset: Preset, t: (k: StringKey, v?: Record<string, string | number>) => string) {
@@ -23,8 +28,12 @@ function describe(preset: Preset, t: (k: StringKey, v?: Record<string, string | 
 }
 
 export function PresetList() {
-  const { t } = useT()
+  const { t, lang } = useT()
   const { presets, remove, rename, update } = usePresets()
+  // Resolved through the catalogue on every render, so a journey that no longer
+  // exists — a built one that was deleted — simply stops appearing.
+  const favIds = useFavourites((s) => s.ids)
+  const favourites = favIds.map((id) => getJourney(id)).filter((j): j is Journey => !!j)
   const { config, loadConfig, toggle } = useSession()
   const [editing, setEditing] = useState<Preset | null>(null)
   const [name, setName] = useState('')
@@ -38,18 +47,52 @@ export function PresetList() {
   }
 
   return (
-    <Screen title={t('presets.title')} subtitle={t('presets.subtitle')}>
-      {presets.length === 0 ? (
+    <Screen title={t('nav.favourites')}>
+      {/*
+        Two kinds of saved thing, and they are not the same kind.
+
+        A favourite journey is a pointer into the catalogue — a week someone
+        means to walk. A preset is a frozen set of dials. Putting them on one
+        screen is right, because "the things I kept" is how a person thinks
+        about them; merging them into one list would not be, because only one of
+        them can be played by pressing it.
+      */}
+      {favourites.length > 0 && (
+        <>
+          <SectionHead
+            title={t('fav.journeys')}
+            onAll={() => navigate('/journeys')}
+            allLabel={t('fav.toJourneys')}
+            tight
+          />
+          <div className="mb-2 grid grid-cols-2 gap-2.5">
+            {favourites.map((journey) => (
+              <Tile
+                key={journey.id}
+                hue={getFrequency(journey.schedule[0].frequencyId)?.hue ?? 265}
+                glyph={GLYPH_FOR_THEME[themeOf(journey)]}
+                title={journeyTitle(journey, lang)}
+                meta={t('common.daysN', { n: journey.days })}
+                onClick={() => navigate(`/journey/${journey.id}`)}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      {favourites.length > 0 && presets.length > 0 && <SectionHead title={t('presets.title')} />}
+
+      {favourites.length === 0 && presets.length === 0 ? (
         <EmptyState
-          title={t('presets.emptyTitle')}
-          body={t('presets.emptyBody')}
+          title={t('fav.emptyTitle')}
+          body={t('fav.emptyBody')}
           action={
-            <button onClick={() => navigate('/player')} className="cta flex-none px-5 py-2.5 text-[13.5px]">
-              {t('presets.toPlayer')}
+            <button onClick={() => navigate('/journeys')} className="cta flex-none px-5 py-2.5 text-[13.5px]">
+              {t('fav.toJourneys')}
             </button>
           }
         />
-      ) : (
+      ) : presets.length === 0 ? null : (
         <div className="space-y-2">
           {presets.map((preset) => {
             const root = getFrequency(preset.config.rootId)

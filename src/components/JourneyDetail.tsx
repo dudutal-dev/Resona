@@ -16,6 +16,7 @@ import { hueText } from '../lib/themes'
 import { useJourneys } from '../store/journeyStore'
 import { useCustomJourneys } from '../store/customJourneyStore'
 import { Screen, TrustBadge } from './ui'
+import { FavouriteButton } from './FavouriteButton'
 import { ReleaseHeader } from './ReleaseHeader'
 import { journeyCover } from '../lib/cover'
 
@@ -51,6 +52,7 @@ export function JourneyDetail({ id }: { id: string }) {
     <div className="mx-auto w-full max-w-3xl overflow-hidden px-4 pb-40 safe-top">
       <ReleaseHeader
         cover={journeyCover(journey)}
+        menu={<FavouriteButton journeyId={journey.id} size={22} />}
         eyebrow={t(purposeKey(journey.purpose))}
         title={journeyTitle(journey, lang)}
         subtitle={t('journey.byline', { n: journey.days })}

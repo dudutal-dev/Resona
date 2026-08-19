@@ -15,6 +15,7 @@ import {
 import type { Journey } from '../lib/types'
 import { useJourneys } from '../store/journeyStore'
 import { AppBar, SectionHead } from './AppBar'
+import { FavouriteButton } from './FavouriteButton'
 
 /**
  * A journey, as a plate rather than a row.
@@ -39,21 +40,30 @@ function JourneyCard({ journey }: { journey: Journey }) {
   const first = journey.schedule[0]
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={() => navigate(`/journey/${journey.id}`)}
-      className="jcard w-full p-4 text-start"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') navigate(`/journey/${journey.id}`)
+      }}
+      className="jcard w-full cursor-pointer p-4 text-start"
       style={{
         background: `linear-gradient(152deg, hsl(${hue} var(--jc-s1) var(--jc-l1)), hsl(${hue + 32} var(--jc-s2) var(--jc-l2)))`,
         color: '#fff',
       }}
     >
-      {/* The shelf's mark, big and barely there — texture, not an icon. */}
+      {/* The shelf's mark, big and barely there — texture, not an icon. The
+          star sits under it, where a thumb reaches without covering the title. */}
       <span
         className="pointer-events-none absolute end-4 top-4"
         style={{ color: 'rgba(255,255,255,0.34)' }}
         aria-hidden
       >
         <Glyph id={GLYPH_FOR_THEME[theme]} size={31} />
+      </span>
+      <span className="absolute bottom-3 end-3">
+        <FavouriteButton journeyId={journey.id} size={19} onCard />
       </span>
 
       <h3 className="pe-11 text-[18px] font-extrabold leading-tight">{journeyTitle(journey, lang)}</h3>
@@ -71,12 +81,12 @@ function JourneyCard({ journey }: { journey: Journey }) {
       </p>
 
       {/* One bar per day. Counting them is how you know what you are agreeing to. */}
-      <span className="mt-4 flex gap-1.5" aria-hidden>
+      <span className="mt-4 flex gap-1.5 pe-10" aria-hidden>
         {Array.from({ length: journey.days }, (_, i) => (
           <span key={i} className="seg" data-done={i < done} />
         ))}
       </span>
-    </button>
+    </div>
   )
 }
 

@@ -42,6 +42,14 @@
  * file has arrived, which matters because these are fetched on demand rather
  * than precached.
  *
+ * A still is written out beside each clip. The figure picker used to show the
+ * clip itself in a `<video preload="metadata">` on the assumption that it would
+ * paint its first frame; on iOS it paints nothing at all until the element has
+ * played, so the picker was two black rectangles. A poster is a few kilobytes,
+ * it is small enough to precache, and it means the picker costs nothing on a
+ * connection — nobody should download a megabyte of video to find out what it
+ * looks like.
+ *
  * The encoded files are committed, so a normal build never runs this. If ffmpeg
  * is missing the script says so and changes nothing.
  */
@@ -80,6 +88,14 @@ const FPS = 24
 const PORTRAIT_HEIGHT = 900
 const WIDE_HEIGHT = 660
 const CRF = 35
+/**
+ * Where the still is taken from, and how big it is. One second in: the figure
+ * is facing the camera there, and a poster of the back of someone's head does
+ * not tell you which figure it is.
+ */
+const POSTER_AT_SECONDS = 1
+const POSTER_HEIGHT = 480
+const POSTER_QUALITY = 72
 
 function findFfmpeg() {
   const fromEnv = process.env.FFMPEG_PATH
@@ -171,7 +187,17 @@ for (const file of sources.sort()) {
     out, '-y',
   ])
 
+  const poster = join(OUT_DIR, `${stem}-poster.webp`)
+  run([
+    '-ss', String(POSTER_AT_SECONDS), '-i', input,
+    '-frames:v', '1',
+    '-vf', `scale=-2:${POSTER_HEIGHT}`,
+    '-c:v', 'libwebp', '-quality', String(POSTER_QUALITY),
+    poster, '-y',
+  ])
+
   console.log(
-    `${stem}  ${kb(input)} / ${seconds.toFixed(1)}s in  →  ${kb(out)} / ${TARGET_SECONDS}s at ${height}p`,
+    `${stem}  ${kb(input)} / ${seconds.toFixed(1)}s in  →  ${kb(out)} / ${TARGET_SECONDS}s at ${height}p` +
+      `, poster ${kb(poster)}`,
   )
 }

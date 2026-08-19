@@ -89,11 +89,16 @@ function warm(url: string) {
 type Props = {
   /** The cut to play. Swapping it mid-session reloads the element. */
   src: string
+  /**
+   * A still from the clip, drawn while the video is still arriving. Without it
+   * the stage opens on black for as long as the first megabyte takes.
+   */
+  poster?: string
   playing: boolean
   className?: string
 }
 
-export function TurntableField({ src, playing, className = '' }: Props) {
+export function TurntableField({ src, poster, playing, className = '' }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const reducedMotion = useSettings((s) => s.reducedMotion)
@@ -159,6 +164,15 @@ export function TurntableField({ src, playing, className = '' }: Props) {
     video.src = src
     warm(src)
 
+    // The still, held ready so the stage has something to draw during the
+    // first fetch. `drawImage` does not care which of the two it is handed,
+    // which is what lets the whole treatment below stay written once.
+    let still: HTMLImageElement | null = null
+    if (poster) {
+      still = new Image()
+      still.src = poster
+    }
+
     void video.play().catch(() => {
       /* autoplay of a muted, sourceless-audio element is allowed; if a platform
          refuses anyway the canvas simply holds the last frame it decoded */
@@ -169,15 +183,21 @@ export function TurntableField({ src, playing, className = '' }: Props) {
       const w = canvas.width
       const h = canvas.height
       if (!w || !h) return
-      if (video.readyState < 2) return
+
+      // Whichever of the two is ready. The video wins the moment it can give a
+      // frame; before that the poster stands in, so opening the stage on a cold
+      // cache shows the figure rather than a black screen for a megabyte.
+      const live = video.readyState >= 2
+      const source: CanvasImageSource | null = live ? video : still?.complete ? still : null
+      if (!source) return
 
       ctx.fillStyle = '#000'
       ctx.fillRect(0, 0, w, h)
 
       // Contain-fit, the same 94% as the still figures so the two sit at the
       // same size when the stage switches between them.
-      const vw = video.videoWidth || 1
-      const vh = video.videoHeight || 1
+      const vw = (live ? video.videoWidth : still?.naturalWidth) || 1
+      const vh = (live ? video.videoHeight : still?.naturalHeight) || 1
       const fit = Math.min((h * 0.94) / vh, (w * 0.94) / vw)
       const dw = vw * fit
       const dh = vh * fit
@@ -189,13 +209,13 @@ export function TurntableField({ src, playing, className = '' }: Props) {
       ctx.save()
       ctx.globalAlpha = 0.34
       ctx.filter = 'blur(38px)'
-      ctx.drawImage(video, dx - dw * 0.16, dy - dh * 0.1, dw * 1.32, dh * 1.2)
+      ctx.drawImage(source, dx - dw * 0.16, dy - dh * 0.1, dw * 1.32, dh * 1.2)
       ctx.restore()
       ctx.filter = 'none'
 
-      const wave = playing ? engine.getWaveform() : null
+      const wave = playing && live ? engine.getWaveform() : null
       if (!wave || reducedMotion) {
-        ctx.drawImage(video, dx, dy, dw, dh)
+        ctx.drawImage(source, dx, dy, dw, dh)
         return
       }
 
@@ -207,7 +227,7 @@ export function TurntableField({ src, playing, className = '' }: Props) {
         const sample = wave[Math.floor((i / STRIPS) * wave.length)] ?? 0
         const shift = sample * dw * 0.045
         ctx.drawImage(
-          video,
+          source,
           0,
           i * stripSrc,
           vw,
@@ -230,7 +250,7 @@ export function TurntableField({ src, playing, className = '' }: Props) {
       video.removeAttribute('src')
       video.load()
     }
-  }, [src, playing, reducedMotion])
+  }, [src, poster, playing, reducedMotion])
 
   return (
     <div className={className}>

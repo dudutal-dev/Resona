@@ -7,6 +7,7 @@ import { useT } from '../lib/i18n'
 import { useSession } from '../store/sessionStore'
 import { useSettings } from '../store/settingsStore'
 import { FigureField } from './FigureField'
+import { Badge } from './Badge'
 import { formatClock } from './ui'
 
 /**
@@ -117,6 +118,7 @@ export function TvStage({ onClose }: { onClose: () => void }) {
       {figure.kind === 'turntable' ? (
         <TurntableField
           src={portrait ? figure.portrait : figure.wide}
+          poster={portrait ? figure.poster : figure.posterWide}
           playing={isPlaying}
           className="absolute inset-0"
         />
@@ -254,8 +256,11 @@ export function TvStage({ onClose }: { onClose: () => void }) {
                   }}
                   className="overflow-hidden rounded-xl text-[10px]"
                   style={{
-                    border: `1px solid ${chosen ? 'var(--accent)' : 'rgba(255,255,255,0.14)'}`,
-                    boxShadow: chosen ? '0 0 18px var(--glow)' : 'none',
+                    // Gold marks the chosen one here as it does everywhere
+                    // else in the app; the frequency's hue belongs to the
+                    // objects, not to the chrome that selects them.
+                    border: `1px solid ${chosen ? 'var(--gold)' : 'rgba(255,255,255,0.14)'}`,
+                    boxShadow: chosen ? '0 0 18px var(--gold-soft)' : 'none',
                   }}
                 >
                   <span className="block aspect-[3/4] bg-black">
@@ -267,19 +272,29 @@ export function TvStage({ onClose }: { onClose: () => void }) {
                         className="h-full w-full object-cover opacity-90"
                       />
                     ) : entry.kind === 'turntable' ? (
-                      // A muted, preload-none video shows its poster frame and
-                      // costs nothing until it is chosen — which is the whole
-                      // point of not precaching these.
-                      <video
-                        src={portrait ? entry.portrait : entry.wide}
-                        muted
-                        playsInline
-                        preload="metadata"
+                      // A still, not the clip. A video element is not a
+                      // thumbnail: on iOS it paints nothing until it has
+                      // played, so this used to be a black rectangle. The
+                      // poster is a few kilobytes and is precached, so the
+                      // picker also costs nothing before the clip is fetched.
+                      <img
+                        src={entry.poster}
+                        alt=""
+                        loading="lazy"
                         className="h-full w-full object-cover opacity-90"
                       />
                     ) : (
-                      // The scene has no still to show, so it says so.
-                      <span className="grid h-full w-full place-items-center text-[22px]">◎</span>
+                      // The scene is generated, so there is no frame to grab.
+                      // It gets the app's own mark instead of an empty square.
+                      <span
+                        className="grid h-full w-full place-items-center"
+                        style={{
+                          background:
+                            'radial-gradient(80% 60% at 50% 35%, hsl(var(--h) 70% 45% / 0.5), #0a0a0c 75%)',
+                        }}
+                      >
+                        <Badge hue={root?.hue ?? 265} glyph="flower" size={54} />
+                      </span>
                     )}
                   </span>
                   <span className="block truncate px-1 py-1.5">{t(entry.name)}</span>

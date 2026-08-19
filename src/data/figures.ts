@@ -1,5 +1,7 @@
 import figurePortrait from '../assets/turntables/figure-portrait.mp4?url'
+import figurePoster from '../assets/turntables/figure-portrait-poster.webp'
 import figureWide from '../assets/turntables/figure-wide.mp4?url'
+import figureWidePoster from '../assets/turntables/figure-wide-poster.webp'
 import type { StringKey } from '../lib/i18n'
 
 /**
@@ -46,8 +48,22 @@ export type Figure =
    *
    * H.264 with no audio track, and only that: the note at the top of
    * `pack-turntables.mjs` has the reasoning for both.
+   *
+   * The posters are stills from each cut. They are what the picker shows and
+   * what the stage paints while the video is still arriving — a video element
+   * is not a thumbnail, and on iOS it paints nothing at all until it has
+   * played. One per cut, because the stage that is waiting for the wide clip
+   * should not be holding a tall still letterboxed into it.
    */
-  | { id: string; kind: 'turntable'; portrait: string; wide: string; name: StringKey }
+  | {
+      id: string
+      kind: 'turntable'
+      portrait: string
+      wide: string
+      poster: string
+      posterWide: string
+      name: StringKey
+    }
 
 // The scene stays last, so the artwork reads as one run and the odd one out is
 // at the end. Inserting into the middle shifts what a saved index points at,
@@ -58,6 +74,8 @@ export const FIGURES: Figure[] = [
     kind: 'turntable',
     portrait: figurePortrait,
     wide: figureWide,
+    poster: figurePoster,
+    posterWide: figureWidePoster,
     name: 'figure.chakraTurn',
   },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },

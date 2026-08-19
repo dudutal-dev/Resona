@@ -19,62 +19,102 @@ import { openApp } from '../harness.mjs'
 export const name = 'route'
 export const about = 'a dead output stream is rebuilt, not trusted'
 
+/**
+ * The three ways the route dies, each of them observed rather than imagined.
+ *
+ *  - `track`     the stream's track ends. What a call does to a cast.
+ *  - `silent`    the same, with the context never interrupted — which is what a
+ *                real phone call actually produced: not one line in the log,
+ *                because the graph renders into a stream and the system has no
+ *                reason to touch it.
+ *  - `paused`    the system pauses the element and leaves everything else
+ *                intact.
+ */
+const FAULTS = ['track', 'silent', 'paused']
+
 export async function run(browser) {
   // Background audio is what puts the media element in the path; it is on by
   // default in the app, and the check is meaningless without it.
   const { ctx, page, errors } = await openApp(browser, { backgroundAudio: true })
-  const result = await page.evaluate(async () => {
+  const results = await page.evaluate(async (faults) => {
     const { useSession } = await import('/src/store/sessionStore.ts')
     const { useSettings } = await import('/src/store/settingsStore.ts')
     const { mediaRoute } = await import('/src/audio/MediaRoute.ts')
     const { engine } = await import('/src/audio/ToneEngine.ts')
+    // Cleared through the module, not through localStorage: the log keeps its
+    // entries in memory and writing the key underneath it leaves every fault
+    // carrying the previous fault's evidence.
+    const { clearDiagnostics, readDiagnostics } = await import('/src/lib/diagnostics.ts')
     useSettings.getState().setBackgroundAudio(true)
-
-    await useSession.getState().toggle()
-    await new Promise((r) => setTimeout(r, 5000))
 
     const route = mediaRoute
     const trackOf = () => route.streamDest?.stream.getAudioTracks()[0]
-    const before = trackOf()
-    if (!route.isExternal || !before) {
+    const rows = []
+
+    for (const fault of faults) {
       await useSession.getState().toggle()
-      return { external: route.isExternal, reason: 'the live route never came up' }
-    }
+      await new Promise((r) => setTimeout(r, 5000))
+      const before = trackOf()
+      if (!route.isExternal || !before) {
+        rows.push({ fault, reason: 'the live route never came up' })
+        await useSession.getState().toggle()
+        await new Promise((r) => setTimeout(r, 2500))
+        continue
+      }
+      clearDiagnostics()
 
-    // The interruption, as the platform delivers it: the stream's track ends,
-    // and the context stops.
-    before.stop()
-    const raw = window.__audio.context.rawContext
-    await raw.suspend()
-    document.dispatchEvent(new Event('visibilitychange'))
-    await new Promise((r) => setTimeout(r, 5000))
+      const raw = window.__audio.context.rawContext
+      if (fault === 'track') {
+        before.stop()
+        await raw.suspend()
+      } else if (fault === 'silent') {
+        // The reported fault, exactly: the stream dies and the context is never
+        // told anything at all.
+        before.stop()
+      } else if (fault === 'paused') {
+        route.el.pause()
+      }
+      // Coming back to the app is the only thing the person does.
+      document.dispatchEvent(new Event('visibilitychange'))
+      await new Promise((r) => setTimeout(r, 6000))
 
-    const after = trackOf()
-    const out = {
-      external: route.isExternal,
-      deadTrackState: before.readyState,
-      replaced: !!after && after.id !== before.id,
-      liveAfter: after?.readyState === 'live',
-      elementPlaying: !!route.el && !route.el.paused,
-      graphSounding: engine.isProducingSound(),
-      log: JSON.parse(localStorage.getItem('diagnostics') || '[]').map((e) => e.tag),
+      const after = trackOf()
+      rows.push({
+        fault,
+        // Either repair counts: a paused element that simply starts again did
+        // not need a new stream, and rebuilding one would be a gap for nothing.
+        flowing: !!route.el && !route.el.paused && after?.readyState === 'live',
+        rebuilt: !!after && after.id !== before.id,
+        graphSounding: engine.isProducingSound(),
+        log: readDiagnostics().map((e) => e.tag).join(' '),
+      })
+      await useSession.getState().toggle()
+      await new Promise((r) => setTimeout(r, 2500))
     }
-    await useSession.getState().toggle()
-    return out
-  })
+    return rows
+  }, FAULTS)
   await ctx.close()
 
   const failures = []
-  if (result.reason) {
-    failures.push(result.reason)
-  } else {
-    if (result.deadTrackState !== 'ended') failures.push('the simulated fault did not kill the track')
-    if (!result.replaced) failures.push('the dead stream was kept — this is the reported bug')
-    if (!result.liveAfter) failures.push('the new track is not live')
-    if (!result.elementPlaying) failures.push('the media element is not playing after the rebuild')
-    if (!result.log.includes('route-rebuilt') && !result.log.includes('route-fallback-direct')) {
-      failures.push('the rebuild was not recorded in the log')
+  for (const r of results) {
+    if (r.reason) {
+      failures.push(`${r.fault}: ${r.reason}`)
+      continue
+    }
+    if (!r.flowing) failures.push(`${r.fault}: the route is still dead — this is the reported bug`)
+    // Any of the repairs counts, including the quiet one: an element the system
+    // paused and that simply started again needed no new stream.
+    if (!/route-(rebuilt|resumed|fallback-direct)|element-restarted/.test(r.log)) {
+      failures.push(`${r.fault}: the repair was not recorded in the log (${r.log || 'nothing logged'})`)
     }
   }
-  return { rows: [result], failures, errors }
+  // The track faults cannot be repaired by starting the element again; a
+  // rebuild is the only thing that can work, and "flowing" without one would
+  // mean the check is measuring something else.
+  for (const r of results) {
+    if ((r.fault === 'track' || r.fault === 'silent') && !r.rebuilt) {
+      failures.push(`${r.fault}: the dead stream was kept`)
+    }
+  }
+  return { rows: results, failures, errors }
 }

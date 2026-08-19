@@ -144,7 +144,13 @@ class SessionPlayer {
     // real mix or with silence. With silence the system keeps a session alive
     // that contains nothing, which is what made switching apps stop the music
     // while the lock screen still claimed it was playing.
-    void mediaRoute.claimNowPlaying(useSettings.getState().backgroundAudio)
+    void mediaRoute.claimNowPlaying(useSettings.getState().backgroundAudio).then(() => {
+      // Pressing play is the other place a dead route shows up: the log from
+      // the phone has a stop and a play right after the silence started, which
+      // is a person trying to fix it by hand — and it did not help, because
+      // starting a session again reuses whatever route is already there.
+      if (this.playing) void mediaRoute.ensureRouteFlowing()
+    })
     this.publishNowPlaying(config)
     mediaRoute.setPlaybackState('playing')
     this.emit()
@@ -346,6 +352,10 @@ class SessionPlayer {
       onStop: () => void this.stop(),
     })
 
+    // The route watches for its element being paused, and has to be able to
+    // tell "the system took it" from "the person pressed stop".
+    mediaRoute.isSessionActive = () => this.playing
+
     /**
      * Coming back from another app, and the escalation when coming back is not
      * enough.
@@ -367,13 +377,22 @@ class SessionPlayer {
       const interrupted = mediaRoute.consumeInterrupted()
       if (!running || !this.playing) return
 
-      // After a real interruption — a call, another app taking the session —
-      // the route to the media element is rebuilt before anything else is
-      // judged. The graph can be perfectly alive while the stream feeding the
-      // element is dead, and that combination is invisible to every measurement
-      // below: it looks exactly like a session playing normally, and sounds like
-      // nothing. Only done for an interruption, because it costs a short gap.
-      if (interrupted && mediaRoute.isExternal) await mediaRoute.rebuildExternalRoute()
+      /**
+       * The route is checked on every return, not only after an interruption
+       * the context noticed.
+       *
+       * The first version of this was gated on `interrupted`, and a log from a
+       * real phone showed why that was wrong: a call came in during a session,
+       * and the context was never interrupted at all — nothing was recorded,
+       * because with background audio on the graph renders into a MediaStream
+       * rather than to the speaker, so the system has no reason to touch it.
+       * What it takes is the element. The graph then keeps producing sound
+       * that goes nowhere, which is exactly what "playing, but silent" is.
+       *
+       * `ensureRouteFlowing` costs nothing when the route is healthy — it looks
+       * at the element and the track — and repairs it when it is not.
+       */
+      if (mediaRoute.isExternal) await mediaRoute.ensureRouteFlowing(interrupted)
 
       // Long enough for a resumed graph to be producing something again, short
       // enough not to be noticed if it is.

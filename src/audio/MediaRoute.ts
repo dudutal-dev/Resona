@@ -78,7 +78,11 @@ class MediaRoute {
   private el: AirPlayElement | null = null
   private external = false
   private streamDest: MediaStreamAudioDestinationNode | null = null
-  private stallHandlers: { ended: () => void; error: () => void } | null = null
+  private stallHandlers: {
+    ended: (e: Event) => void
+    error: (e: Event) => void
+    pause: () => void
+  } | null = null
   private gestureRetryArmed = false
   private streamProbe: AnalyserNode | null = null
   private silentUrl: string | null = null
@@ -88,6 +92,25 @@ class MediaRoute {
    * whether it is returning from an interruption or merely from an app switch.
    */
   private interrupted = false
+  /**
+   * Whether `currentTime` on this browser's media element advances while a
+   * MediaStream plays through it.
+   *
+   * Measured rather than assumed, on a route that has just been verified: if it
+   * advances there, a frozen clock later is real evidence the route has died.
+   * If it does not advance even on a working route, the signal is useless on
+   * this device and is never consulted again — an unreliable test that triggers
+   * a repair is worse than no test at all.
+   */
+  private timeAdvances: boolean | null = null
+  /** Repairs are rate-limited; a broken route must not become a rebuild loop. */
+  private lastRebuild = 0
+  /**
+   * Whether a session is supposed to be running, asked by the element's own
+   * `pause` event — which fires both when the system takes the audio away and
+   * when this app pauses the element itself.
+   */
+  isSessionActive: (() => boolean) | null = null
 
   // ------------------------------------------------ the single media element
 
@@ -207,6 +230,7 @@ class MediaRoute {
     this.watchExternalStall(el)
 
     this.external = true
+    await this.calibrateClock(el)
     return true
   }
 
@@ -217,15 +241,27 @@ class MediaRoute {
       diag('route-stalled', e.type)
       void this.setExternal(false)
     }
-    this.stallHandlers = { ended: recover, error: recover }
+    // The element being paused is the loudest thing the system does on a phone
+    // call, and it was the one event nobody was listening for. Acted on only
+    // while a session is supposed to be running: the app pauses this element
+    // itself on every stop, and repairing that would be fighting the person who
+    // pressed stop.
+    const paused = () => {
+      if (!this.external || !this.isSessionActive?.()) return
+      diag('element-paused')
+      void this.ensureRouteFlowing()
+    }
+    this.stallHandlers = { ended: recover, error: recover, pause: paused }
     el.addEventListener('ended', recover)
     el.addEventListener('error', recover)
+    el.addEventListener('pause', paused)
   }
 
   private clearStallWatch() {
     if (!this.el || !this.stallHandlers) return
     this.el.removeEventListener('ended', this.stallHandlers.ended)
     this.el.removeEventListener('error', this.stallHandlers.error)
+    this.el.removeEventListener('pause', this.stallHandlers.pause)
     this.stallHandlers = null
   }
 
@@ -469,11 +505,17 @@ class MediaRoute {
     const running = await this.forceResume()
     if (!wasRunning) diag(running ? 'resumed' : 'resume-failed', Tone.getContext().state)
     if (this.wantWakeLock) await this.acquireWakeLock()
+    // Whether the element had to be started again is worth a line. It is the
+    // quiet repair — the one that fixes a session paused by the system without
+    // anything else noticing — and a repair that leaves no trace is a repair
+    // nobody can confirm happened when the next report arrives.
+    const wasPaused = !!this.el?.paused
     try {
       await this.el?.play()
     } catch {
       /* needs a gesture; `armGestureRetry` below covers it */
     }
+    if (wasPaused && this.el && !this.el.paused) diag('element-restarted')
     if (!running) this.armGestureRetry()
     return running
   }
@@ -534,6 +576,98 @@ class MediaRoute {
 
   /** Called after a gesture brings the context back, so the graph can be checked. */
   onRecovered: (() => void) | null = null
+
+  /**
+   * Is sound actually leaving through the route, right now?
+   *
+   * The question this answers is the one the whole recovery path was missing.
+   * Everything else here measured the audio *graph*, and a report from a real
+   * phone settled it: a call came in, the graph was never interrupted at all —
+   * no state change, nothing in the log — and the app played silence until it
+   * was relaunched. Of course it did. With background audio on, the graph
+   * renders into a MediaStream rather than to the speaker, so the system has no
+   * reason to interrupt it; what it takes away is the *element*, and the
+   * element is downstream of every measurement that was being taken.
+   *
+   * Three signals, in order of how much they can be trusted:
+   *  - the element paused, which is unambiguous;
+   *  - the stream's track ended or went mute, which cannot be undone;
+   *  - the element's clock frozen, which is only consulted where it has been
+   *    shown to move on a working route.
+   */
+  private async routeIsFlowing(): Promise<boolean> {
+    if (!this.external) return true
+    const el = this.el
+    if (!el) return false
+    if (el.paused || el.ended) {
+      diag('route-not-flowing', 'paused')
+      return false
+    }
+    const track = this.streamDest?.stream.getAudioTracks()[0]
+    if (!track || track.readyState !== 'live' || track.muted) {
+      diag('route-not-flowing', track ? `track ${track.readyState}${track.muted ? ' muted' : ''}` : 'no track')
+      return false
+    }
+    if (this.timeAdvances) {
+      const at = el.currentTime
+      await new Promise((r) => setTimeout(r, 450))
+      if (el.currentTime <= at) {
+        diag('route-not-flowing', 'clock frozen')
+        return false
+      }
+    }
+    return true
+  }
+
+  /**
+   * Checks the route and repairs it if it has died.
+   *
+   * Called on every return to the app while a session is running — not only
+   * after an interruption the context noticed, because the fault that prompted
+   * this never reached the context.
+   */
+  async ensureRouteFlowing(force = false): Promise<boolean> {
+    if (!this.external || !engine.isStarted) return true
+    // `force` is used after an interruption the context did notice: the element
+    // may look perfectly healthy and still be attached to a session the system
+    // has taken away, and a person who has just finished a phone call will not
+    // begrudge half a second of silence.
+    if (!force && (await this.routeIsFlowing())) return true
+
+    // A route that cannot be fixed must not be retried every second. The gap
+    // is generous: a genuine second fault within five seconds is indis-
+    // tinguishable from a loop, and the loop is the worse outcome.
+    const now = Date.now()
+    if (now - this.lastRebuild < 5000) return false
+    this.lastRebuild = now
+
+    // Starting the element again is the cheap repair, and where the system
+    // simply paused it, the only one needed.
+    try {
+      await this.el?.play()
+    } catch {
+      /* needs a gesture, or the element is beyond starting */
+    }
+    if (await this.routeIsFlowing()) {
+      diag('route-resumed')
+      return true
+    }
+    return this.rebuildExternalRoute()
+  }
+
+  /**
+   * Finds out whether the element's clock can be believed on this browser.
+   *
+   * Run on a route that has just been verified as carrying sound, so whatever
+   * it observes is the behaviour of a *working* route. A clock that does not
+   * move here would produce a false alarm every time it were consulted.
+   */
+  private async calibrateClock(el: HTMLMediaElement) {
+    if (this.timeAdvances !== null) return
+    const at = el.currentTime
+    await new Promise((r) => setTimeout(r, 450))
+    this.timeAdvances = el.currentTime > at
+  }
 
   /**
    * Whether the last stop was an interruption rather than an app switch, read
@@ -598,6 +732,7 @@ class MediaRoute {
 
     if (await this.startAndVerify(el, 500)) {
       this.watchExternalStall(el)
+      await this.calibrateClock(el)
       diag('route-rebuilt')
       return true
     }

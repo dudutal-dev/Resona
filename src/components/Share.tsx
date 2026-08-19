@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { renderRich, useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
 import { arrivedShared, isInstalled, shareTarget, type Shareable } from '../lib/share'
@@ -103,40 +103,67 @@ export function SharedInvite() {
 }
 
 /**
- * Offered when the sound has been lost and could not be got back on its own.
+ * Offered when something took the audio while the app was away.
  *
- * The last resort, and it exists because there is a class of fault no code can
- * clear: a browser may refuse to start a media element without a gesture. This
- * is that gesture — one tap, in the one place the person is already looking,
- * instead of the app having to be killed and relaunched.
+ * Phrased as a question rather than a statement, and that is the whole design.
+ * A log from a real phone showed every repair reporting success — element
+ * playing, track live, clock advancing — while nothing came out of the speaker,
+ * so the app is in no position to announce either that the sound is gone or
+ * that it is back. The person is the only instrument that can tell, and each
+ * press tries something strictly stronger than the last.
  */
 export function SoundLostNotice() {
   const { t } = useT()
   const soundLost = useSession((s) => s.soundLost)
   const restore = useSession((s) => s.restoreSound)
-  const [done, setDone] = useState(false)
+  const [step, setStep] = useState(0)
+  const [busy, setBusy] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
 
-  if (!soundLost && !done) return null
+  useEffect(() => {
+    if (soundLost) setDismissed(false)
+    if (!soundLost) setStep(0)
+  }, [soundLost])
+
+  if (!soundLost || dismissed) return null
+  const labels = ['sound.restore', 'sound.retry', 'sound.last'] as const
+  const exhausted = step >= labels.length
+
   return (
     <Card glow className="mb-4">
-      <h3 className="text-sm font-bold" style={{ color: 'var(--gold)' }}>
-        {done ? t('sound.restored') : t('sound.lost')}
-      </h3>
-      {!done && (
-        <>
+      <div className="flex items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-bold" style={{ color: 'var(--gold)' }}>
+            {t('sound.lost')}
+          </h3>
           <p className="txt-2 mt-1 text-[11.5px] leading-relaxed">{t('sound.lostBody')}</p>
-          <button
-            onClick={async () => {
-              await restore()
-              setDone(true)
-              setTimeout(() => setDone(false), 2600)
-            }}
-            className="btn mt-3 w-full text-xs"
-          >
-            {t('sound.restore')}
-          </button>
-        </>
-      )}
+          {exhausted ? (
+            <p className="txt-3 mt-3 text-[11px] leading-relaxed">{t('sound.exhausted')}</p>
+          ) : (
+            <button
+              onClick={async () => {
+                setBusy(true)
+                await restore()
+                setBusy(false)
+                setStep((n) => n + 1)
+              }}
+              disabled={busy}
+              className="btn mt-3 w-full text-xs"
+            >
+              {busy ? t('sound.tried') : t(labels[step])}
+            </button>
+          )}
+        </div>
+        <button
+          onClick={() => setDismissed(true)}
+          aria-label={t('common.close')}
+          className="txt-3 shrink-0 p-1"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
     </Card>
   )
 }

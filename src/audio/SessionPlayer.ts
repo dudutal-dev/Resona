@@ -73,6 +73,15 @@ class SessionPlayer {
    * says so, and the screen offers the one tap that is allowed to fix it.
    */
   private soundLost = false
+  /**
+   * How many times the manual repair has been asked for in this session.
+   *
+   * Each press tries something strictly stronger than the last, because the
+   * weaker steps have been observed reporting success while the phone stayed
+   * silent. The person is the only instrument that can tell whether there is
+   * sound, so the ladder is climbed by them and not by a measurement.
+   */
+  private restoreStep = 0
 
   onChange(fn: Listener) {
     this.listeners.add(fn)
@@ -92,7 +101,7 @@ class SessionPlayer {
     return this.soundLost
   }
 
-  private setSoundLost(lost: boolean) {
+  setSoundLost(lost: boolean) {
     if (this.soundLost === lost) return
     this.soundLost = lost
     if (lost) diag('sound-lost')
@@ -107,12 +116,29 @@ class SessionPlayer {
    * route, and it rebuilds the voices in case the graph is the half that died.
    */
   async restoreSound(): Promise<boolean> {
-    diag('restore-pressed')
+    this.restoreStep += 1
+    diag('restore-pressed', `step ${this.restoreStep}`)
     await mediaRoute.resumeIfNeeded(this.playing)
-    const flowing = await mediaRoute.ensureRouteFlowing(true)
-    if (this.playing && !engine.isProducingSound()) this.restartVoices()
-    this.setSoundLost(!flowing)
-    return flowing
+
+    if (this.restoreStep === 1) {
+      // Rebuild the stream, and the voices if the graph is the half that died.
+      await mediaRoute.ensureRouteFlowing(true)
+    } else if (this.restoreStep === 2) {
+      // Discard the element itself. This is what relaunching the app did.
+      await mediaRoute.hardRebuild()
+    } else {
+      // Out of the element path altogether: straight to the speaker, no stream
+      // and no playback session to lose.
+      await mediaRoute.toDirect()
+    }
+
+    this.restartVoices()
+    // Deliberately not cleared here. Nothing in a browser can confirm that
+    // sound is reaching the speaker, and saying "fixed" when it is not is how
+    // the last two attempts ended. The card stays until the person stops
+    // pressing it or the session is started again.
+    this.emit()
+    return true
   }
 
   /** Seconds since the session began, for the elapsed readout. */
@@ -167,6 +193,7 @@ class SessionPlayer {
 
     this.playing = true
     this.soundLost = false
+    this.restoreStep = 0
     this.startedAt = Date.now()
     diag('play', `${config.rootId} ${config.melodyStyle ?? 'ambient'}`)
     // Only drop to silence when the voices really were torn down. Resuming
@@ -394,6 +421,15 @@ class SessionPlayer {
     // The route watches for its element being paused, and has to be able to
     // tell "the system took it" from "the person pressed stop".
     mediaRoute.isSessionActive = () => this.playing
+    // Anything that takes the audio during a session raises the offer to
+    // repair, at the moment it happens. It is never lowered by this code: no
+    // measurement available here can tell whether sound is reaching the
+    // speaker, and the last two reports were of repairs that said they had
+    // worked. Only starting a session again, or the person dismissing it,
+    // clears it.
+    mediaRoute.onFault = () => {
+      if (this.playing) this.setSoundLost(true)
+    }
 
     /**
      * Coming back from another app, and the escalation when coming back is not
@@ -443,7 +479,7 @@ class SessionPlayer {
           await new Promise((r) => setTimeout(r, 1400))
           ok = await mediaRoute.ensureRouteFlowing()
         }
-        this.setSoundLost(!ok)
+        if (!ok) this.setSoundLost(true)
       }
 
       // Long enough for a resumed graph to be producing something again, short

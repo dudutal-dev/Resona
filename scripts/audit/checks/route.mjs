@@ -107,23 +107,33 @@ export async function run(browser) {
     const { useSession } = await import('/src/store/sessionStore.ts')
     const { mediaRoute } = await import('/src/audio/MediaRoute.ts')
     const { player } = await import('/src/audio/SessionPlayer.ts')
+    const { clearDiagnostics, readDiagnostics } = await import('/src/lib/diagnostics.ts')
     window.location.hash = '#/player'
     await useSession.getState().toggle()
     await new Promise((r) => setTimeout(r, 5000))
+    clearDiagnostics()
 
-    const real = mediaRoute.ensureRouteFlowing.bind(mediaRoute)
-    mediaRoute.ensureRouteFlowing = async () => false
+    // The fault as it actually presented: the element is paused while the app
+    // is away, and every repair then reports success. What must not happen is
+    // the app deciding for the person that the sound came back.
+    mediaRoute.el.pause()
     document.dispatchEvent(new Event('visibilitychange'))
-    await new Promise((r) => setTimeout(r, 3000))
-    const admitted = player.isSoundLost
-    const onScreen = document.body.innerText.includes('הקול נקטע')
+    await new Promise((r) => setTimeout(r, 4000))
+    const offered = player.isSoundLost
+    const onScreen = document.body.innerText.includes('לא שומע כלום')
 
-    mediaRoute.ensureRouteFlowing = real
-    await useSession.getState().restoreSound()
-    await new Promise((r) => setTimeout(r, 1500))
-    const cleared = !player.isSoundLost
+    // Three presses, each stronger than the last. The third leaves the element
+    // path entirely, which is the one repair that cannot be undone by a
+    // playback session going missing.
+    for (let i = 0; i < 3; i++) {
+      await useSession.getState().restoreSound()
+      await new Promise((r) => setTimeout(r, 2000))
+    }
+    const steps = readDiagnostics().map((e) => e.tag).join(' ')
+    const soundingAtTheEnd = (await import('/src/audio/ToneEngine.ts')).engine.isProducingSound()
+    const direct = !mediaRoute.isExternal
     await useSession.getState().toggle()
-    return { fault: 'unrepairable', admitted, onScreen, cleared }
+    return { fault: 'escalation', offered, onScreen, steps, direct, soundingAtTheEnd }
   })
   await ctx.close()
 
@@ -148,9 +158,12 @@ export async function run(browser) {
       failures.push(`${r.fault}: the dead stream was kept`)
     }
   }
-  if (!unrepairable.admitted) failures.push('the player did not admit the sound was lost')
-  if (!unrepairable.onScreen) failures.push('the screen says nothing when the sound is lost')
-  if (!unrepairable.cleared) failures.push('the manual repair did not clear the fault')
+  if (!unrepairable.offered) failures.push('a fault while away did not raise the offer to repair')
+  if (!unrepairable.onScreen) failures.push('the screen says nothing after a fault while away')
+  if (!/hard-rebuild/.test(unrepairable.steps)) failures.push('the second press did not discard the element')
+  if (!/route-direct/.test(unrepairable.steps)) failures.push('the third press did not leave the element path')
+  if (!unrepairable.direct) failures.push('the last resort did not end on the direct route')
+  if (!unrepairable.soundingAtTheEnd) failures.push('the graph is silent after the last resort')
 
   return { rows: [...results, unrepairable], failures, errors }
 }

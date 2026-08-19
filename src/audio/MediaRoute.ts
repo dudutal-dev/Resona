@@ -106,11 +106,31 @@ class MediaRoute {
   /** Repairs are rate-limited; a broken route must not become a rebuild loop. */
   private lastRebuild = 0
   /**
+   * Something took the audio while the app was away.
+   *
+   * Kept because the repair cannot be verified. Every signal available here —
+   * the element playing, the track live, the clock moving — said the route was
+   * healthy on a phone that was producing no sound at all, so a fault seen on
+   * the way out is the only honest reason to suspect the sound on the way back.
+   */
+  private faultSeen = false
+  /**
    * Whether a session is supposed to be running, asked by the element's own
    * `pause` event — which fires both when the system takes the audio away and
    * when this app pauses the element itself.
    */
   isSessionActive: (() => boolean) | null = null
+  /**
+   * Called the moment anything takes the audio, rather than at the end of a
+   * repair.
+   *
+   * The first version worked this out inside the recovery path, from a flag and
+   * a return value, and it lost the race: the element's `pause` event arrives
+   * after the return to the foreground has already been handled, so the fault
+   * was recorded a moment after the decision that needed it. Reporting it where
+   * it happens has no ordering to get wrong.
+   */
+  onFault: (() => void) | null = null
 
   // ------------------------------------------------ the single media element
 
@@ -249,6 +269,7 @@ class MediaRoute {
     const paused = () => {
       if (!this.external || !this.isSessionActive?.()) return
       diag('element-paused')
+      this.reportFault()
       void this.ensureRouteFlowing()
     }
     this.stallHandlers = { ended: recover, error: recover, pause: paused }
@@ -600,11 +621,13 @@ class MediaRoute {
     const el = this.el
     if (!el) return false
     if (el.paused || el.ended) {
+      this.reportFault()
       diag('route-not-flowing', 'paused')
       return false
     }
     const track = this.streamDest?.stream.getAudioTracks()[0]
     if (!track || track.readyState !== 'live' || track.muted) {
+      this.reportFault()
       diag('route-not-flowing', track ? `track ${track.readyState}${track.muted ? ' muted' : ''}` : 'no track')
       return false
     }
@@ -612,6 +635,7 @@ class MediaRoute {
       const at = el.currentTime
       await new Promise((r) => setTimeout(r, 450))
       if (el.currentTime <= at) {
+          this.reportFault()
         diag('route-not-flowing', 'clock frozen')
         return false
       }
@@ -681,6 +705,86 @@ class MediaRoute {
     const was = this.interrupted
     this.interrupted = false
     return was
+  }
+
+  private reportFault() {
+    this.faultSeen = true
+    this.onFault?.()
+  }
+
+  /** Whether anything took the audio since this was last asked. */
+  consumeFaultSeen(): boolean {
+    const was = this.faultSeen
+    this.faultSeen = false
+    return was
+  }
+
+  /**
+   * Throws the element away and builds a new one.
+   *
+   * The step above this — starting the element again — reported success on a
+   * phone that stayed silent, and every measurement agreed with it. Which means
+   * the element can hold a playback session the system has emptied while
+   * presenting as perfectly healthy, and nothing in a page can see the
+   * difference. What relaunching the app does that no repair had done is
+   * discard the element itself, so that is what this does.
+   */
+  async hardRebuild(): Promise<boolean> {
+    if (!engine.isStarted) return false
+    diag('hard-rebuild')
+    this.clearStallWatch()
+    const old = this.el
+    if (old) {
+      try {
+        old.pause()
+        old.srcObject = null
+        old.removeAttribute('src')
+        old.remove()
+      } catch {
+        /* it is being discarded either way */
+      }
+    }
+    this.el = null
+    this.timeAdvances = null
+
+    for (const track of this.streamDest?.stream.getTracks() ?? []) track.stop()
+    try {
+      this.streamDest?.disconnect()
+      this.streamProbe?.disconnect()
+    } catch {
+      /* already detached */
+    }
+    this.streamDest = null
+    this.streamProbe = null
+    this.external = false
+    // A fresh element, a fresh stream, from the same code path a first session
+    // uses — the closest thing to relaunching without losing the session.
+    return this.setExternal(true, 700)
+  }
+
+  /**
+   * Takes the element out of the path entirely.
+   *
+   * The last resort, and the one most likely to make a sound: with the master
+   * connected straight to the destination there is no stream, no element and no
+   * playback session to lose. Background playback and the lock-screen card go
+   * with it, which is a real cost and a much smaller one than silence.
+   */
+  async toDirect(): Promise<void> {
+    if (!engine.isStarted) return
+    diag('route-direct')
+    this.clearStallWatch()
+    for (const track of this.streamDest?.stream.getTracks() ?? []) track.stop()
+    const limiter = engine.output
+    limiter.disconnect()
+    limiter.toDestination()
+    this.streamDest = null
+    this.streamProbe = null
+    this.external = false
+    if (this.el) {
+      this.el.srcObject = null
+      this.el.pause()
+    }
   }
 
   /**
@@ -758,6 +862,7 @@ class MediaRoute {
       // as `resumed`, and logging both doubles every interruption.
       if (raw.state !== 'running') {
         this.interrupted = true
+        this.reportFault()
         diag('context-lost', raw.state)
         onLost()
       }

@@ -6,6 +6,7 @@ import { Ambience, BUILTIN_AMBIENCE, type AmbienceOption } from './Ambience'
 import { mediaRoute } from './MediaRoute'
 import { coverArtwork } from './artwork'
 import { freqLabel, getFrequency, getJourney, journeyTitle, shortLabel } from '../lib/catalog'
+import { diag } from '../lib/diagnostics'
 import { translate } from '../lib/i18n'
 import { useSettings } from '../store/settingsStore'
 import { THEME_HUE, themeOf } from '../lib/themes'
@@ -128,6 +129,7 @@ class SessionPlayer {
 
     this.playing = true
     this.startedAt = Date.now()
+    diag('play', `${config.rootId} ${config.melodyStyle ?? 'ambient'}`)
     // Only drop to silence when the voices really were torn down. Resuming
     // during a fade-out leaves them running, and slamming the fade to zero
     // first would put an audible hole in a session that never stopped.
@@ -284,6 +286,7 @@ class SessionPlayer {
    */
   async stop(fromTimer = false) {
     if (!this.playing) return
+    diag('stop', fromTimer ? 'timer' : 'user')
     const generation = ++this.generation
     this.clearTimers()
     const fade = fromTimer ? 0.4 : 2.5
@@ -313,6 +316,7 @@ class SessionPlayer {
    */
   private restartVoices() {
     if (!this.config) return
+    diag('voices-rebuilt')
     this.melody?.stop()
     this.beat?.stop()
     this.ambience?.stop()
@@ -364,7 +368,12 @@ class SessionPlayer {
       // Long enough for a resumed graph to be producing something again, short
       // enough not to be noticed if it is.
       await new Promise((r) => setTimeout(r, 900))
-      if (this.playing && !engine.isProducingSound()) this.restartVoices()
+      if (this.playing && !engine.isProducingSound()) {
+        // The interesting line in the whole log: the context came back and the
+        // graph did not, which is the fault that used to require relaunching.
+        diag('silent-after-resume')
+        this.restartVoices()
+      }
     }
 
     document.addEventListener('visibilitychange', () => {

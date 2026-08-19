@@ -35,6 +35,7 @@ export const STORAGE_KEYS = {
   history: 'history',
   customJourneys: 'customJourneys',
   favourites: 'favourites',
+  diagnostics: 'diagnostics',
 } as const
 
 /** crypto.randomUUID is unavailable on http origins in some browsers. */

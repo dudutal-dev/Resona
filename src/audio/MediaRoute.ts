@@ -1,3 +1,4 @@
+import { diag } from '../lib/diagnostics'
 import { Tone, engine } from './ToneEngine'
 
 /**
@@ -183,6 +184,7 @@ class MediaRoute {
     el.volume = 1
 
     const ok = await this.startAndVerify(el, settleMs)
+    diag(ok ? 'route-external' : 'route-external-failed')
     if (!ok) {
       limiter.disconnect()
       limiter.toDestination()
@@ -204,8 +206,9 @@ class MediaRoute {
 
   private watchExternalStall(el: HTMLMediaElement) {
     this.clearStallWatch()
-    const recover = () => {
+    const recover = (e: Event) => {
       if (!this.external) return
+      diag('route-stalled', e.type)
       void this.setExternal(false)
     }
     this.stallHandlers = { ended: recover, error: recover }
@@ -452,7 +455,12 @@ class MediaRoute {
       return Tone.getContext().state === 'running'
     }
 
+    // Only worth a line if something was actually wrong. Coming back to a
+    // context that never stopped happens every time the app is switched to, and
+    // a log full of that hides the one entry that matters.
+    const wasRunning = (Tone.getContext().state as string) === 'running'
     const running = await this.forceResume()
+    if (!wasRunning) diag(running ? 'resumed' : 'resume-failed', Tone.getContext().state)
     if (this.wantWakeLock) await this.acquireWakeLock()
     try {
       await this.el?.play()
@@ -497,6 +505,7 @@ class MediaRoute {
   private armGestureRetry() {
     if (this.gestureRetryArmed) return
     this.gestureRetryArmed = true
+    diag('awaiting-gesture')
     const retry = async () => {
       const ok = await this.forceResume(1)
       try {
@@ -505,6 +514,7 @@ class MediaRoute {
         /* still not allowed */
       }
       if (ok) {
+        diag('recovered-by-gesture')
         this.gestureRetryArmed = false
         for (const type of GESTURES) document.removeEventListener(type, retry)
         this.onRecovered?.()
@@ -526,7 +536,12 @@ class MediaRoute {
   watchContextState(onLost: () => void) {
     const raw = Tone.getContext().rawContext as unknown as AudioContext
     raw.addEventListener?.('statechange', () => {
-      if (raw.state !== 'running') onLost()
+      // The loss is the event; the return is already recorded by `resumeIfNeeded`
+      // as `resumed`, and logging both doubles every interruption.
+      if (raw.state !== 'running') {
+        diag('context-lost', raw.state)
+        onLost()
+      }
     })
   }
 }

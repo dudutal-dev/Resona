@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { THEMES, THEME_COLOR, useSettings } from '../store/settingsStore'
 import { usePresets } from '../store/presetsStore'
 import { useJourneys } from '../store/journeyStore'
@@ -7,6 +7,12 @@ import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { ListeningMode } from './ListeningMode'
 import { checkForUpdate, reloadNow, type UpdateState } from '../lib/updater'
+import {
+  clearDiagnostics,
+  diagnosticsReport,
+  readDiagnostics,
+  watchDiagnostics,
+} from '../lib/diagnostics'
 import { Card, Screen } from './ui'
 
 /** The build this screen is running — same stamp the About screen prints. */
@@ -96,6 +102,80 @@ function Toggle({
         />
       </span>
     </button>
+  )
+}
+
+/**
+ * The flight recorder, read back.
+ *
+ * Its whole reason for existing is that the faults worth knowing about happen
+ * on a phone, in a car, on a speaker — never here. So the one thing this screen
+ * has to do well is get the log off the device and into a message.
+ */
+function DiagnosticsCard() {
+  const { t } = useT()
+  const [entries, setEntries] = useState(() => readDiagnostics())
+  const [copied, setCopied] = useState(false)
+  useEffect(() => watchDiagnostics(() => setEntries([...readDiagnostics()])), [])
+
+  const share = async () => {
+    const text = diagnosticsReport(BUILD)
+    // The share sheet is the right thing on a phone — it reaches WhatsApp, mail,
+    // notes. It does not exist on a desktop browser, and it rejects when the
+    // person dismisses it, which is not a failure worth reporting.
+    const nav = navigator as Navigator & { share?: (d: { title: string; text: string }) => Promise<void> }
+    if (nav.share) {
+      try {
+        await nav.share({ title: 'Resona diagnostics', text })
+        return
+      } catch {
+        /* dismissed, or refused — fall through to the clipboard */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2500)
+    } catch {
+      /* no clipboard permission; the log is still on screen below */
+    }
+  }
+
+  const recent = entries.slice(-8).reverse()
+
+  return (
+    <Card>
+      <p className="text-sm font-semibold">{t('settings.diag')}</p>
+      <p className="txt-3 mt-0.5 text-[11px] leading-relaxed">{t('settings.diagHint')}</p>
+      {entries.length === 0 ? (
+        <p className="chip mt-3">{t('settings.diagEmpty')}</p>
+      ) : (
+        <>
+          <div
+            className="mt-3 max-h-40 overflow-y-auto rounded-2xl p-2.5 text-[10px] leading-relaxed"
+            style={{ background: 'var(--obj)', border: '1px solid var(--obj-line)' }}
+            dir="ltr"
+          >
+            {recent.map((e, i) => (
+              <div key={`${e.t}-${i}`} className="readout txt-2 truncate">
+                {new Date(e.t).toISOString().slice(11, 19)} {e.tag}
+                {e.repeat && e.repeat > 1 ? ` ×${e.repeat}` : ''}
+                {e.detail ? ` — ${e.detail}` : ''}
+              </div>
+            ))}
+          </div>
+          <p className="txt-3 mt-1.5 text-[10px]">{t('settings.diagCount', { n: String(entries.length) })}</p>
+          <div className="mt-3 flex gap-2">
+            <button onClick={share} className="btn flex-1 text-xs">
+              {copied ? t('settings.diagCopied') : t('settings.diagShare')}
+            </button>
+            <button onClick={clearDiagnostics} className="btn flex-1 text-xs">
+              {t('settings.diagClear')}
+            </button>
+          </div>
+        </>
+      )}
+    </Card>
   )
 }
 
@@ -196,6 +276,8 @@ export function SettingsScreen() {
         </Card>
 
         <UpdateCard />
+
+        <DiagnosticsCard />
 
         <Card>
           <h3 className="text-sm font-bold">{t('settings.localData')}</h3>

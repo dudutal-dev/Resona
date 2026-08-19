@@ -64,25 +64,25 @@ export function HomeScreen() {
       <AppBar title={t('nav.home')} />
 
       {/* The one thing on this screen that is a proposal rather than a list. */}
-      <section className="hero p-6" style={{ ['--hero-h' as string]: String(featured.hue) }}>
+      <section className="hero p-5" style={{ ['--hero-h' as string]: String(featured.hue) }}>
         <p
-          className="relative flex items-center gap-1.5 text-[12px] font-extrabold"
+          className="relative flex items-center gap-1.5 text-[11px] font-extrabold"
           style={{ color: 'var(--gold)', letterSpacing: '0.16em' }}
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
             <path d="M12 2l1.9 6.4a2 2 0 001.7 1.7L22 12l-6.4 1.9a2 2 0 00-1.7 1.7L12 22l-1.9-6.4a2 2 0 00-1.7-1.7L2 12l6.4-1.9a2 2 0 001.7-1.7z" />
           </svg>
           {t('home.featured')}
         </p>
-        <h2 className="relative mt-3 text-[34px] font-extrabold leading-[1.1] tracking-tight">
+        <h2 className="relative mt-2.5 text-[25px] font-extrabold leading-[1.12] tracking-tight">
           {freqLabel(featured, lang)} — <span className="readout">{featured.hz}Hz</span>
         </h2>
-        <p className="txt-2 relative mt-3 line-clamp-2 text-[14px] leading-relaxed">
+        <p className="txt-2 relative mt-2.5 line-clamp-2 text-[13px] leading-relaxed">
           {freqInfo(featured, lang)}
         </p>
-        <div className="relative mt-6 flex justify-start">
+        <div className="relative mt-5 flex justify-start">
           <button onClick={() => void playFeatured()} className="cta">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
               <path d="M8 5.5v13a1 1 0 001.5.87l11-6.5a1 1 0 000-1.74l-11-6.5A1 1 0 008 5.5z" />
             </svg>
             {t('home.startListening')}
@@ -93,7 +93,7 @@ export function HomeScreen() {
       {inProgress.length > 0 && (
         <>
           <SectionHead title={t('home.activeJourney')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {inProgress.slice(0, 4).map(({ p, journey }) => (
               <Tile
                 key={p.journeyId}
@@ -109,7 +109,7 @@ export function HomeScreen() {
       )}
 
       <SectionHead title={t('home.quick')} onAll={() => navigate('/frequencies')} allLabel={t('home.seeAll')} />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {quick.map((f) => (
           <Tile
             key={f.id}
@@ -127,7 +127,7 @@ export function HomeScreen() {
       </div>
 
       <SectionHead title={t('home.shelfSessions')} onAll={() => navigate('/journeys')} allLabel={t('home.seeAll')} />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {sets.map((j) => (
           <Tile
             key={j.id}
@@ -141,7 +141,7 @@ export function HomeScreen() {
       </div>
 
       <SectionHead title={t('home.bands')} onAll={() => navigate('/frequencies')} allLabel={t('home.seeAll')} />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2.5">
         {bands.map((f) => (
           <Tile
             key={f.id}

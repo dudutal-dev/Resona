@@ -41,7 +41,7 @@ function JourneyCard({ journey }: { journey: Journey }) {
   return (
     <button
       onClick={() => navigate(`/journey/${journey.id}`)}
-      className="jcard w-full p-5 text-start"
+      className="jcard w-full p-4 text-start"
       style={{
         background: `linear-gradient(152deg, hsl(${hue} var(--jc-s1) var(--jc-l1)), hsl(${hue + 32} var(--jc-s2) var(--jc-l2)))`,
         color: '#fff',
@@ -49,16 +49,16 @@ function JourneyCard({ journey }: { journey: Journey }) {
     >
       {/* The shelf's mark, big and barely there — texture, not an icon. */}
       <span
-        className="pointer-events-none absolute end-5 top-5"
+        className="pointer-events-none absolute end-4 top-4"
         style={{ color: 'rgba(255,255,255,0.34)' }}
         aria-hidden
       >
-        <Glyph id={GLYPH_FOR_THEME[theme]} size={40} />
+        <Glyph id={GLYPH_FOR_THEME[theme]} size={31} />
       </span>
 
-      <h3 className="pe-14 text-[23px] font-extrabold leading-tight">{journeyTitle(journey, lang)}</h3>
+      <h3 className="pe-11 text-[18px] font-extrabold leading-tight">{journeyTitle(journey, lang)}</h3>
 
-      <p className="mt-2 text-[13px] font-bold" style={{ color: 'rgba(255,255,255,0.82)' }}>
+      <p className="mt-1.5 text-[11.5px] font-bold" style={{ color: 'rgba(255,255,255,0.82)' }}>
         {t('common.daysN', { n: journey.days })}
         {' · '}
         <span className="readout">{first.durationMin}</span> {t('common.minutes')}
@@ -66,12 +66,12 @@ function JourneyCard({ journey }: { journey: Journey }) {
         {t('journeys.withMelody')}
       </p>
 
-      <p className="mt-3 text-[13.5px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.86)' }}>
+      <p className="mt-2.5 text-[12.5px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.86)' }}>
         {journeyDescription(journey, lang)}
       </p>
 
       {/* One bar per day. Counting them is how you know what you are agreeing to. */}
-      <span className="mt-5 flex gap-1.5" aria-hidden>
+      <span className="mt-4 flex gap-1.5" aria-hidden>
         {Array.from({ length: journey.days }, (_, i) => (
           <span key={i} className="seg" data-done={i < done} />
         ))}
@@ -93,13 +93,13 @@ export function JourneyList() {
       <SectionHead title={t('journeys.guided')} blurb={t('journeys.guidedBlurb')} tight />
 
       {/* The one thing here that is made rather than chosen. */}
-      <button onClick={() => navigate('/build')} className="obj mb-6 flex w-full items-center gap-3 p-4 text-start">
+      <button onClick={() => navigate('/build')} className="obj mb-5 flex w-full items-center gap-3 p-3.5 text-start">
         <span className="min-w-0 flex-1">
-          <span className="block text-[16px] font-extrabold">{t('build.entry')}</span>
-          <span className="txt-3 mt-0.5 block text-[12.5px]">{t('build.entryNote')}</span>
+          <span className="block text-[14.5px] font-extrabold">{t('build.entry')}</span>
+          <span className="txt-3 mt-0.5 block text-[11.5px]">{t('build.entryNote')}</span>
         </span>
         <span
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-full"
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-full"
           style={{ background: 'var(--gold-soft)', color: 'var(--gold)', border: '1px solid var(--gold)' }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -122,7 +122,7 @@ export function JourneyList() {
             <button
               key={key}
               onClick={() => setFilter(key as JourneyTheme | 'all')}
-              className="shrink-0 rounded-full px-3.5 py-2 text-[12.5px] font-bold transition-colors"
+              className="shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-bold transition-colors"
               style={{
                 background: active
                   ? hue === null
@@ -140,7 +140,7 @@ export function JourneyList() {
         })}
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {shown.flatMap((g) => g.journeys).map((journey) => (
           <JourneyCard key={journey.id} journey={journey} />
         ))}

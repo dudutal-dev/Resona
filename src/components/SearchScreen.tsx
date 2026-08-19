@@ -53,7 +53,7 @@ export function SearchScreen() {
     <div className="mx-auto w-full max-w-3xl px-4 pb-44 safe-top">
       <AppBar title={t('search.title')} />
 
-      <div className="obj flex items-center gap-3 p-4">
+      <div className="obj flex items-center gap-3 p-3.5">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden style={{ color: 'var(--txt-3)' }}>
           <circle cx="11" cy="11" r="6.6" stroke="currentColor" strokeWidth="1.8" />
           <path d="M16 16l4.2 4.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -64,7 +64,7 @@ export function SearchScreen() {
           placeholder={t('search.placeholder')}
           aria-label={t('search.title')}
           autoComplete="off"
-          className="w-full bg-transparent text-[16px] font-bold outline-none placeholder:font-normal"
+          className="w-full bg-transparent text-[15px] font-bold outline-none placeholder:font-normal"
           style={{ color: 'var(--txt)' }}
         />
         {q && (
@@ -84,7 +84,7 @@ export function SearchScreen() {
               anyway — most searches here are a way of reaching one known tone
               faster than scrolling the library. */}
           <SectionHead title={t('home.quick')} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {ROOT_FREQUENCIES.slice(0, 6).map((f) => (
               <Tile
                 key={f.id}
@@ -109,7 +109,7 @@ export function SearchScreen() {
       {freqs.length > 0 && (
         <>
           <SectionHead title={t('search.freqs')} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {freqs.map((f) => (
               <Tile
                 key={f.id}
@@ -135,7 +135,7 @@ export function SearchScreen() {
       {journeys.length > 0 && (
         <>
           <SectionHead title={t('search.journeys')} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {journeys.map((j) => (
               <Tile
                 key={j.id}

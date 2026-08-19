@@ -30,7 +30,7 @@ export function Screen({
       <AppBar title={title} onBack={onBack} />
       {(subtitle || action) && (
         <div className="mb-6 flex items-start justify-between gap-3">
-          {subtitle && <p className="txt-2 min-w-0 flex-1 text-[13.5px] leading-relaxed">{subtitle}</p>}
+          {subtitle && <p className="txt-2 min-w-0 flex-1 text-[12.5px] leading-relaxed">{subtitle}</p>}
           {action && <div className="shrink-0">{action}</div>}
         </div>
       )}

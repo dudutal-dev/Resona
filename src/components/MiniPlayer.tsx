@@ -29,15 +29,15 @@ export function MiniPlayer({ hidden }: { hidden: boolean }) {
 
   return (
     <div className="fixed inset-x-0 bottom-[4.6rem] z-40 px-3">
-      <div className="dock animate-fade-up mx-auto flex max-w-md items-center gap-3 p-3">
+      <div className="dock animate-fade-up mx-auto flex max-w-md items-center gap-2.5 p-2.5">
         <button
           onClick={() => navigate('/player')}
           className="flex min-w-0 flex-1 items-center gap-3 text-start"
           aria-label={t('mini.open')}
         >
-          <Badge hue={hue} glyph={glyph} size={54} playing />
+          <Badge hue={hue} glyph={glyph} size={44} playing />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[16px] font-extrabold leading-tight">
+            <span className="block truncate text-[14px] font-extrabold leading-tight">
               {title}
               {root?.hz != null && (
                 <>
@@ -49,7 +49,7 @@ export function MiniPlayer({ hidden }: { hidden: boolean }) {
                 </>
               )}
             </span>
-            <span className="txt-3 mt-0.5 block truncate text-[12px] leading-tight">
+            <span className="txt-3 mt-0.5 block truncate text-[11px] leading-tight">
               <span className="readout">{formatClock(elapsed)}</span>
               {remaining !== null && t('mini.remaining', { clock: formatClock(remaining) })}
             </span>
@@ -60,14 +60,14 @@ export function MiniPlayer({ hidden }: { hidden: boolean }) {
         <button
           onClick={() => void toggle()}
           aria-label={t('common.stop')}
-          className="grid h-14 w-14 shrink-0 place-items-center rounded-full transition-transform active:scale-90"
+          className="grid h-12 w-12 shrink-0 place-items-center rounded-full transition-transform active:scale-90"
           style={{
             background: 'linear-gradient(135deg, var(--cta-from), var(--cta-to))',
             color: 'var(--cta-fg)',
             boxShadow: '0 10px 26px -10px var(--cta-glow)',
           }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
             <rect x="6" y="5" width="4.2" height="14" rx="1.4" />
             <rect x="13.8" y="5" width="4.2" height="14" rx="1.4" />
           </svg>

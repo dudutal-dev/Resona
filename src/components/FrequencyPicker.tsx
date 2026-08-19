@@ -53,7 +53,7 @@ function FrequencyRow({
   const { t, lang } = useT()
   return (
     <div
-      className="obj relative flex items-center gap-3 p-3 transition-colors duration-200"
+      className="obj relative flex items-center gap-2.5 p-2.5 transition-colors duration-200"
       style={
         selected
           ? { background: hueFill(freq.hue, 0.12), borderColor: hueLine(freq.hue, 0.55) }
@@ -61,17 +61,17 @@ function FrequencyRow({
       }
     >
       <button onClick={onSelect} className="flex min-w-0 flex-1 items-center gap-3 text-start">
-        <Badge hue={freq.hue} glyph={glyphForFrequency(freq)} size={44} playing={selected} />
+        <Badge hue={freq.hue} glyph={glyphForFrequency(freq)} size={38} playing={selected} />
         <span className="min-w-0 flex-1">
           {/* Not truncated: several English labels share an opening phrase and
               would clip to the same stub, which is worse than two lines. */}
           <span
-            className="block text-[14.5px] font-extrabold leading-snug"
+            className="block text-[13.5px] font-extrabold leading-snug"
             style={selected ? { color: hueText(freq.hue) } : undefined}
           >
             {freqLabel(freq, lang)}
           </span>
-          <span className="txt-3 readout mt-0.5 block text-[11.5px]">
+          <span className="txt-3 readout mt-0.5 block text-[11px]">
             {freq.hz ? `${freq.hz} Hz` : `${freq.range?.[0]}–${freq.range?.[1]} Hz`}
           </span>
         </span>

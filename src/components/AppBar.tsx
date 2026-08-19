@@ -17,28 +17,28 @@ import { back, navigate } from '../lib/router'
 export function AppBar({ title, onBack = false }: { title: string; onBack?: boolean }) {
   const { t } = useT()
   return (
-    <header className="flex items-center gap-2 pb-6 pt-3">
+    <header className="flex items-center gap-2 pb-5 pt-3">
       {onBack && (
-        <button onClick={back} aria-label={t('common.back')} className="circle-btn h-10 w-10">
+        <button onClick={back} aria-label={t('common.back')} className="circle-btn h-9 w-9">
           {/* Points the way back, which is against the reading direction. */}
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden className="flip-ltr">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden className="flip-ltr">
             <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
       )}
-      <h1 className="min-w-0 truncate text-[30px] font-extrabold leading-none tracking-tight">{title}</h1>
+      <h1 className="min-w-0 truncate text-[23px] font-extrabold leading-none tracking-tight">{title}</h1>
       <span className="wordmark ms-auto">RESONA</span>
       <button
         onClick={() => navigate('/settings')}
         aria-label={t('nav.settings')}
         className="circle-btn ms-1"
       >
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path d="M4 7h16M7 12h10M10 17h4" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
         </svg>
       </button>
       <button onClick={() => navigate('/about')} aria-label={t('nav.about')} className="circle-btn">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path
             d="M9.2 9a2.9 2.9 0 015.6 1c0 2-2.8 2.4-2.8 4.2M12 17.6h.01"
             stroke="currentColor"
@@ -70,19 +70,19 @@ export function SectionHead({
   tight?: boolean
 }) {
   return (
-    <div className={`mb-3 ${tight ? 'mt-0' : 'mt-8'}`}>
+    <div className={`mb-2.5 ${tight ? 'mt-0' : 'mt-7'}`}>
       <div className="flex items-baseline gap-2">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="mark self-center" aria-hidden>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="mark self-center" aria-hidden>
           <path d="M12 2l1.9 6.4a2 2 0 001.7 1.7L22 12l-6.4 1.9a2 2 0 00-1.7 1.7L12 22l-1.9-6.4a2 2 0 00-1.7-1.7L2 12l6.4-1.9a2 2 0 001.7-1.7z" />
         </svg>
-        <h2 className="text-[21px] font-extrabold tracking-tight">{title}</h2>
+        <h2 className="text-[17px] font-extrabold tracking-tight">{title}</h2>
         {onAll && (
-          <button onClick={onAll} className="txt-3 ms-auto shrink-0 text-[12px] font-bold">
+          <button onClick={onAll} className="txt-3 ms-auto shrink-0 text-[11.5px] font-bold">
             {allLabel}
           </button>
         )}
       </div>
-      {blurb && <p className="txt-2 mt-2 text-[13px] leading-relaxed">{blurb}</p>}
+      {blurb && <p className="txt-2 mt-1.5 text-[12px] leading-relaxed">{blurb}</p>}
     </div>
   )
 }

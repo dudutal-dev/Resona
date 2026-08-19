@@ -96,7 +96,7 @@ export function BottomNav({ current }: { current: Route['name'] }) {
               className="navitem relative flex-1 transition-transform active:scale-90"
               data-on={active}
             >
-              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden>
                 {item.icon}
               </svg>
               <span className="navlab">{t(item.label)}</span>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { renderRich, useT } from '../lib/i18n'
 import { navigate } from '../lib/router'
 import { arrivedShared, isInstalled, shareTarget, type Shareable } from '../lib/share'
+import { useSession } from '../store/sessionStore'
 import { Card } from './ui'
 
 /**
@@ -97,6 +98,45 @@ export function SharedInvite() {
           </svg>
         </button>
       </div>
+    </Card>
+  )
+}
+
+/**
+ * Offered when the sound has been lost and could not be got back on its own.
+ *
+ * The last resort, and it exists because there is a class of fault no code can
+ * clear: a browser may refuse to start a media element without a gesture. This
+ * is that gesture — one tap, in the one place the person is already looking,
+ * instead of the app having to be killed and relaunched.
+ */
+export function SoundLostNotice() {
+  const { t } = useT()
+  const soundLost = useSession((s) => s.soundLost)
+  const restore = useSession((s) => s.restoreSound)
+  const [done, setDone] = useState(false)
+
+  if (!soundLost && !done) return null
+  return (
+    <Card glow className="mb-4">
+      <h3 className="text-sm font-bold" style={{ color: 'var(--gold)' }}>
+        {done ? t('sound.restored') : t('sound.lost')}
+      </h3>
+      {!done && (
+        <>
+          <p className="txt-2 mt-1 text-[11.5px] leading-relaxed">{t('sound.lostBody')}</p>
+          <button
+            onClick={async () => {
+              await restore()
+              setDone(true)
+              setTimeout(() => setDone(false), 2600)
+            }}
+            className="btn mt-3 w-full text-xs"
+          >
+            {t('sound.restore')}
+          </button>
+        </>
+      )}
     </Card>
   )
 }

@@ -63,6 +63,16 @@ class SessionPlayer {
   private generation = 0
   /** Whether the voices are actually running, as opposed to merely faded out. */
   private voicesLive = false
+  /**
+   * Set when the sound could not be got back automatically.
+   *
+   * There is a limit to what can be repaired without a gesture: a browser may
+   * refuse to start a media element until the person touches something, and no
+   * amount of trying changes that. Rather than leave a session that looks
+   * healthy and plays nothing — which has now been reported twice — the player
+   * says so, and the screen offers the one tap that is allowed to fix it.
+   */
+  private soundLost = false
 
   onChange(fn: Listener) {
     this.listeners.add(fn)
@@ -75,6 +85,34 @@ class SessionPlayer {
 
   get isPlaying() {
     return this.playing
+  }
+
+  /** Whether the session is running but the sound is not reaching the output. */
+  get isSoundLost() {
+    return this.soundLost
+  }
+
+  private setSoundLost(lost: boolean) {
+    if (this.soundLost === lost) return
+    this.soundLost = lost
+    if (lost) diag('sound-lost')
+    this.emit()
+  }
+
+  /**
+   * The manual repair, behind a real gesture.
+   *
+   * Everything automatic has already been tried by the time this is offered, so
+   * this does the two things a gesture makes newly possible: it rebuilds the
+   * route, and it rebuilds the voices in case the graph is the half that died.
+   */
+  async restoreSound(): Promise<boolean> {
+    diag('restore-pressed')
+    await mediaRoute.resumeIfNeeded(this.playing)
+    const flowing = await mediaRoute.ensureRouteFlowing(true)
+    if (this.playing && !engine.isProducingSound()) this.restartVoices()
+    this.setSoundLost(!flowing)
+    return flowing
   }
 
   /** Seconds since the session began, for the elapsed readout. */
@@ -128,6 +166,7 @@ class SessionPlayer {
     this.ambience!.start()
 
     this.playing = true
+    this.soundLost = false
     this.startedAt = Date.now()
     diag('play', `${config.rootId} ${config.melodyStyle ?? 'ambient'}`)
     // Only drop to silence when the voices really were torn down. Resuming
@@ -392,7 +431,20 @@ class SessionPlayer {
        * `ensureRouteFlowing` costs nothing when the route is healthy — it looks
        * at the element and the track — and repairs it when it is not.
        */
-      if (mediaRoute.isExternal) await mediaRoute.ensureRouteFlowing(interrupted)
+      if (mediaRoute.isExternal) {
+        let ok = await mediaRoute.ensureRouteFlowing(interrupted)
+        if (!ok) {
+          // One failed attempt is not a verdict. Repairs are rate-limited so
+          // they cannot become a loop, which means a second fault arriving
+          // moments after the first is refused rather than fixed — and in the
+          // measurements that produced a "sound lost" notice on a route that
+          // then repaired itself a second later. The person must not be told
+          // the sound is gone while the app is still getting it back.
+          await new Promise((r) => setTimeout(r, 1400))
+          ok = await mediaRoute.ensureRouteFlowing()
+        }
+        this.setSoundLost(!ok)
+      }
 
       // Long enough for a resumed graph to be producing something again, short
       // enough not to be noticed if it is.
@@ -406,6 +458,12 @@ class SessionPlayer {
     }
 
     document.addEventListener('visibilitychange', () => {
+      // Recorded on both edges. A log that shows a session playing and then
+      // nothing cannot distinguish "the app was never left" from "the app was
+      // left and something took the sound" — and the second report to arrive
+      // was exactly that shape: two lines, and a switch to another app in
+      // between that left no trace.
+      if (this.playing) diag(document.visibilityState === 'visible' ? 'foreground' : 'background')
       if (document.visibilityState === 'visible') void recover()
     })
     // `pageshow` fires on a back-forward-cache restore, where `visibilitychange`

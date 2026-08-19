@@ -26,6 +26,8 @@ type SessionState = {
   isPlaying: boolean
   /** Set while the closing fade runs, so the UI can dim in step with the audio. */
   isFading: boolean
+  /** Session running, sound not arriving — see `SessionPlayer.isSoundLost`. */
+  soundLost: boolean
   elapsed: number
   remaining: number | null
   /** Journey day currently being played, if this session was launched from one. */
@@ -47,6 +49,8 @@ type SessionState = {
 
   toggle: () => Promise<void>
   stop: () => Promise<void>
+  /** The tap offered when the sound has been lost and cannot be got back alone. */
+  restoreSound: () => Promise<void>
   tick: () => void
 }
 
@@ -89,6 +93,7 @@ export const useSession = create<SessionState>((set, get) => {
     config: restore(),
     isPlaying: false,
     isFading: false,
+    soundLost: false,
     elapsed: 0,
     remaining: null,
     activeJourney: null,
@@ -134,6 +139,11 @@ export const useSession = create<SessionState>((set, get) => {
       set({ isPlaying: player.isPlaying })
     },
 
+    restoreSound: async () => {
+      await player.restoreSound()
+      set({ soundLost: player.isSoundLost })
+    },
+
     stop: async () => {
       await player.stop()
       player.setJourneyContext(null)
@@ -176,6 +186,7 @@ export const useSession = create<SessionState>((set, get) => {
 
       set({
         isPlaying: playing,
+        soundLost: player.isSoundLost,
         isFading: player.isFadingOut(),
         elapsed: player.getElapsedSeconds(),
         remaining: player.getRemainingSeconds(),

@@ -93,6 +93,38 @@ export async function run(browser) {
     }
     return rows
   }, FAULTS)
+
+  /**
+   * And the case nothing automatic can fix.
+   *
+   * A browser is allowed to refuse to start a media element without a gesture,
+   * and no repair can argue with that. What the app must not do is carry on
+   * looking healthy: the fault is injected at the seam, and what is checked is
+   * that the player admits it, the screen says so, and the tap it offers clears
+   * it.
+   */
+  const unrepairable = await page.evaluate(async () => {
+    const { useSession } = await import('/src/store/sessionStore.ts')
+    const { mediaRoute } = await import('/src/audio/MediaRoute.ts')
+    const { player } = await import('/src/audio/SessionPlayer.ts')
+    window.location.hash = '#/player'
+    await useSession.getState().toggle()
+    await new Promise((r) => setTimeout(r, 5000))
+
+    const real = mediaRoute.ensureRouteFlowing.bind(mediaRoute)
+    mediaRoute.ensureRouteFlowing = async () => false
+    document.dispatchEvent(new Event('visibilitychange'))
+    await new Promise((r) => setTimeout(r, 3000))
+    const admitted = player.isSoundLost
+    const onScreen = document.body.innerText.includes('הקול נקטע')
+
+    mediaRoute.ensureRouteFlowing = real
+    await useSession.getState().restoreSound()
+    await new Promise((r) => setTimeout(r, 1500))
+    const cleared = !player.isSoundLost
+    await useSession.getState().toggle()
+    return { fault: 'unrepairable', admitted, onScreen, cleared }
+  })
   await ctx.close()
 
   const failures = []
@@ -116,5 +148,9 @@ export async function run(browser) {
       failures.push(`${r.fault}: the dead stream was kept`)
     }
   }
-  return { rows: results, failures, errors }
+  if (!unrepairable.admitted) failures.push('the player did not admit the sound was lost')
+  if (!unrepairable.onScreen) failures.push('the screen says nothing when the sound is lost')
+  if (!unrepairable.cleared) failures.push('the manual repair did not clear the fault')
+
+  return { rows: [...results, unrepairable], failures, errors }
 }

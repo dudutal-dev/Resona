@@ -9,6 +9,7 @@ import { ListeningMode } from './ListeningMode'
 import { checkForUpdate, reloadNow, type UpdateState } from '../lib/updater'
 import {
   clearDiagnostics,
+  clockOf,
   diagnosticsReport,
   readDiagnostics,
   watchDiagnostics,
@@ -158,7 +159,7 @@ function DiagnosticsCard() {
           >
             {recent.map((e, i) => (
               <div key={`${e.t}-${i}`} className="readout txt-2 truncate">
-                {new Date(e.t).toISOString().slice(11, 19)} {e.tag}
+                {clockOf(e.t)} {e.tag}
                 {e.repeat && e.repeat > 1 ? ` ×${e.repeat}` : ''}
                 {e.detail ? ` — ${e.detail}` : ''}
               </div>

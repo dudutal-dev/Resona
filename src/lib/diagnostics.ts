@@ -87,15 +87,32 @@ export function watchDiagnostics(fn: () => void): () => void {
  * which. It is device information, not personal information, and it never
  * leaves the phone unless the person sends it.
  */
+/**
+ * The time on the phone's own clock, not UTC.
+ *
+ * The first exported log came back three hours behind the wall clock of the
+ * person reading it, which makes the one question the log exists to answer —
+ * "what were you doing at that moment" — needlessly hard.
+ */
+export function clockOf(t: number): string {
+  const d = new Date(t)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
+
 export function diagnosticsReport(build: string): string {
   const head = [
     `Resona ${build}`,
     typeof navigator === 'undefined' ? '' : navigator.userAgent,
-    `${entries.length} entries · exported ${new Date().toISOString()}`,
+    // Local time, and the offset that produced it, so a log read on another
+    // machine is still anchored.
+    `${entries.length} entries · exported ${clockOf(Date.now())} (UTC${
+      -new Date().getTimezoneOffset() / 60 >= 0 ? '+' : ''
+    }${-new Date().getTimezoneOffset() / 60})`,
     '',
   ]
   const body = entries.map((e) => {
-    const time = new Date(e.t).toISOString().slice(11, 19)
+    const time = clockOf(e.t)
     const times = e.repeat && e.repeat > 1 ? ` ×${e.repeat}` : ''
     return `${time} ${e.tag}${times}${e.detail ? ` — ${e.detail}` : ''}`
   })

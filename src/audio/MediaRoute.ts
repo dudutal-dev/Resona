@@ -82,6 +82,12 @@ class MediaRoute {
   private gestureRetryArmed = false
   private streamProbe: AnalyserNode | null = null
   private silentUrl: string | null = null
+  /**
+   * Set when the context stops on its own — a call, another app taking the
+   * audio session. Read and cleared by the recovery path, which needs to know
+   * whether it is returning from an interruption or merely from an app switch.
+   */
+  private interrupted = false
 
   // ------------------------------------------------ the single media element
 
@@ -459,6 +465,7 @@ class MediaRoute {
     // context that never stopped happens every time the app is switched to, and
     // a log full of that hides the one entry that matters.
     const wasRunning = (Tone.getContext().state as string) === 'running'
+    if (!wasRunning) this.interrupted = true
     const running = await this.forceResume()
     if (!wasRunning) diag(running ? 'resumed' : 'resume-failed', Tone.getContext().state)
     if (this.wantWakeLock) await this.acquireWakeLock()
@@ -529,6 +536,82 @@ class MediaRoute {
   onRecovered: (() => void) | null = null
 
   /**
+   * Whether the last stop was an interruption rather than an app switch, read
+   * once and cleared.
+   *
+   * The distinction matters because the repair below is not free: it costs a
+   * short gap in the audio, which would be absurd on every switch to another
+   * app and is nothing at all after a phone call.
+   */
+  consumeInterrupted(): boolean {
+    const was = this.interrupted
+    this.interrupted = false
+    return was
+  }
+
+  /**
+   * Builds a completely new route to the media element.
+   *
+   * This is the fix for the fault that survived everything above: after a phone
+   * call the app comes back looking correct — the clock runs, the visualiser
+   * moves, the graph is measurably producing sound — and nothing comes out. The
+   * reason is that "producing sound" was measured at the *graph*, and when the
+   * route is a MediaStream feeding an `<audio>` element, a live graph proves
+   * nothing about it. iOS ends the stream's track over an interruption, and an
+   * ended track cannot be restarted: `play()` resolves, the element reports
+   * itself as playing, and it renders silence for ever. Relaunching the app
+   * worked because it built a new element and a new stream — which is precisely
+   * what this does, without losing the session.
+   *
+   * If the new route cannot be verified, the direct path is restored instead,
+   * so the worst outcome is sound from the phone rather than no sound at all.
+   */
+  async rebuildExternalRoute(): Promise<boolean> {
+    if (!engine.isStarted || !this.external) return false
+    const limiter = engine.output
+    const ctx = Tone.getContext().rawContext as unknown as AudioContext
+    const el = this.element()
+
+    this.clearStallWatch()
+    // The old destination is discarded rather than reused. Its track is the
+    // thing that died.
+    for (const track of this.streamDest?.stream.getTracks() ?? []) track.stop()
+    try {
+      this.streamDest?.disconnect()
+      this.streamProbe?.disconnect()
+    } catch {
+      /* already detached */
+    }
+    limiter.disconnect()
+
+    this.streamDest = ctx.createMediaStreamDestination()
+    this.streamProbe = ctx.createAnalyser()
+    this.streamProbe.fftSize = 2048
+    limiter.connect(this.streamDest)
+    limiter.connect(this.streamProbe)
+
+    el.pause()
+    el.removeAttribute('src')
+    el.loop = false
+    el.srcObject = this.streamDest.stream
+    el.volume = 1
+
+    if (await this.startAndVerify(el, 500)) {
+      this.watchExternalStall(el)
+      diag('route-rebuilt')
+      return true
+    }
+
+    limiter.disconnect()
+    limiter.toDestination()
+    el.srcObject = null
+    this.external = false
+    await this.playSilence()
+    diag('route-fallback-direct')
+    return false
+  }
+
+  /**
    * Fires whenever the context leaves `running` on its own — an interruption
    * that arrives while the page is still in front, which `visibilitychange`
    * never hears about.
@@ -539,6 +622,7 @@ class MediaRoute {
       // The loss is the event; the return is already recorded by `resumeIfNeeded`
       // as `resumed`, and logging both doubles every interruption.
       if (raw.state !== 'running') {
+        this.interrupted = true
         diag('context-lost', raw.state)
         onLost()
       }

@@ -364,7 +364,17 @@ class SessionPlayer {
      */
     const recover = async () => {
       const running = await mediaRoute.resumeIfNeeded(this.playing)
+      const interrupted = mediaRoute.consumeInterrupted()
       if (!running || !this.playing) return
+
+      // After a real interruption — a call, another app taking the session —
+      // the route to the media element is rebuilt before anything else is
+      // judged. The graph can be perfectly alive while the stream feeding the
+      // element is dead, and that combination is invisible to every measurement
+      // below: it looks exactly like a session playing normally, and sounds like
+      // nothing. Only done for an interruption, because it costs a short gap.
+      if (interrupted && mediaRoute.isExternal) await mediaRoute.rebuildExternalRoute()
+
       // Long enough for a resumed graph to be producing something again, short
       // enough not to be noticed if it is.
       await new Promise((r) => setTimeout(r, 900))

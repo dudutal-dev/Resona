@@ -71,7 +71,10 @@ npm run icons      # רינדור מחדש של אייקוני האפליקצי�
 `https://dudutal-dev.github.io/Resona/`
 
 הפעלה חד-פעמית: **Settings → Pages → Source: Deploy from a branch → Branch: `main` / `/docs` → Save**.
-אחרי שינוי בקוד: `npm run build:pages`, ואז commit ל-`docs/` מעדכן את האתר.
+אחרי שינוי בקוד, **בשני שלבים ובסדר הזה**: קודם commit לקוד, אחר כך `npm run build:pages`,
+ואז commit נפרד ל-`docs/`. חותם הבילד נקרא מ-HEAD בזמן הבנייה, ולכן בנייה *לפני* ה-commit
+מטביעה באפליקציה את המזהה של הקומיט הקודם — כלומר בדיוק המספר שנועד להכריע מה רץ על
+המכשיר, מצביע על משהו אחר. בסדר הזה החותם מציין את הקומיט שממנו האתר נבנה.
 
 **קובץ בודד** — `npm run build:single` יוצר `dist-single/resona.html`: קובץ אחד עם הכול בפנים,
 שרץ בלחיצה כפולה בלי שרת ובלי התקנה.

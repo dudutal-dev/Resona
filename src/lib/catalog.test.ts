@@ -181,7 +181,15 @@ describe('journeys', () => {
         } else {
           // And the reverse: a kick must not appear under a sleep journey
           // because a style was pasted into the wrong entry.
-          expect(day.style, `${where} should stay ambient`).toBeUndefined()
+          //
+          // This used to require no style at all, which was the same rule while
+          // every non-club style was the default one. `organic` is a free style
+          // — no grid, no kick — and a psychedelic journey is entitled to ask
+          // for it, so what is actually forbidden is a club engine rather than
+          // any declaration.
+          expect(CLUB_STYLES as string[], `${where} must not run a club engine`).not.toContain(
+            day.style,
+          )
         }
       }
     }

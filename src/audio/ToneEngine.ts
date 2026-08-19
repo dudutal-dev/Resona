@@ -41,14 +41,25 @@ import * as Tone from 'tone'
  */
 const OUTPUT_TRIM: Record<string, number> = {
   ambient: 2.1,
-  // Measured, not inherited. A plucked string sounded like it would need its
-  // own figure, and at the default it already lands at -21.5dBFS RMS — the same
-  // as techno, 1.8dB from ambient, inside the spread the other five sit in. Its
-  // peak is the lowest of any engine at -12.8dBFS: a decaying note turns out to
-  // be less peaky than an ambient swell, whose pad stacks. Written out rather
-  // than left to the fallback so the next person does not have to re-measure to
-  // find out whether anyone ever checked.
-  organic: 1.2,
+  /**
+   * Measured twice, and the second time is the one that counts.
+   *
+   * The first pass took a reading at depth 0, found -21.5dBFS RMS — the same as
+   * techno — and left it at the default. That was true and useless: organic is
+   * mostly played at depth, where the scale moves onto the upper harmonic
+   * series, and there it measured -25 against -19.5 for an ambient stage of the
+   * same journey. One voice that decays is genuinely sparser than a lead and a
+   * pad that sustain, so some of that gap is the instrument and belongs; five
+   * and a half decibels of it is not, and on a shelf where the two alternate it
+   * reads as the sound dropping out between stages.
+   *
+   * Two fixes went into the voice itself first, because a level correction that
+   * papers over a wrong timbre is not a fix — see the pluck in
+   * `GenerativeMelody`. They recovered 5.4dB. This closes the rest, which is
+   * what this table is for. Peak goes to about -7dBFS, so the limiter is still
+   * not in the path.
+   */
+  organic: 1.7,
   techno: 1.2,
   trance: 1.2,
   psytrance: 1.2,

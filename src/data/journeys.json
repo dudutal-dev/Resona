@@ -1121,6 +1121,237 @@
     "descriptionEn": "The bright edge of the psychedelic shelf — high frequencies and gamma, awake and glittering rather than heavy and deep."
   },
   {
+    "id": "journey-abyss-7",
+    "title": "מעמקים",
+    "titleEn": "The deep",
+    "days": 7,
+    "purpose": "psychedelic",
+    "arc": "descending",
+    "description": "הקצה השני של ״זוהר״ — אותו מבנה בדיוק, בכיוון ההפוך. הסולם יורד מ-396Hz אל 174Hz, והפעימה עצמה מאטה איתו: דלתא שיורדת 2.4 ← 1.8 ← 1.2Hz בשלושת השלבים האחרונים. זה מה שמבדיל אותו מ״מרחב פתוח״, שעומד במקום — כאן שוקעים.",
+    "descriptionEn": "The other end of Aurora — the same structure exactly, pointed the other way. The scale sinks from 396Hz to 174Hz, and the pulse slows with it: delta descending 2.4 → 1.8 → 1.2Hz across the last three stages. That is what separates it from Open space, which stands still — this one sinks.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-396",
+        "durationMin": 30,
+        "note": "הירידה מתחילה",
+        "depth": 0.62,
+        "pace": 0.18,
+        "density": 0.35,
+        "noteEn": "The descent begins"
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-theta",
+        "durationMin": 35,
+        "note": "מתחת לפני השטח",
+        "depth": 0.72,
+        "pace": 0.14,
+        "density": 0.3,
+        "noteEn": "Below the surface"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-285",
+        "durationMin": 35,
+        "note": "לחץ",
+        "depth": 0.8,
+        "pace": 0.16,
+        "density": 0.28,
+        "noteEn": "Pressure"
+      },
+      {
+        "day": 4,
+        "frequencyId": "sol-285",
+        "durationMin": 40,
+        "note": "חושך גמור",
+        "depth": 0.88,
+        "pace": 0.12,
+        "density": 0.24,
+        "noteEn": "Total dark"
+      },
+      {
+        "day": 5,
+        "frequencyId": "bb-delta",
+        "durationMin": 40,
+        "note": "הקרקעית",
+        "depth": 0.93,
+        "pace": 0.1,
+        "density": 0.22,
+        "noteEn": "The floor",
+        "beatId": "bb-delta",
+        "beatHz": 2.4
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-174",
+        "durationMin": 45,
+        "note": "מה שחי שם למטה",
+        "depth": 0.97,
+        "pace": 0.14,
+        "density": 0.2,
+        "noteEn": "What lives down there",
+        "beatId": "bb-delta",
+        "beatHz": 1.8
+      },
+      {
+        "day": 7,
+        "frequencyId": "bb-delta",
+        "durationMin": 45,
+        "note": "מעמקים",
+        "depth": 1.0,
+        "pace": 0.12,
+        "density": 0.18,
+        "noteEn": "The deep",
+        "beatId": "bb-delta",
+        "beatHz": 1.2
+      }
+    ]
+  },
+  {
+    "id": "journey-prism-6",
+    "title": "מנסרה",
+    "titleEn": "Prism",
+    "days": 6,
+    "purpose": "psychedelic",
+    "arc": "ascending",
+    "description": "הגובה האמצעי, ובמנוע אחר: שלושה מהשלבים מנוגנים בפריטה ולא בהתנפחות. אותה סדרה הרמונית עליונה של ״זוהר״, אבל כל מרווח מוזר נשמע כמיתר נפרד במקום כענן — הרבה יותר קל לעקוב אחרי מה בדיוק קורה.",
+    "descriptionEn": "The middle altitude, on a different engine: three of the stages are plucked rather than swelled. The same upper harmonic series as Aurora, but every strange interval arrives as a separate string instead of as a cloud — far easier to follow what is actually happening.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-417",
+        "durationMin": 25,
+        "note": "האור נכנס",
+        "depth": 0.55,
+        "pace": 0.3,
+        "density": 0.5,
+        "noteEn": "The light enters",
+        "style": "organic",
+        "beatId": "bb-theta",
+        "beatHz": 6.5
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-alpha",
+        "durationMin": 25,
+        "note": "הפיצול הראשון",
+        "depth": 0.66,
+        "pace": 0.35,
+        "density": 0.55,
+        "noteEn": "The first split"
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-528",
+        "durationMin": 30,
+        "note": "שבעה צבעים",
+        "depth": 0.76,
+        "pace": 0.28,
+        "density": 0.45,
+        "noteEn": "Seven colours",
+        "style": "organic",
+        "beatId": "bb-theta",
+        "beatHz": 6
+      },
+      {
+        "day": 4,
+        "frequencyId": "bb-smr",
+        "durationMin": 25,
+        "note": "קצה חד",
+        "depth": 0.84,
+        "pace": 0.4,
+        "density": 0.5,
+        "noteEn": "A hard edge"
+      },
+      {
+        "day": 5,
+        "frequencyId": "sol-639",
+        "durationMin": 30,
+        "note": "הצד השני",
+        "depth": 0.92,
+        "pace": 0.32,
+        "density": 0.42,
+        "noteEn": "The far side",
+        "style": "organic",
+        "beatId": "bb-theta",
+        "beatHz": 5.5
+      },
+      {
+        "day": 6,
+        "frequencyId": "sol-741",
+        "durationMin": 30,
+        "note": "לבן שוב",
+        "depth": 1.0,
+        "pace": 0.36,
+        "density": 0.4,
+        "noteEn": "White again",
+        "beatId": "bb-beta",
+        "beatHz": 16
+      }
+    ]
+  },
+  {
+    "id": "journey-brink-4",
+    "title": "קצה האור",
+    "titleEn": "The edge of light",
+    "days": 4,
+    "purpose": "psychedelic",
+    "arc": "ascending",
+    "description": "מעל ״זוהר״, וקצר בהתאם. מתחיל כבר בעומק שהוא מגיע אליו רק בשלב הרביעי, ונשאר שם: 741Hz ומעלה, גמא לכל האורך, ובלי שום שלב רגוע שאפשר לנוח בו. ארבעה שלבים זה כל מה שזה צריך.",
+    "descriptionEn": "Above Aurora, and short accordingly. It opens at the depth Aurora only reaches on its fourth stage, and stays there: 741Hz and up, gamma throughout, and no calm stage to rest in. Four stages is all it needs.",
+    "schedule": [
+      {
+        "day": 1,
+        "frequencyId": "sol-741",
+        "durationMin": 20,
+        "note": "כבר בפנים",
+        "depth": 0.85,
+        "pace": 0.5,
+        "density": 0.62,
+        "noteEn": "Already inside",
+        "beatId": "bb-gamma",
+        "beatHz": 34
+      },
+      {
+        "day": 2,
+        "frequencyId": "bb-gamma",
+        "durationMin": 20,
+        "note": "לובן חם",
+        "depth": 0.92,
+        "pace": 0.58,
+        "density": 0.68,
+        "noteEn": "White heat",
+        "beatId": "bb-gamma",
+        "beatHz": 40
+      },
+      {
+        "day": 3,
+        "frequencyId": "sol-963",
+        "durationMin": 25,
+        "note": "בלי צל",
+        "depth": 0.97,
+        "pace": 0.52,
+        "density": 0.6,
+        "noteEn": "No shadow",
+        "beatId": "bb-gamma",
+        "beatHz": 44
+      },
+      {
+        "day": 4,
+        "frequencyId": "bb-gamma40",
+        "durationMin": 25,
+        "note": "הקצה",
+        "depth": 1.0,
+        "pace": 0.62,
+        "density": 0.7,
+        "noteEn": "The edge",
+        "beatId": "bb-gamma40",
+        "beatHz": 40
+      }
+    ]
+  },
+  {
     "id": "journey-deepwork-5",
     "title": "עבודה עמוקה",
     "days": 5,

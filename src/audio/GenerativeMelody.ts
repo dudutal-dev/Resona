@@ -380,8 +380,44 @@ export class GenerativeMelody {
        * also a brighter one, and holding the tone fixed while only the level
        * moves is what makes a sampled pluck sound like a sample.
        */
-      this.pluckGain.gain.setTargetAtTime(0.5 + vel * 1.1, time - 0.02, 0.01)
-      this.pluck.dampening = 1900 + vel * 3200
+      /**
+       * Loudness, with the register compensated for.
+       *
+       * A Karplus-Strong string is a delay line, and a shorter one loses energy
+       * faster — so the higher the note, the quieter and shorter it comes out.
+       * That is physically true and musically wrong: on a real instrument the
+       * top of the range is not ten decibels down. It matters here because
+       * depth moves the scale onto the upper harmonic series, where every note
+       * is a long way above the root — measured on a Prism stage at depth 0.76,
+       * organic came out eleven decibels under an ambient stage of the same
+       * journey family, which reads as the sound dropping out rather than as a
+       * change of instrument.
+       *
+       * So the compensation is written against the ratio to the root rather
+       * than against absolute pitch. That is the variable that actually moves
+       * with depth, and it leaves an ordinary session — where the lead sits
+       * near the root — exactly where it already measured correctly.
+       */
+      const ratio = freq / (this.root || freq)
+      const register = Math.min(2.4, Math.max(1, 1 + (ratio - 1) * 0.9))
+      this.pluckGain.gain.setTargetAtTime((0.5 + vel * 1.1) * register, time - 0.02, 0.01)
+      /**
+       * Dampening follows the note, not the clock.
+       *
+       * It is an absolute cutoff in Hz, and it was written as one: around
+       * 1900-5100 whatever was being played. That is fine for a low note and
+       * ruinous for a high one — at depth the scale moves onto the upper
+       * harmonic series, the pluck lands above a kilohertz, and a fixed cutoff
+       * there removes everything above the fundamental and leaves almost
+       * nothing. Measured on a Prism stage at depth 0.76 it came out at
+       * -30.4 dBFS against -17.9 for the deep journey: the same app, twelve
+       * decibels apart, which on a shelf reads as the sound cutting out.
+       *
+       * Tied to the note it stays a string across the whole register: a few
+       * partials above whatever is sounding, bounded so it never goes brighter
+       * than a real instrument or so dark it chokes.
+       */
+      this.pluck.dampening = Math.min(9000, Math.max(1400, freq * (3.4 + vel * 3.6)))
       this.pluck.triggerAttack(freq, time)
       // Struck an octave up as well when the register is low: a plucked note
       // near the drone disappears into it, and the octave keeps the line

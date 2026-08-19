@@ -17,6 +17,7 @@ import { Sheet, TrustBadge, formatClock } from './ui'
 import { ReleaseHeader } from './ReleaseHeader'
 import { coverForRoot } from '../lib/cover'
 import { MoodPicker } from './MoodPicker'
+import { ShareButton, SharedInvite } from './Share'
 
 /**
  * Split off on its own: the television stage carries the figure's point cloud,
@@ -30,7 +31,7 @@ const TvStage = lazy(() => import('./TvStage').then((m) => ({ default: m.TvStage
 /** Untouched for this long while playing, and the screen fades down. */
 const DIM_AFTER_MS = 75_000
 
-export function PlayerScreen() {
+export function PlayerScreen({ rootId }: { rootId?: string } = {}) {
   const { t, lang } = useT()
   const {
     config,
@@ -58,6 +59,20 @@ export function PlayerScreen() {
   useEffect(() => {
     void import('./TvStage')
   }, [])
+
+  /**
+   * A frequency arrived in the address — someone was sent this exact one.
+   *
+   * Applied once per id and only if it names a frequency the app has: a link
+   * with a typo in it should open the player as it was, not an empty screen.
+   * The address is then rewritten to plain `#/player`, so going back to the
+   * player later does not silently re-select it.
+   */
+  useEffect(() => {
+    if (!rootId) return
+    if (getFrequency(rootId)) setRoot(rootId)
+    navigate('/player')
+  }, [rootId])
 
   /**
    * The orb fades itself down while a session runs and nobody touches it.
@@ -126,8 +141,12 @@ export function PlayerScreen() {
 
   return (
     <div className="mx-auto w-full max-w-3xl overflow-hidden px-4 pb-40 safe-top">
+      <SharedInvite />
       <ReleaseHeader
         cover={cover}
+        // What is shared from the player is the frequency it is on — a journey
+        // has its own screen, and that is where a journey should be shared from.
+        menu={<ShareButton target={{ kind: 'frequency', id: config.rootId }} size={19} />}
         art={
           isPlaying ? (
             <div

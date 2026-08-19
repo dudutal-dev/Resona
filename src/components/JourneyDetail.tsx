@@ -17,6 +17,7 @@ import { useJourneys } from '../store/journeyStore'
 import { useCustomJourneys } from '../store/customJourneyStore'
 import { Screen, TrustBadge } from './ui'
 import { FavouriteButton } from './FavouriteButton'
+import { ShareButton, SharedInvite } from './Share'
 import { ReleaseHeader } from './ReleaseHeader'
 import { journeyCover } from '../lib/cover'
 
@@ -50,9 +51,15 @@ export function JourneyDetail({ id }: { id: string }) {
 
   return (
     <div className="mx-auto w-full max-w-3xl overflow-hidden px-4 pb-40 safe-top">
+      <SharedInvite />
       <ReleaseHeader
         cover={journeyCover(journey)}
-        menu={<FavouriteButton journeyId={journey.id} size={22} />}
+        menu={
+          <span className="flex items-center gap-1.5">
+            <ShareButton target={{ kind: 'journey', id: journey.id }} size={19} />
+            <FavouriteButton journeyId={journey.id} size={22} />
+          </span>
+        }
         eyebrow={t(purposeKey(journey.purpose))}
         title={journeyTitle(journey, lang)}
         subtitle={t('journey.byline', { n: journey.days })}

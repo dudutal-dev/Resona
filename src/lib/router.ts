@@ -7,7 +7,7 @@ import { useEffect, useLayoutEffect, useState } from 'react'
  */
 export type Route =
   | { name: 'home' }
-  | { name: 'player' }
+  | { name: 'player'; rootId?: string }
   | { name: 'frequencies' }
   | { name: 'search' }
   | { name: 'journeys' }
@@ -24,7 +24,11 @@ export function parseHash(hash: string): Route {
   if (parts.length === 0) return { name: 'home' }
   switch (parts[0]) {
     case 'player':
-      return { name: 'player' }
+      // A shared frequency arrives as `#/player/sol-528`. The id is passed
+      // through rather than validated here; the screen owns knowing what a
+      // frequency is, and an unknown one should leave the player as it was
+      // rather than route somewhere else.
+      return parts[1] ? { name: 'player', rootId: parts[1] } : { name: 'player' }
     case 'frequencies':
       return { name: 'frequencies' }
     case 'search':

@@ -68,7 +68,7 @@ export default function App() {
       <AuroraBackground intensity={isPlaying ? 1.25 : 1} />
       <main className="min-h-full">
         {route.name === 'home' && <HomeScreen />}
-        {route.name === 'player' && <PlayerScreen />}
+        {route.name === 'player' && <PlayerScreen rootId={route.rootId} />}
         {route.name === 'frequencies' && <FrequenciesScreen />}
         {route.name === 'search' && <SearchScreen />}
         {route.name === 'journeys' && <JourneyList />}

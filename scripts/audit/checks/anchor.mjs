@@ -42,10 +42,17 @@ export async function run(browser) {
       }
     }
 
-    const RATIOS = [
+    const SCALE = [
       ...scale.JUST_MAJOR, ...scale.JUST_PENTATONIC,
       ...scale.JUST_MINOR_PENTATONIC, ...scale.JUST_HARMONIC,
     ]
+    // Plus the shimmer: the lead occasionally doubles a note a pure fifth above
+    // it (`GenerativeMelody`, the partner note). Against the root that lands on
+    // ratios the scale tables do not list — a 7/4 shadowed at 3/2 is 21/16 —
+    // and this check called one of those a fault. It is not: the promise the
+    // app makes is a whole-number ratio of the root, and 21:16 is one. The
+    // octave partner needs nothing here, since octaves are already free.
+    const RATIOS = [...SCALE, ...SCALE.map((r) => r * 1.5)]
     const out = []
     for (const c of cases) {
       await sp.player.stop()

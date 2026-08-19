@@ -16,9 +16,10 @@ import * as anchor from './checks/anchor.mjs'
 import * as groove from './checks/groove.mjs'
 import * as recovery from './checks/recovery.mjs'
 import * as route from './checks/route.mjs'
+import * as share from './checks/share.mjs'
 import * as screens from './checks/screens.mjs'
 
-const ALL = [levels, anchor, groove, recovery, route, screens]
+const ALL = [levels, anchor, groove, recovery, route, share, screens]
 
 const asked = process.argv.slice(2).filter((a) => !a.startsWith('-'))
 const checks = asked.length ? ALL.filter((c) => asked.includes(c.name)) : ALL

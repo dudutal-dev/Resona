@@ -1227,7 +1227,7 @@
         "pace": 0.3,
         "density": 0.5,
         "noteEn": "The light enters",
-        "style": "organic",
+        "style": "plucked",
         "beatId": "bb-theta",
         "beatHz": 6.5
       },
@@ -1250,7 +1250,7 @@
         "pace": 0.28,
         "density": 0.45,
         "noteEn": "Seven colours",
-        "style": "organic",
+        "style": "plucked",
         "beatId": "bb-theta",
         "beatHz": 6
       },
@@ -1273,7 +1273,7 @@
         "pace": 0.32,
         "density": 0.42,
         "noteEn": "The far side",
-        "style": "organic",
+        "style": "plucked",
         "beatId": "bb-theta",
         "beatHz": 5.5
       },

@@ -120,6 +120,11 @@ export function TvStage({ onClose }: { onClose: () => void }) {
    * honours a playback rate. Whether it does is not something a page can find
    * out — the property sets cleanly either way — so this is written to be
    * correct where it works and harmless where it does not.
+   *
+   * A steady rate here rather than the pose choreography the local canvas gets:
+   * that one adjusts the rate every frame against where the figure actually is,
+   * which needs a `currentTime` that can be read back. A receiver's cannot, so
+   * asking it to hold a pose would be asking it to land somewhere blind.
    */
   useEffect(() => {
     const el = castRef.current

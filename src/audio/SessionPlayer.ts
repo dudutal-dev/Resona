@@ -303,6 +303,26 @@ class SessionPlayer {
     this.emit()
   }
 
+  /**
+   * Rebuilds the running session in place.
+   *
+   * Not a stop and a play: those would fade out, tear down and fade back in
+   * over twenty seconds, and would clear the timer and the journey context. The
+   * voices are stopped and started against the current config while everything
+   * around them stays exactly as it was.
+   */
+  private restartVoices() {
+    if (!this.config) return
+    this.melody?.stop()
+    this.beat?.stop()
+    this.ambience?.stop()
+    this.melody?.start()
+    this.beat?.start()
+    this.ambience?.start()
+    this.mixer?.setFade(1, 0.6)
+    this.emit()
+  }
+
   async toggle(config: SessionConfig) {
     if (this.playing) await this.stop()
     else await this.play(config)
@@ -322,9 +342,43 @@ class SessionPlayer {
       onStop: () => void this.stop(),
     })
 
+    /**
+     * Coming back from another app, and the escalation when coming back is not
+     * enough.
+     *
+     * Resuming the context is the first step and usually the only one needed.
+     * What it does not cover is a graph that survives the interruption in a
+     * state where the transport runs and nothing sounds — the voices are
+     * scheduled against a clock that stopped and restarted underneath them. The
+     * app then shows a counting session with silence behind it, and the only
+     * way out was to kill it and start again.
+     *
+     * So the return is verified rather than assumed: a moment after the context
+     * is running, the output is measured, and if there is nothing there the
+     * voices are rebuilt. That is precisely what relaunching the app achieved,
+     * done automatically and without losing the session.
+     */
+    const recover = async () => {
+      const running = await mediaRoute.resumeIfNeeded(this.playing)
+      if (!running || !this.playing) return
+      // Long enough for a resumed graph to be producing something again, short
+      // enough not to be noticed if it is.
+      await new Promise((r) => setTimeout(r, 900))
+      if (this.playing && !engine.isProducingSound()) this.restartVoices()
+    }
+
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') void mediaRoute.resumeIfNeeded(this.playing)
+      if (document.visibilityState === 'visible') void recover()
     })
+    // `pageshow` fires on a back-forward-cache restore, where `visibilitychange`
+    // does not.
+    window.addEventListener('pageshow', () => void recover())
+    // An interruption that arrives while the page is still in front — a call, or
+    // another app taking the audio session — is never a visibility change.
+    mediaRoute.watchContextState(() => {
+      if (this.playing) void recover()
+    })
+    mediaRoute.onRecovered = () => void recover()
 
     // The lock-screen card is written once per config change, so switching
     // language mid-session would otherwise leave the old language showing on a

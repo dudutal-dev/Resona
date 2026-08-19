@@ -69,3 +69,44 @@ export function turnSeconds({
 export function turnRate(clipSeconds: number, periodSeconds: number): number {
   return Math.min(MAX_RATE, Math.max(MIN_RATE, (clipSeconds || 24) / periodSeconds))
 }
+
+/**
+ * Where the figure is allowed to come to rest.
+ *
+ * A constant rotation is the one thing a person watching for half an hour stops
+ * seeing: it has no events in it, so there is nothing to notice. What reads as
+ * alive is a figure that turns to somewhere and then stays there — and "stays
+ * there" only means anything if the places it stops are chosen rather than
+ * wherever the loop happened to be when the music changed.
+ *
+ * These are fractions of one revolution. Front is 0, and the rest are spaced so
+ * that no two adjacent poses are the same view: a three-quarter, a profile, the
+ * back, the other profile, the other three-quarter. The clip is one revolution,
+ * so a fraction is a fraction of its duration.
+ */
+export const POSES = [0, 0.14, 0.28, 0.42, 0.5, 0.58, 0.72, 0.86] as const
+
+/**
+ * How long the figure holds a pose, and how long it takes to reach the next
+ * one, in units of the music's own note interval.
+ *
+ * Held longer at the front, because that is the pose worth resting on, and the
+ * figure looking out of the screen is the whole reason for having a figure.
+ */
+export const HOLD_NOTES = { front: 9, other: 4 }
+export const TURN_NOTES = 3
+
+/** Seconds between lead notes, which is what every duration here is counted in. */
+export function noteSeconds({
+  playing,
+  style,
+  pace,
+}: {
+  playing: boolean
+  style: MelodyStyle | undefined
+  pace: number
+}): number {
+  if (!playing) return 2.4
+  if (isClubStyle(style)) return (4 * 60) / clubBpm(style, pace)
+  return 1.5 - pace * 1.12
+}

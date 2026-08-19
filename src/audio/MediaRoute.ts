@@ -78,6 +78,7 @@ class MediaRoute {
   private external = false
   private streamDest: MediaStreamAudioDestinationNode | null = null
   private stallHandlers: { ended: () => void; error: () => void } | null = null
+  private gestureRetryArmed = false
   private streamProbe: AnalyserNode | null = null
   private silentUrl: string | null = null
 
@@ -421,30 +422,116 @@ class MediaRoute {
   }
 
   /**
-   * Called when the page becomes visible again. Browsers suspend the
-   * AudioContext in the background — this makes the return silent-free — and
-   * re-takes the wake lock the OS dropped.
+   * Called when the page becomes visible again, and whenever the context
+   * reports that it has stopped running.
+   *
+   * The previous version tried `resume()` once and gave up. That is why
+   * switching to another app and coming back could leave the transport showing
+   * a running clock with nothing audible, recoverable only by killing the app:
+   * three separate things can go wrong on the way back and it only handled the
+   * first.
+   *
+   *  - iOS has a state the spec does not: `interrupted`. A phone call, another
+   *    app taking the audio session, or the screen locking puts the context
+   *    there, and a single `resume()` from `interrupted` frequently resolves
+   *    without the context actually leaving that state. It has to be asked more
+   *    than once.
+   *  - `resume()` can require a fresh user gesture, and the promise rejects
+   *    silently. Nothing was listening for the next tap, so the app stayed dead
+   *    until it was relaunched — the next tap is exactly the gesture it needed.
+   *  - The element carrying the now-playing session is paused by some platforms
+   *    when the page hides, and starting it again is what re-establishes the
+   *    route.
+   *
+   * Returns whether the context is running by the end, so the caller can decide
+   * whether anything further is needed.
    */
-  async resumeIfNeeded(shouldBePlaying: boolean) {
-    if (shouldBePlaying) {
-      if (Tone.getContext().state !== 'running') {
-        try {
-          await Tone.getContext().resume()
-        } catch {
-          /* needs a fresh gesture; the UI still shows the play control */
-        }
+  async resumeIfNeeded(shouldBePlaying: boolean): Promise<boolean> {
+    if (!shouldBePlaying) {
+      await this.releaseWakeLock()
+      return Tone.getContext().state === 'running'
+    }
+
+    const running = await this.forceResume()
+    if (this.wantWakeLock) await this.acquireWakeLock()
+    try {
+      await this.el?.play()
+    } catch {
+      /* needs a gesture; `armGestureRetry` below covers it */
+    }
+    if (!running) this.armGestureRetry()
+    return running
+  }
+
+  /**
+   * Asks the context to resume, more than once, because once is not enough.
+   *
+   * The state is re-read through a function on every check rather than held in
+   * a local: it changes underneath us, which is the entire point, and a
+   * narrowed local would be describing a moment that has already passed.
+   */
+  private async forceResume(attempts = 3): Promise<boolean> {
+    const isRunning = () => (Tone.getContext().state as string) === 'running'
+    for (let i = 0; i < attempts; i++) {
+      if (isRunning()) return true
+      try {
+        await Tone.getContext().resume()
+      } catch {
+        /* try again, or fall through to the gesture retry */
       }
-      if (this.wantWakeLock) await this.acquireWakeLock()
-      // The element is paused when the page hides on some platforms.
+      // A resolved `resume()` does not mean a running context on iOS.
+      if (isRunning()) return true
+      await new Promise((r) => setTimeout(r, 120))
+    }
+    return isRunning()
+  }
+
+  /**
+   * Waits for the next touch anywhere and tries again.
+   *
+   * This is the piece that was missing. A context that needs a gesture cannot
+   * be revived by any amount of code, but the person is holding the phone and
+   * about to tap something — so the tap that used to do nothing now does the
+   * one thing that works.
+   */
+  private armGestureRetry() {
+    if (this.gestureRetryArmed) return
+    this.gestureRetryArmed = true
+    const retry = async () => {
+      const ok = await this.forceResume(1)
       try {
         await this.el?.play()
       } catch {
-        /* needs a gesture */
+        /* still not allowed */
       }
-    } else {
-      await this.releaseWakeLock()
+      if (ok) {
+        this.gestureRetryArmed = false
+        for (const type of GESTURES) document.removeEventListener(type, retry)
+        this.onRecovered?.()
+      }
+    }
+    for (const type of GESTURES) {
+      document.addEventListener(type, retry, { passive: true })
     }
   }
+
+  /** Called after a gesture brings the context back, so the graph can be checked. */
+  onRecovered: (() => void) | null = null
+
+  /**
+   * Fires whenever the context leaves `running` on its own — an interruption
+   * that arrives while the page is still in front, which `visibilitychange`
+   * never hears about.
+   */
+  watchContextState(onLost: () => void) {
+    const raw = Tone.getContext().rawContext as unknown as AudioContext
+    raw.addEventListener?.('statechange', () => {
+      if (raw.state !== 'running') onLost()
+    })
+  }
 }
+
+/** Anything that counts as a gesture on the platforms this runs on. */
+const GESTURES = ['pointerdown', 'touchend', 'keydown'] as const
 
 export const mediaRoute = new MediaRoute()

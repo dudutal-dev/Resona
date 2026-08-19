@@ -1,17 +1,19 @@
 import { useState } from 'react'
 import { useT, type StringKey } from '../lib/i18n'
 import { BUILTIN_AMBIENCE } from '../audio/Ambience'
-import { getFrequency, getJourney, journeyTitle } from '../lib/catalog'
+import { getFrequency, getJourney, journeyTitle, purposeKey } from '../lib/catalog'
 import { GLYPH_FOR_THEME } from '../lib/glyphs'
-import { themeOf } from '../lib/themes'
+import { THEME_HUE, themeOf } from '../lib/themes'
 import { useFavourites } from '../store/favouritesStore'
+import { useJourneys } from '../store/journeyStore'
 import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { usePresets } from '../store/presetsStore'
 import type { Journey, Preset } from '../lib/types'
 import { hueFill, hueLine, hueText } from '../lib/themes'
 import { SectionHead } from './AppBar'
-import { Tile } from './Tile'
+import { Badge } from './Badge'
+import { FavouriteButton } from './FavouriteButton'
 import { Card, EmptyState, Screen, Sheet } from './ui'
 
 function describe(preset: Preset, t: (k: StringKey, v?: Record<string, string | number>) => string) {
@@ -34,6 +36,7 @@ export function PresetList() {
   // exists — a built one that was deleted — simply stops appearing.
   const favIds = useFavourites((s) => s.ids)
   const favourites = favIds.map((id) => getJourney(id)).filter((j): j is Journey => !!j)
+  const progress = useJourneys((s) => s.progress)
   const { config, loadConfig, toggle } = useSession()
   const [editing, setEditing] = useState<Preset | null>(null)
   const [name, setName] = useState('')
@@ -65,17 +68,57 @@ export function PresetList() {
             allLabel={t('fav.toJourneys')}
             tight
           />
-          <div className="mb-2 grid grid-cols-2 gap-2.5">
-            {favourites.map((journey) => (
-              <Tile
-                key={journey.id}
-                hue={getFrequency(journey.schedule[0].frequencyId)?.hue ?? 265}
-                glyph={GLYPH_FOR_THEME[themeOf(journey)]}
-                title={journeyTitle(journey, lang)}
-                meta={t('common.stagesN', { n: journey.days })}
-                onClick={() => navigate(`/journey/${journey.id}`)}
-              />
-            ))}
+          {/*
+            Full rows rather than the two-column grid the rest of the app uses.
+
+            A favourite is not something being browsed — it has already been
+            chosen, and there are rarely more than a handful. So each one gets
+            the width to show its mark at the size it is drawn at everywhere
+            else, its own colour, and how far through it you are, which is the
+            thing you actually came to this screen to check.
+          */}
+          <div className="mb-2 space-y-2.5">
+            {favourites.map((journey) => {
+              const hue = THEME_HUE[themeOf(journey)]
+              const done = progress[journey.id]?.completedDays.length ?? 0
+              return (
+                <div
+                  key={journey.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => navigate(`/journey/${journey.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') navigate(`/journey/${journey.id}`)
+                  }}
+                  // A div, not a button: the star inside it is one, and a button
+                  // inside a button is invalid markup that React warns about.
+                  className="obj flex w-full cursor-pointer items-center gap-3.5 p-3.5 text-start"
+                >
+                  <Badge hue={hue} glyph={GLYPH_FOR_THEME[themeOf(journey)]} size={54} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[16px] font-extrabold leading-tight">
+                      {journeyTitle(journey, lang)}
+                    </span>
+                    <span className="txt-3 mt-1 block truncate text-[12px]">
+                      {t(purposeKey(journey.purpose))} · {t('common.stagesN', { n: journey.days })}
+                    </span>
+                    {/* One bar per stage, the same reading as on the shelf. */}
+                    <span className="mt-2 flex gap-1" aria-hidden>
+                      {Array.from({ length: journey.days }, (_, i) => (
+                        <span
+                          key={i}
+                          className="h-[3px] flex-1 rounded-full"
+                          style={{
+                            background: i < done ? hueText(hue) : 'var(--border)',
+                          }}
+                        />
+                      ))}
+                    </span>
+                  </span>
+                  <FavouriteButton journeyId={journey.id} size={18} />
+                </div>
+              )
+            })}
           </div>
         </>
       )}

@@ -215,7 +215,7 @@ export class GenerativeMelody {
 
     if (!isClubStyle(style)) {
       this.club?.stop()
-      if (style === 'organic') this.ensurePluck()
+      if (style === 'plucked') this.ensurePluck()
     } else {
       if (!this.club) this.club = new ClubGroove(this.out)
       this.club.setStyle(style)
@@ -331,7 +331,7 @@ export class GenerativeMelody {
       // A plucked note is gone in a second or two, so organic plays closer
       // together and in longer runs. At ambient's spacing the same phrases came
       // out as isolated pings with silence between them.
-      const organic = this.style === 'organic'
+      const organic = this.style === 'plucked'
 
       if (this.phraseLeft > 0) {
         // Inside a phrase: notes stay close, with the spacing varying enough
@@ -361,12 +361,13 @@ export class GenerativeMelody {
 
   private playLeadNote(time: number, phraseStart: boolean) {
     if (!this.scale.length) return
+    engine.notePulse(phraseStart)
     if (!phraseStart) this.degree = nextDegree(this.degree, this.scale.length)
     const freq = this.scale[this.degree]
     const dur = (2 + Math.random() * 6) * (1 - this.pace * 0.82)
     const vel = 0.18 + Math.random() * 0.3 + this.pace * 0.12 + (phraseStart ? 0.08 : 0)
 
-    if (this.style === 'organic' && this.pluck && this.pluckGain) {
+    if (this.style === 'plucked' && this.pluck && this.pluckGain) {
       /**
        * A string is struck and then left alone: there is no sustain to ask for
        * and no release to schedule, so `dur` says nothing here — which is why

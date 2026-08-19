@@ -42,11 +42,13 @@ export type Frequency = {
  */
 export const MELODY_STYLES = [
   'ambient',
-  'organic',
+  'plucked',
   'techno',
   'trance',
   'psytrance',
   'deephouse',
+  'organichouse',
+  'trippy',
 ] as const
 
 export type MelodyStyle = (typeof MELODY_STYLES)[number]
@@ -59,13 +61,23 @@ export type MelodyStyle = (typeof MELODY_STYLES)[number]
  * one, and getting it wrong would have handed a kick and a hi-hat to a texture
  * that is supposed to have neither.
  */
-export type ClubStyle = Exclude<MelodyStyle, 'ambient' | 'organic'>
+export type ClubStyle = Exclude<MelodyStyle, FreeStyle>
 
 /** Free styles: no tempo, no grid, no club voices. */
-export const FREE_STYLES = ['ambient', 'organic'] as const
+export const FREE_STYLES = ['ambient', 'plucked'] as const
 export type FreeStyle = (typeof FREE_STYLES)[number]
 export const isClubStyle = (s: MelodyStyle | undefined): s is ClubStyle =>
-  s !== undefined && s !== 'ambient' && s !== 'organic'
+  s !== undefined && !(FREE_STYLES as readonly string[]).includes(s)
+
+/**
+ * `organic` was the id the plucked style shipped under for one release, on a
+ * misreading: what was asked for was organic deep house, which is a club genre
+ * and is now its own entry. Saved sessions and a catalogue journey still name
+ * the old id, so it is mapped rather than broken.
+ */
+export const LEGACY_STYLE_IDS: Record<string, MelodyStyle> = { organic: 'plucked' }
+export const migrateStyle = (s: string | undefined): MelodyStyle | undefined =>
+  s === undefined ? undefined : (LEGACY_STYLE_IDS[s] ?? (s as MelodyStyle))
 
 export const CLUB_STYLES = MELODY_STYLES.filter(isClubStyle)
 

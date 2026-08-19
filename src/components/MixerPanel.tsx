@@ -185,8 +185,8 @@ export function MixerPanel() {
               {t(styleNoteKey(style))}
               {root?.hz ? rich('mixer.kickNote', { hz: root.hz }) : t('mixer.kickNoteNoHz')}
             </p>
-          ) : style === 'organic' ? (
-            <p className="txt-3 text-[11px] leading-relaxed">{t('style.organic.note')}</p>
+          ) : style === 'plucked' ? (
+            <p className="txt-3 text-[11px] leading-relaxed">{t('style.plucked.note')}</p>
           ) : (
             config.pace >= 0.45 && (
               <p className="txt-3 text-[11px] leading-relaxed">

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { migrateStyle } from '../lib/types'
 import type { AmbienceId, BeatMode, MelodyStyle, SessionConfig, TimerMode } from '../lib/types'
 import { defaultBeatHz, getFrequency } from '../lib/catalog'
 import { STORAGE_KEYS, readJSON, writeJSON } from '../lib/storage'
@@ -60,6 +61,9 @@ function restore(): SessionConfig {
     ...DEFAULT_CONFIG,
     ...saved,
     levels: { ...DEFAULT_CONFIG.levels, ...(saved.levels ?? {}) },
+    // A session saved under the old id for the plucked style would otherwise
+    // restore a style the engine no longer has.
+    style: migrateStyle(saved.style) ?? DEFAULT_CONFIG.style,
   }
 }
 

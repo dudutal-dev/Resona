@@ -40,6 +40,11 @@ const CYCLE_BARS: Record<ClubStyle, number> = {
   trance: 32,
   psytrance: 32,
   deephouse: 16,
+  organichouse: 16,
+  // Trippy is the longest arrangement here on purpose: the whole point of it is
+  // that you stop noticing where the bar line is, and a sixteen-bar cycle keeps
+  // reminding you.
+  trippy: 32,
 }
 
 /** Base tempo before `pace` nudges it. */
@@ -48,6 +53,11 @@ const BASE_BPM: Record<ClubStyle, number> = {
   trance: 136,
   psytrance: 144,
   deephouse: 122,
+  // Organic house lives a few BPM under deep house — the hand percussion needs
+  // the room, and above about 120 it stops sounding played and starts sounding
+  // programmed.
+  organichouse: 118,
+  trippy: 104,
 }
 
 /**
@@ -63,6 +73,10 @@ const SWING: Record<ClubStyle, number> = {
   trance: 0,
   psytrance: 0,
   deephouse: 0.22,
+  // Deeper than deep house. This is the difference between a shuffle and a
+  // groove played by hands that are not quite on the grid.
+  organichouse: 0.3,
+  trippy: 0.16,
 }
 
 /** Per-style kick shaping. The drum is the genre's signature as much as the tempo. */
@@ -76,6 +90,11 @@ const KICK_SHAPE: Record<ClubStyle, { pitchDecay: number; decay: number; volume:
   // Deep house is rounder and softer: a longer pitch fall, less click, and it
   // sits lower in the mix than in any of the others.
   deephouse: { pitchDecay: 0.075, decay: 0.42, volume: -9 },
+  // Softer again, and longer: an organic house kick is felt more than heard,
+  // and the percussion on top is what you actually follow.
+  organichouse: { pitchDecay: 0.09, decay: 0.5, volume: -11 },
+  // Slow, long and deliberately soft — it marks time rather than driving.
+  trippy: { pitchDecay: 0.11, decay: 0.62, volume: -10 },
 }
 
 /**
@@ -108,6 +127,7 @@ export class ClubGroove {
   private kick: Tone.MembraneSynth
   private clap: Tone.NoiseSynth
   private hat: Tone.NoiseSynth
+  private wood: Tone.MembraneSynth
 
   private style: ClubStyle = 'techno'
   private scale: number[] = []
@@ -180,6 +200,27 @@ export class ClubGroove {
       envelope: { attack: 0.001, decay: 0.035, sustain: 0 },
       volume: -26,
     }).connect(new Tone.Filter({ type: 'highpass', frequency: 7000 }).connect(this.out))
+
+    /**
+     * Wood: the conga, rim and shaker of the organic house kit.
+     *
+     * Struck rather than hissed, which is the whole difference from the hat. A
+     * `MembraneSynth` with almost no pitch fall and a short decay is a hand
+     * drum: there is a definite pitch in it, briefly, and then a body. Filtered
+     * to take off the sub so it never competes with the kick, and sent to the
+     * room rather than dry, because hand percussion in a recording is always in
+     * a space.
+     */
+    this.wood = new Tone.MembraneSynth({
+      pitchDecay: 0.012,
+      octaves: 1.6,
+      envelope: { attack: 0.001, decay: 0.16, sustain: 0, release: 0.05 },
+      volume: -17,
+    }).connect(
+      new Tone.Filter({ type: 'highpass', frequency: 240 }).connect(
+        new Tone.Filter({ type: 'lowpass', frequency: 5200 }).connect(this.reverb),
+      ),
+    )
   }
 
   // ------------------------------------------------------------------ tempo
@@ -211,7 +252,10 @@ export class ClubGroove {
       envelope: { attack: 0.001, decay: k.decay, sustain: 0, release: 0.08 },
     })
 
-    const house = this.style === 'deephouse'
+    // Organic house voices its chords like deep house — it is deep house, played
+    // differently — so both take the warm stab rather than the saw.
+    const house = this.style === 'deephouse' || this.style === 'organichouse'
+    const trippy = this.style === 'trippy'
     // Deep house voices chords, not a saw arpeggio: a triangle with a slow
     // release reads as a warm electric-piano stab, which is the sound the genre
     // is built on. A sawtooth here would just be trance played slowly.
@@ -222,7 +266,9 @@ export class ClubGroove {
         : { attack: 0.005, decay: 0.14, sustain: 0.08, release: 0.14 },
       volume: house ? -22 : -20,
     })
-    this.arpFilter.Q.rampTo(this.style === 'psytrance' ? 6 : house ? 1.2 : 3, 0.5)
+    // Trippy sits between psy's resonance and house's softness, and its filter
+    // is the instrument — see the sweep in `section`.
+    this.arpFilter.Q.rampTo(this.style === 'psytrance' ? 6 : trippy ? 4.5 : house ? 1.2 : 3, 0.5)
 
     // The psy bass roll only works if each note is gone before the next lands.
     this.bass.set({
@@ -256,7 +302,8 @@ export class ClubGroove {
   /** Depth widens the arp's tail without touching the floor. */
   setDepth(value: number) {
     this.depth = Math.max(0, Math.min(1, value))
-    this.delay.feedback.rampTo(0.34 + this.depth * 0.22, 1.5)
+    const trippy = this.style === 'trippy'
+    this.delay.feedback.rampTo(trippy ? 0.58 + this.depth * 0.16 : 0.34 + this.depth * 0.22, 1.5)
     this.reverb.wet.rampTo(0.22 + this.depth * 0.2, 1.5)
   }
 
@@ -279,7 +326,15 @@ export class ClubGroove {
   private retime() {
     // The delay is tied to the tempo, so the repeats land between the notes
     // rather than drifting across them.
-    this.delay.delayTime.rampTo(this.stepSeconds * 3, 0.4)
+    //
+    // Trippy takes a dotted-eighth instead of the usual three-sixteenths, and
+    // far more of it. That interval against a four-four bar is the oldest dub
+    // trick there is: the repeats never line up with the beat, so a sparse part
+    // fills the bar with something that keeps arriving from the wrong place.
+    const trippy = this.style === 'trippy'
+    this.delay.delayTime.rampTo(this.stepSeconds * (trippy ? 6 : 3), 0.4)
+    this.delay.feedback.rampTo(trippy ? 0.58 + this.depth * 0.16 : 0.34 + this.depth * 0.22, 0.6)
+    this.delay.wet.rampTo(trippy ? 0.46 : 0.26, 0.6)
     if (this.running) this.schedule()
   }
 
@@ -311,6 +366,45 @@ export class ClubGroove {
         hats: true,
         cutoff: 1400 + sweep * 900,
         wet: 0.3,
+      }
+    }
+
+    if (this.style === 'organichouse') {
+      // The same rolling shape as deep house — no drops, because this is deep
+      // house — but the movement is the percussion thinning rather than the
+      // chords leaving, and the filter breathes over a slower curve.
+      const sweep = Math.sin((pos / CYCLE_BARS.organichouse) * Math.PI * 2)
+      return {
+        kick: true,
+        clap: pos >= 2,
+        bass: true,
+        arp: pos < 13,
+        hats: pos % 8 < 6,
+        cutoff: 1150 + sweep * 700,
+        wet: 0.36,
+      }
+    }
+
+    if (this.style === 'trippy') {
+      /**
+       * No sections in the club sense: no build, no drop, nothing that resolves.
+       *
+       * What moves instead is the filter, on a slow cycle that never sits
+       * still, and the kick going away for a stretch and coming back without
+       * announcing either. The point is to lose track of where you are, and an
+       * arrangement with a shape is exactly what would let you find out.
+       */
+      const cycle = CYCLE_BARS.trippy
+      const slow = Math.sin((pos / cycle) * Math.PI * 2)
+      const slower = Math.sin((pos / cycle) * Math.PI * 2 * 0.5 + 1.1)
+      return {
+        kick: pos < 10 || pos >= 16,
+        clap: false,
+        bass: true,
+        arp: true,
+        hats: pos >= 6,
+        cutoff: 760 + slow * 520 + slower * 380,
+        wet: 0.44 + slower * 0.1,
       }
     }
 
@@ -480,6 +574,8 @@ export class ClubGroove {
     const time = swung
 
     if (inBar === 0) {
+      // A bar is this engine's note, and a four-bar figure change is its phrase.
+      engine.notePulse(bar % 4 === 0)
       this.arpFilter.frequency.rampTo(s.cutoff, this.stepSeconds * STEPS_PER_BAR, time)
       this.reverb.wet.rampTo(s.wet + this.depth * 0.18, 1.5, time)
       // A new figure every four bars: long enough to lock onto, short enough
@@ -487,20 +583,62 @@ export class ClubGroove {
       if (bar % 4 === 0) this.regenerate()
     }
 
-    if (s.kick && inBar % 4 === 0) {
-      this.kick.triggerAttackRelease(foldToRange(this.root, 38, 76), 0.24, time, 1)
+    if (s.kick) {
+      if (this.style === 'trippy') {
+        // Not four on the floor. The downbeat, and a second one late in the bar
+        // that moves — which is what stops it reading as a slow house track and
+        // starts it reading as something you are inside rather than facing.
+        const second = bar % 2 === 0 ? 10 : 11
+        if (inBar === 0) this.kick.triggerAttackRelease(foldToRange(this.root, 38, 76), 0.3, time, 1)
+        else if (inBar === second) {
+          this.kick.triggerAttackRelease(foldToRange(this.root, 38, 76), 0.3, time, 0.72)
+        }
+      } else if (inBar % 4 === 0) {
+        this.kick.triggerAttackRelease(foldToRange(this.root, 38, 76), 0.24, time, 1)
+      }
     }
 
     // Backbeat, on two and four.
     if (s.clap && (inBar === 4 || inBar === 12)) {
-      this.clap.triggerAttackRelease(0.14, time, 0.8)
+      if (this.style === 'organichouse') {
+        // A rim, not a clap: shorter, drier and pitched, which is most of what
+        // makes the groove sound struck rather than triggered.
+        this.wood.triggerAttackRelease(foldToRange(this.root, 300, 600), 0.028, time, 0.55)
+      } else if (this.style !== 'trippy') {
+        this.clap.triggerAttackRelease(0.14, time, 0.8)
+      }
+    }
+
+    /**
+     * Hand percussion, on organic house only.
+     *
+     * The pattern is deliberately not a subdivision of the bar — it repeats
+     * every three 16ths against a four-beat bar, so it walks around the grid
+     * and lands somewhere different in each of the four beats. That is the
+     * cheapest honest imitation of a player who is not counting, and it is what
+     * the genre is named for.
+     */
+    if (this.style === 'organichouse' && s.hats && inBar % 3 === 1) {
+      const late = time + this.stepSeconds * 0.12
+      // Two pitches alternating, the way a pair of congas is played.
+      const high = inBar % 6 === 1
+      this.wood.triggerAttackRelease(
+        foldToRange(this.root, high ? 420 : 260, high ? 840 : 520),
+        0.02,
+        late,
+        high ? 0.4 : 0.24,
+      )
     }
 
     if (s.hats) {
       // Offbeat eighths — the pulse between the kicks. In deep house that hit
       // is the open hat and it carries the groove; in psy the 16ths underneath
       // are what makes the tempo feel like 144 rather than 120.
-      if (inBar % 4 === 2) this.hat.triggerAttackRelease(0.06, time, 0.8)
+      if (this.style === 'trippy') {
+        // One shaker, off the beat, and nothing else up here — the delay is
+        // carrying the time.
+        if (inBar % 8 === 6) this.hat.triggerAttackRelease(0.05, time, 0.42)
+      } else if (inBar % 4 === 2) this.hat.triggerAttackRelease(0.06, time, 0.8)
       else if (this.style === 'psytrance') this.hat.triggerAttackRelease(0.018, time, 0.3)
       else if (inBar % 2 === 1 && this.density > 0.55) {
         this.hat.triggerAttackRelease(0.02, time, 0.35)
@@ -541,6 +679,20 @@ export class ClubGroove {
         hit = beatStep === 0 || inBar % 8 === 6
         length = this.stepSeconds * 3.2
         velocity = 0.7
+        break
+      case 'organichouse':
+        // Short and plucked where deep house is long and sustained, with a
+        // pickup into the next bar. A fingered bass does not hold.
+        hit = beatStep === 0 || inBar === 7 || inBar === 14
+        length = this.stepSeconds * 0.9
+        velocity = inBar === 0 ? 0.82 : 0.62
+        break
+      case 'trippy':
+        // Long, sparse and syncopated: two notes a bar, neither on a beat you
+        // would tap.
+        hit = inBar === 2 || inBar === 9
+        length = this.stepSeconds * 5
+        velocity = 0.68
         break
       default:
         hit = beatStep === 0 || inBar % 8 === 6
@@ -593,6 +745,7 @@ export class ClubGroove {
     this.kick.dispose()
     this.clap.dispose()
     this.hat.dispose()
+    this.wood.dispose()
     this.arpFilter.dispose()
     this.delay.dispose()
     this.reverb.dispose()

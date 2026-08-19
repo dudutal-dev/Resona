@@ -244,6 +244,42 @@ class ToneEngine {
     this.bassShelf?.gain.rampTo(clamped, ramp)
   }
 
+  /**
+   * A count of musical events, for anything that wants to move in time with
+   * the music without listening to the audio.
+   *
+   * Polled rather than subscribed to. The one consumer is the television
+   * figure, which is already running a frame loop and can simply read a number
+   * — and a counter cannot leak a listener, which a callback registered from a
+   * component that unmounts on every route change very much can.
+   *
+   * `notes` ticks on every lead note or club bar; `phrases` ticks only where
+   * the music itself starts something new, which is what a figure should be
+   * moving on.
+   */
+  readonly pulse = { notes: 0, phrases: 0 }
+
+  notePulse(phraseStart: boolean) {
+    this.pulse.notes++
+    if (phraseStart) this.pulse.phrases++
+  }
+
+  /**
+   * Whether anything is actually coming out right now.
+   *
+   * Used to tell a session that survived an interruption from one that only
+   * looks like it did. The threshold is deliberately near the noise floor: this
+   * answers "is the graph alive", not "is it loud enough", and a session in the
+   * quiet part of a fade is still alive.
+   */
+  isProducingSound(): boolean {
+    const wave = this.getWaveform()
+    if (!wave) return false
+    let peak = 0
+    for (const v of wave) peak = Math.max(peak, Math.abs(v))
+    return peak > 0.0004
+  }
+
   /** Frequency-domain magnitudes in dB, or null before the engine starts. */
   getSpectrum(): Float32Array | null {
     const v = this.analyserNode?.getValue()

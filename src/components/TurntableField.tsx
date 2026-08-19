@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { engine } from '../audio/ToneEngine'
-import { turnRate, turnSeconds } from '../lib/turnClock'
+import { HOLD_NOTES, POSES, TURN_NOTES, noteSeconds } from '../lib/turnClock'
 import { useSession } from '../store/sessionStore'
 import { useSettings } from '../store/settingsStore'
 
@@ -28,6 +28,15 @@ import { useSettings } from '../store/settingsStore'
 
 /** Strips the frame is sheared into. Matches `FigureField`. */
 const STRIPS = 96
+
+/** What browsers accept for a playback rate. */
+const MIN_RATE = 0.0625
+/**
+ * The fastest a turn is allowed to run. Well under what the element would
+ * accept: past this the figure stops reading as turning and starts reading as
+ * being scrubbed, and the overshoot per frame grows with it.
+ */
+const TURN_MAX_RATE = 1.15
 
 /**
  * URLs already pulled through a plain fetch, so a play/pause cycle does not ask
@@ -76,27 +85,126 @@ export function TurntableField({ src, poster, playing, className = '' }: Props) 
   const style = useSession((s) => s.config.style)
   const pace = useSession((s) => s.config.pace)
 
-  // The rate is the whole idea, so it is derived rather than baked in.
+  /**
+   * The figure turns to somewhere and stays there, on the music's events.
+   *
+   * The first version rotated at a constant rate derived from the tempo. That
+   * was correct and boring: a steady spin has nothing in it to notice, and
+   * after a minute it reads as a screensaver. What a person actually watches is
+   * a figure that turns when something happens and then holds — facing out,
+   * mostly, because a figure looking at you is the reason to have one.
+   *
+   * So the rate is no longer set once and left. Each frame it is computed from
+   * the distance to the pose the figure is heading for: far away it runs, close
+   * up it eases, and at the pose it is zero and the video is genuinely paused
+   * on a frame. Driving the rate rather than scrubbing `currentTime` matters —
+   * scrubbing every frame makes the decoder seek, which stutters; letting it
+   * play forward slowly is what it is built for.
+   *
+   * What starts a turn is `engine.pulse.phrases`, which the melody bumps when it
+   * begins a new run of notes and the club engine bumps every four bars. That is
+   * the difference between moving *with* the music and moving *at the same
+   * time as* it.
+   */
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
 
-    const period = turnSeconds({ playing, style, pace })
-    const clip = video.duration || 24
-    video.playbackRate = turnRate(clip, period)
-    // Development only, beside `window.__audio`: what the figure is doing and
-    // why, in one object. Worth keeping — it is what caught a measurement of
-    // this very effect that was reading a duplicate store left behind by a hot
-    // reload, and reporting that the rate never changed when it always had.
-    if (import.meta.env.DEV) {
-      ;(window as unknown as { __turn?: unknown }).__turn = {
-        style,
-        pace,
-        playing,
-        secondsPerTurn: +period.toFixed(1),
-        rate: video.playbackRate,
+    let raf = 0
+    let poseIndex = 0
+    let target = 0
+    let lastPhrase = -1
+    let holdUntil = 0
+    let lastFrame = performance.now()
+
+    const step = () => {
+      raf = requestAnimationFrame(step)
+      const clip = video.duration || 24
+      const now = performance.now()
+      const dt = Math.min(0.1, (now - lastFrame) / 1000)
+      lastFrame = now
+
+      const note = noteSeconds({ playing, style, pace })
+      const phrase = engine.pulse.phrases
+
+      // A new phrase, and the current pose has been held long enough, means it
+      // is time to move. The minimum hold is what stops a busy passage from
+      // shaking the figure.
+      if (phrase !== lastPhrase && now >= holdUntil) {
+        lastPhrase = phrase
+        // Always forward: a turntable turns one way, and a figure that
+        // reverses direction reads as a glitch rather than as a choice.
+        poseIndex = (poseIndex + 1 + Math.floor(Math.random() * 2)) % POSES.length
+        target = POSES[poseIndex] * clip
+        const held = poseIndex === 0 ? HOLD_NOTES.front : HOLD_NOTES.other
+        holdUntil = now + (TURN_NOTES + held) * note * 1000
+      } else if (phrase !== lastPhrase) {
+        lastPhrase = phrase
       }
+
+      // Distance the short way round, always forwards.
+      const at = video.currentTime % clip
+      const ahead = (target - at + clip) % clip
+
+      /**
+       * Arrival, and the overshoot that made the first version never stop.
+       *
+       * The element plays on between animation frames, so it can pass the pose
+       * inside one — and "distance forwards to the target" then reads as almost
+       * a whole revolution rather than as a small miss. The figure would set off
+       * to chase it the long way round, at which point it never held anything
+       * and the rate sat pinned near its maximum: exactly the constant spin this
+       * was written to replace, arrived at from the other direction.
+       *
+       * So the window scales with how fast it is moving, and anything just
+       * *behind* the pose counts as arrived and is snapped onto it. One seek of
+       * a few hundredths of a second, once per pose, is not visible; a figure
+       * that never stops very much is.
+       */
+      /**
+       * The last fraction of a second is snapped rather than crawled.
+       *
+       * Approaching the pose asymptotically looks right and never actually
+       * stops: measured, the figure spent the whole time between phrases
+       * creeping through the final tenth of a second of clip, which is a figure
+       * slowing down, not a figure at rest. Three tenths of a second of a
+       * twenty-four second revolution is under five degrees — nobody sees it
+       * jump, and everybody sees it stop.
+       */
+      const eps = Math.max(0.3, video.playbackRate * 0.1)
+      if (ahead <= eps) {
+        if (Math.abs(at - target) > 0.02) video.currentTime = target
+        video.playbackRate = MIN_RATE
+        if (!video.paused) video.pause()
+      } else if (ahead >= clip - eps * 2) {
+        video.currentTime = target
+        video.playbackRate = MIN_RATE
+        if (!video.paused) video.pause()
+      } else {
+        if (video.paused) void video.play().catch(() => {})
+        // Cover the remaining distance in the time a turn is allowed, and never
+        // faster than the eye can follow it.
+        const wanted = ahead / Math.max(0.4, TURN_NOTES * note)
+        video.playbackRate = Math.min(TURN_MAX_RATE, Math.max(MIN_RATE, wanted))
+      }
+
+      if (import.meta.env.DEV) {
+        ;(window as unknown as { __turn?: unknown }).__turn = {
+          style,
+          pace,
+          playing,
+          pose: POSES[poseIndex],
+          atFraction: +(at / clip).toFixed(3),
+          aheadSeconds: +ahead.toFixed(2),
+          rate: +video.playbackRate.toFixed(3),
+          holding: video.paused,
+          phrases: phrase,
+        }
+      }
+      void dt
     }
+    raf = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf)
   }, [style, pace, playing])
 
   useEffect(() => {

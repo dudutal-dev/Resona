@@ -31,17 +31,18 @@ const HE: AboutSection[] = [
     ],
   },
   {
-    title: 'קלאב — ארבעה מנועים',
+    title: 'קלאב — שישה מנועים',
     paragraphs: [
       'למדף הזה יש מנוע נפרד, וכאן ההבטחה על "בלי לופ" נפרדת בכוונה. באמביינט הסדירות היא הבעיה; כאן היא הצורה. קיק שיוצא מהמשבצת אינו טראק מעניין יותר — הוא טראק שבור. לכן יש רשת אמיתית: שעון של שמינית-עשרה, מונה תיבות, וקטעים שמדליקים ומכבים כלים. מה שכן לא חוזר הוא החומר — הפיגורה נכתבת מחדש כל ארבע תיבות.',
       '<b>הקיק הוא התדר.</b> אין דגימות ואין ספריית תופים — הקיק מסונתז על תדר היעד מקופל אוקטבות מטה. ב-528Hz הוא <ltr>66 Hz</ltr>, ב-396Hz הוא <ltr>49.5 Hz</ltr>. הצליל החזק ביותר במיקס הוא התדר שבחרת.',
       'מה שמבדיל בין הארבעה זה לא הטמפו — זה החלק הקל. זה איפה הבס יושב ביחס לקיק: <b>טכנו</b> מתחתיו, <b>טראנס</b> בין הפעימות, <b>פסיטראנס</b> מתגלגל דרך שלוש השמיניות-עשרה שאחרי כל קיק, ו<b>דיפ האוס</b> ארוך ומסונקף. ואז — האם השמיניות-עשרה ישרות או מתנדנדות (רק דיפ האוס מתנדנד), האם ההרמוניה מפורקת לארפג׳ או נוחתת כאקורד מלא (רק דיפ האוס), והאם הסידור בכלל מרשה לעצמו להפיל את הרחבה. טראנס ופסיטראנס עושים ברייקדאון ודרופ; טכנו כמעט אף פעם לא עוזב את הקיק; דיפ האוס לא מפיל כלום, הוא פשוט מתגלגל.',
       'סרגל "עומק" מזיז את ההרמוניה לדרגות שהאקורד מדלג עליהן — בסדרה ההרמונית העליונה אלו <ltr>11/8</ltr>, <ltr>13/8</ltr> ו-<ltr>7/4</ltr>. זה מה שהופך פסיטראנס לפסיכדלי ודיפ האוס לאקורדים שנשמעים מוכרים ולא מוכרים בו-זמנית.',
+      'שניים נוספו מאוחר יותר ואינם וריאציות טמפו. <b>אורגני האוס</b> הוא דיפ האוס שמנוגן בידיים: שאפל עמוק יותר, קיק רך שמרגישים ולא שומעים, וכלי הקשה מעץ במקום מחיאה — התבנית שלהם חוזרת כל שלוש שמיניות-עשרה מול תיבה של ארבע, כך שהיא מטיילת סביב הגריד ונוחתת בכל פעם במקום אחר. זה החיקוי הזול והכן ביותר של מישהו שלא סופר. <b>טריפי</b> אינו למועדון בכלל: 104 פעימות, קיק שמסמן זמן במקום להוביל, דיליי דאב על שמינית מנוקדת שלעולם לא מתיישר עם הפעימה, ומחזור של 32 תיבות בלי בילד ובלי דרופ — כי כל דבר שנפתר מחזיר אותך לספור.',
       'יש כאן פעימה קצבית חזקה וקבועה. במקרה של אפילפסיה או רגישות לגירוי קצבי — כדאי להיוועץ ברופא לפני שימוש במדף הזה.',
     ],
   },
   {
-    title: 'אורגני — מיתר במקום נשימה',
+    title: 'פריטה — מיתר במקום נשימה',
     paragraphs: [
       'סגנון שלישי, שאינו אמביינט ואינו קלאב. אין בו רשת, אין קיק, ואין שום דבר שעולה בעוצמה — יש מיתר שנפרט ונשאר לדעוך. אלו אותן פרזות חופשיות של האמביינט, על אותו סולם ואותו עיגון, רק צפופות יותר: צליל פריטה נגמר תוך שנייה וחצי, ובמרווחים של האמביינט הוא היה יוצא נקישות בודדות עם שקט ביניהן.',
       'הוא לא מסונתז כמעטפת אחרת על אותו אוסילטור, כי זה לא היה עובד — <b>הגוף</b> שגוי, לא רק צורת ההתקפה. זהו מודל קרפלוס-סטרונג: עירור אמיתי ודעיכה אמיתית. הפריטה החזקה גם בהירה יותר, כמו בכלי אמיתי, במקום להישאר באותו גוון ורק להתחזק.',
@@ -109,17 +110,18 @@ const EN: AboutSection[] = [
     ],
   },
   {
-    title: 'Club — four engines',
+    title: 'Club — six engines',
     paragraphs: [
       'This shelf has its own engine, and the "no loop" promise is deliberately different here. In ambient, regularity is the problem; here it is the form. A kick that wanders off the grid is not a more interesting track, it is a broken one. So there is a real grid: a 16th-note clock, a bar counter, and sections that turn instruments on and off. What still refuses to repeat is the material — the figure is rewritten every four bars.',
       '<b>The kick is the frequency.</b> No samples and no drum library — the kick is synthesised on the target frequency folded down by octaves. At 528Hz it is <ltr>66 Hz</ltr>; at 396Hz it is <ltr>49.5 Hz</ltr>. The loudest thing in the mix is the frequency you chose.',
       'What separates the four is not the tempo — that is the easy part. It is where the bass sits against the kick: <b>techno</b> under it, <b>trance</b> between the beats, <b>psytrance</b> rolling through the three 16ths after every kick, and <b>deep house</b> long and syncopated. Then: whether the off-16ths are straight or shuffled (only deep house shuffles), whether the harmony is arpeggiated or lands as a full chord (only deep house), and whether the arrangement is allowed to tear the floor down at all. Trance and psytrance break down and drop; techno almost never lets go of the kick; deep house drops nothing, it simply rolls.',
       'The "depth" slider moves the harmony onto the degrees a chord steps over — in the upper harmonic series those are <ltr>11/8</ltr>, <ltr>13/8</ltr> and <ltr>7/4</ltr>. That is what makes psytrance psychedelic, and what makes deep-house chords sound familiar and unfamiliar at the same time.',
+      'Two were added later and are not tempo variations. <b>Organic house</b> is deep house played by hands: a deeper shuffle, a soft kick felt rather than heard, and wooden percussion instead of a clap — their pattern repeats every three sixteenths against a bar of four, so it walks around the grid and lands somewhere different each time. That is the cheapest honest imitation of a player who is not counting. <b>Trippy</b> is not for a club at all: 104 BPM, a kick that marks time rather than leading, a dotted-eighth dub delay that never lines up with the beat, and a 32-bar cycle with no build and no drop — because anything that resolves puts you back to counting.',
       'There is a strong, constant rhythmic pulse here. If you have epilepsy or a sensitivity to rhythmic stimulation, consult a doctor before using this shelf.',
     ],
   },
   {
-    title: 'Organic — a string instead of a breath',
+    title: 'Plucked — a string instead of a breath',
     paragraphs: [
       'A third style, neither ambient nor club. No grid, no kick, and nothing that swells — a string is plucked and left to decay. These are the same free phrases as ambient, on the same scale and the same anchoring, only packed closer together: a plucked note is gone in a second and a half, and at ambient’s spacing it came out as isolated pings with silence between them.',
       'It is not the same oscillator under a different envelope, because that does not work — the <b>body</b> is wrong, not just the shape of the attack. This is a Karplus-Strong model: a real excitation and a real decay. A harder pluck is also a brighter one, as on a real instrument, rather than the same timbre turned up.',

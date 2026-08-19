@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { clubBpm } from '../audio/ClubGroove'
 import { engine } from '../audio/ToneEngine'
+import { turnRate, turnSeconds } from '../lib/turnClock'
 import { useSession } from '../store/sessionStore'
 import { useSettings } from '../store/settingsStore'
 
@@ -9,23 +9,11 @@ import { useSettings } from '../store/settingsStore'
  *
  * The clip is one revolution of a locked-camera turntable, encoded at
  * twenty-four seconds so the usual rates land near 1 and it runs at its own
- * frame rate
- * — see `pack-turntables.mjs`. Left alone it would be a loop playing at whatever
+ * frame rate — see `pack-turntables.mjs`. Left alone it would be a loop at whatever
  * speed it was shot at, which is wallpaper. What makes it belong to this app is
- * that the rate is derived from what is actually sounding:
- *
- *  - On a **club engine** there is a real tempo, so a revolution takes sixteen
- *    bars of it. The turn completes on a phrase boundary rather than drifting
- *    against one — at 126 BPM that is a little over half a minute.
- *  - On the **ambient engine** there is no grid, but there is a note interval,
- *    which is the one number everything rhythmic there follows. A revolution
- *    takes `NOTES_PER_TURN` of those.
- *
- * The first version locked it to the brainwave rate instead. That was a nicer
- * idea on paper than in a room: theta at 6Hz came out at eight seconds a turn,
- * which reads as a figure spinning rather than a figure turning. Whatever the
- * music says, the period is held inside `SLOWEST`/`FASTEST`, because there is a
- * speed past which this stops being something you can rest your eyes on.
+ * that the rate is derived from what is actually sounding, which is exactly
+ * how long a revolution takes — see `turnClock`, which both this and the cast
+ * route read so the two cannot drift apart.
  *
  * Everything else is the treatment `FigureField` already applies to a still:
  * the frame is sheared into horizontal strips by the live waveform, and a
@@ -37,23 +25,6 @@ import { useSettings } from '../store/settingsStore'
  * is not an optimisation: a second media element with audio contends for the
  * system's Now Playing session, and on iOS the route follows whichever wins.
  */
-
-/** One revolution per this many bars of a club engine. */
-const BARS_PER_TURN = 16
-/** One revolution per this many lead notes of the ambient engine. */
-const NOTES_PER_TURN = 24
-/**
- * However fast the music is, a turn takes at least this long, and however slow
- * it is, no longer than this. Twenty seconds is about where a rotation stops
- * reading as motion and starts reading as drift.
- */
-const FASTEST_TURN_SECONDS = 20
-const SLOWEST_TURN_SECONDS = 60
-/** Nothing playing: a slow idle drift, so the figure is never simply frozen. */
-const IDLE_TURN_SECONDS = 45
-/** What browsers accept. Reached only if the clip length changes. */
-const MIN_RATE = 0.0625
-const MAX_RATE = 2
 
 /** Strips the frame is sheared into. Matches `FigureField`. */
 const STRIPS = 96
@@ -110,25 +81,9 @@ export function TurntableField({ src, poster, playing, className = '' }: Props) 
     const video = videoRef.current
     if (!video) return
 
-    const musicalPeriod = () => {
-      if (!playing) return IDLE_TURN_SECONDS
-      if (style && style !== 'ambient') {
-        // Sixteen bars of four beats, at whatever tempo the style is running.
-        return (BARS_PER_TURN * 4 * 60) / clubBpm(style, pace)
-      }
-      // `leadInterval` in GenerativeMelody — the interval everything rhythmic
-      // on the ambient engine follows. Kept in step with it by hand, which is
-      // why it is named here rather than being a bare number.
-      const leadInterval = 1.5 - pace * 1.12
-      return NOTES_PER_TURN * leadInterval
-    }
-
-    const period = Math.min(
-      SLOWEST_TURN_SECONDS,
-      Math.max(FASTEST_TURN_SECONDS, musicalPeriod()),
-    )
+    const period = turnSeconds({ playing, style, pace })
     const clip = video.duration || 24
-    video.playbackRate = Math.min(MAX_RATE, Math.max(MIN_RATE, clip / period))
+    video.playbackRate = turnRate(clip, period)
     // Development only, beside `window.__audio`: what the figure is doing and
     // why, in one object. Worth keeping — it is what caught a measurement of
     // this very effect that was reading a duplicate store left behind by a hot

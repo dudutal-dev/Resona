@@ -8,6 +8,8 @@ import { useSession } from '../store/sessionStore'
 import { useSettings } from '../store/settingsStore'
 import { FigureField } from './FigureField'
 import { Badge } from './Badge'
+import { canCastVideo, promptRemote, watchRemote, type RemoteState } from '../lib/remoteVideo'
+import { turnRate, turnSeconds } from '../lib/turnClock'
 import { formatClock } from './ui'
 
 /**
@@ -48,6 +50,17 @@ export function TvStage({ onClose }: { onClose: () => void }) {
   const stageRef = useRef<HTMLDivElement>(null)
   const [chromeVisible, setChromeVisible] = useState(true)
   const [portrait, setPortrait] = useState(false)
+  /**
+   * The element handed to a television, and what the system says about it.
+   *
+   * Separate from the one `TurntableField` draws into on purpose: the moment a
+   * receiver takes an element over, that element stops producing frames locally,
+   * so a single shared one would put the picture on the television and leave a
+   * frozen canvas behind on the phone.
+   */
+  const castRef = useRef<HTMLVideoElement>(null)
+  const [remote, setRemote] = useState<RemoteState>('unsupported')
+  const casting = remote === 'connected'
 
   const root = getFrequency(config.rootId)
   // Read per render rather than once: the accent follows the frequency, and the
@@ -92,6 +105,36 @@ export function TvStage({ onClose }: { onClose: () => void }) {
     }
   }, [])
 
+  // Only turntables have a file to hand over; the generated scene has no source
+  // a receiver could fetch.
+  const castable = figure.kind === 'turntable' && canCastVideo()
+
+  useEffect(() => {
+    const el = castRef.current
+    if (!el || !castable) return
+    return watchRemote(el, setRemote)
+  }, [castable])
+
+  /**
+   * The revolution stays on the music's clock while casting, if the receiver
+   * honours a playback rate. Whether it does is not something a page can find
+   * out — the property sets cleanly either way — so this is written to be
+   * correct where it works and harmless where it does not.
+   */
+  useEffect(() => {
+    const el = castRef.current
+    if (!el || !casting) return
+    const period = turnSeconds({ playing: isPlaying, style: config.style, pace: config.pace })
+    el.playbackRate = turnRate(el.duration || 24, period)
+  }, [casting, isPlaying, config.style, config.pace])
+
+  // Casting is the whole point of not holding the phone: give the screen back.
+  useEffect(() => {
+    if (!casting) return
+    void mediaRoute.setWakeLock(false)
+    if (document.fullscreenElement) void document.exitFullscreen().catch(() => {})
+  }, [casting])
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -114,8 +157,38 @@ export function TvStage({ onClose }: { onClose: () => void }) {
       className="fixed inset-0 z-[60] overflow-hidden bg-black"
       onClick={() => setChromeVisible(true)}
     >
+      {/*
+        The element a television takes over.
+
+        Always mounted while a turntable is chosen, because both pickers need a
+        real element with a real source to offer, and `preload="none"` means
+        mounting one costs nothing until a receiver asks for it. It is the wide
+        cut: a television is wide, whichever way the phone is being held.
+
+        Left in the layout at full size and merely transparent, rather than
+        hidden: a display-none or clipped element is not reliably a valid
+        playback target. It sits before the canvas in document order, so the
+        canvas paints over it; when a receiver takes it, the canvas is gone and
+        this is what is left for the platform to draw its own placeholder into.
+      */}
+      {figure.kind === 'turntable' && (
+        <video
+          ref={castRef}
+          src={figure.wide}
+          poster={figure.posterWide}
+          loop
+          muted
+          playsInline
+          preload="none"
+          aria-hidden
+          className={`absolute inset-0 h-full w-full object-contain ${
+            casting ? '' : 'pointer-events-none opacity-0'
+          }`}
+        />
+      )}
+
       {/* The picture is the whole screen: mirroring sends exactly this. */}
-      {figure.kind === 'turntable' ? (
+      {casting ? null : figure.kind === 'turntable' ? (
         <TurntableField
           src={portrait ? figure.portrait : figure.wide}
           poster={portrait ? figure.poster : figure.posterWide}
@@ -218,10 +291,34 @@ export function TvStage({ onClose }: { onClose: () => void }) {
               {t('figure.pick')} · {t(figure.name)}
             </button>
           )}
+          {/* Only when the system says there is somewhere to send it. A picker
+              that opens onto an empty list is worse than no button. */}
+          {castable && remote !== 'unsupported' && remote !== 'unavailable' && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                const el = castRef.current
+                if (!el) return
+                // The receiver fetches and plays the file itself, so it has to
+                // be loaded and running before the handover.
+                el.load()
+                void el.play().catch(() => {})
+                void promptRemote(el)
+              }}
+              className="btn h-11 rounded-2xl px-4 text-xs"
+              style={
+                casting
+                  ? { background: 'var(--gold-soft)', borderColor: 'var(--gold)', color: 'var(--gold)' }
+                  : undefined
+              }
+            >
+              {t(casting ? 'tv.castOn' : 'tv.cast')}
+            </button>
+          )}
         </div>
         <p className="max-w-[22rem] text-end text-[11px] leading-relaxed txt-3">
-          {t('tv.mirror')}
-          {portrait && <span className="block mt-1 opacity-80">{t('tv.rotate')}</span>}
+          {t(casting ? 'tv.castNote' : 'tv.mirror')}
+          {!casting && portrait && <span className="block mt-1 opacity-80">{t('tv.rotate')}</span>}
         </p>
       </div>
 

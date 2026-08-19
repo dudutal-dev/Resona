@@ -222,7 +222,8 @@ class MediaRoute {
 
   // ------------------------------------------------------------ video route
   //
-  // There isn't one, and this note is here so it is not attempted a third time.
+  // Not here, and the reason is worth keeping — it is also what showed where
+  // the route does belong.
   //
   // The idea was sound on paper: the audio route already hands AirPlay a
   // MediaStream, `canvas.captureStream()` produces a video track of the same
@@ -237,10 +238,14 @@ class MediaRoute {
   // into a stream whose element had been torn out from under it.
   //
   // AirPlay carries a media *source*, not an arbitrary MediaStream, and no
-  // amount of arranging tracks changes that. What does put this picture on a
-  // television is Screen Mirroring, which is a system feature and needs nothing
-  // from the app beyond a full-screen canvas — so that is what TV mode now says
-  // to do.
+  // amount of arranging tracks changes that. That sentence is exact, and when
+  // the figure stopped being a canvas and became a real file it stopped being a
+  // wall: a `<video>` with a URL is precisely the kind of thing AirPlay does
+  // carry. So there is a video route now, and it lives in `lib/remoteVideo`
+  // with the stage that owns the element rather than here with the audio —
+  // what it sends is a clip, not a mix, and it has nothing to do with this
+  // class's one-element rule. Screen Mirroring remains the other way, and the
+  // one that also carries the canvas treatment and the sound.
 
   /** Opens Safari's AirPlay picker, switching to the castable route first. */
   async showOutputPicker(): Promise<boolean> {

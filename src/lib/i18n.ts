@@ -148,6 +148,9 @@ const HE = {
   'figure.chakraTurn': 'נושאת הצ׳אקרות',
   'figure.scene': 'תלת־ממד',
   'tv.mirror': 'לטלוויזיה: מרכז הבקרה ← שיקוף מסך ← בחר את הטלוויזיה. גם התמונה וגם הקול עוברים יחד, ולכן כדאי שהפלט כאן יישאר על הטלפון ולא על AirPlay.',
+  'tv.cast': 'שדר לטלוויזיה',
+  'tv.castOn': 'משדר · נתק',
+  'tv.castNote': 'הדמות מנוגנת בטלוויזיה עצמה, אז הטלפון פנוי ואפשר לנעול אותו. מה שנשלח הוא הקליפ בלבד — הריצוד לפי הצליל, הזוהר והנתונים מצוירים כאן ולא עוברים. המוזיקה ממשיכה מהטלפון.',
   'tv.rotate': 'סובב את הטלפון לרוחב — השיקוף מעביר את המסך כמו שהוא, ולרוחב הוא ימלא את הטלוויזיה.',
   'tv.hint': 'הקש כדי להציג את הפקדים · יציאה עם Esc',
 
@@ -571,6 +574,9 @@ const EN: Record<StringKey, string> = {
   'figure.chakraTurn': 'The chakra bearer',
   'figure.scene': '3D',
   'tv.mirror': 'To the television: Control Centre → Screen Mirroring → pick the television. Picture and sound both go across, so leave the output here on the phone rather than on AirPlay.',
+  'tv.cast': 'Cast to TV',
+  'tv.castOn': 'Casting · disconnect',
+  'tv.castNote': 'The figure plays on the television itself, so the phone is free and can be locked. Only the clip is sent — the shear, the wash and the readouts are drawn here and stay here. The music keeps playing from the phone.',
   'tv.rotate': 'Turn the phone sideways — mirroring sends the screen as it is, and sideways it fills the television.',
   'tv.hint': 'Tap for the controls · Esc to exit',
 

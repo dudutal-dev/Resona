@@ -6,7 +6,60 @@ import { LANGS, LANG_LABEL, useT, type StringKey } from '../lib/i18n'
 import { navigate } from '../lib/router'
 import { useSession } from '../store/sessionStore'
 import { ListeningMode } from './ListeningMode'
+import { checkForUpdate, reloadNow, type UpdateState } from '../lib/updater'
 import { Card, Screen } from './ui'
+
+/** The build this screen is running — same stamp the About screen prints. */
+const BUILD = __BUILD__
+
+/**
+ * "Check for updates", because an installed PWA is resumed far more often than
+ * it is loaded, and a new build can sit on the server for a week without the
+ * phone ever asking. See `lib/updater` for what the button actually does.
+ */
+function UpdateCard() {
+  const { t } = useT()
+  const [state, setState] = useState<UpdateState | 'idle' | 'checking'>('idle')
+
+  const run = async () => {
+    if (state === 'checking') return
+    setState('checking')
+    setState(await checkForUpdate())
+    // On 'updated' the page is already reloading, so this component is about to
+    // be replaced — the message is there for the moment before it goes.
+  }
+
+  const MESSAGE: Record<UpdateState, StringKey> = {
+    updated: 'settings.updateFound',
+    current: 'settings.updateCurrent',
+    unmanaged: 'settings.updateUnmanaged',
+    failed: 'settings.updateFailed',
+  }
+  const message = state === 'idle' || state === 'checking' ? null : MESSAGE[state]
+
+  return (
+    <Card>
+      <p className="text-sm font-semibold">{t('settings.update')}</p>
+      <p className="txt-3 mt-0.5 text-[11px] leading-relaxed">{t('settings.updateHint')}</p>
+      <button onClick={run} disabled={state === 'checking'} className="btn mt-3 w-full text-xs">
+        {t(state === 'checking' ? 'settings.updateChecking' : 'settings.updateCheck')}
+      </button>
+      {message && (
+        <p className="chip mt-2" style={state === 'failed' ? { color: '#ff8fa3' } : undefined}>
+          {t(message)}
+        </p>
+      )}
+      {state === 'unmanaged' && (
+        <button onClick={reloadNow} className="btn mt-2 w-full text-xs">
+          {t('settings.updateReload')}
+        </button>
+      )}
+      <p className="txt-3 mt-3 text-[10px]">
+        {t('settings.updateBuild')} <span className="readout">{BUILD}</span>
+      </p>
+    </Card>
+  )
+}
 
 function Toggle({
   label,
@@ -141,6 +194,8 @@ export function SettingsScreen() {
             onChange={setReducedMotion}
           />
         </Card>
+
+        <UpdateCard />
 
         <Card>
           <h3 className="text-sm font-bold">{t('settings.localData')}</h3>

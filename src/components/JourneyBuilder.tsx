@@ -147,7 +147,7 @@ export function JourneyBuilder() {
               DAY_CHOICES.map((d) => (
                 <Choice
                   key={d}
-                  label={t('common.daysN', { n: d })}
+                  label={t('common.stagesN', { n: d })}
                   active={answers.days === d}
                   onClick={() => set('days', d)}
                 />

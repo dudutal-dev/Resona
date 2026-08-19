@@ -222,7 +222,7 @@ export function TvStage({ onClose }: { onClose: () => void }) {
               {journeyTitle(journey, lang)}
             </p>
             <p className="font-bold" style={{ fontSize: 'min(3.2vh, 2.2vw)' }}>
-              {t('common.dayN', { n: activeJourney?.day ?? 0 })}
+              {t('common.stageN', { n: activeJourney?.day ?? 0 })}
             </p>
           </div>
         )}

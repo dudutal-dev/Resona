@@ -1,5 +1,5 @@
 import { clubBpm } from '../audio/ClubGroove'
-import type { MelodyStyle } from './types'
+import { isClubStyle, type MelodyStyle } from './types'
 
 /**
  * How long one revolution of the figure should take, derived from the music.
@@ -50,10 +50,12 @@ export function turnSeconds({
 }): number {
   const musical = () => {
     if (!playing) return IDLE_TURN_SECONDS
-    if (style && style !== 'ambient') {
+    if (isClubStyle(style)) {
       // Sixteen bars of four beats, at whatever tempo the style is running.
       return (BARS_PER_TURN * 4 * 60) / clubBpm(style, pace)
     }
+    // Organic has no tempo either, so it turns on the note interval like
+    // ambient does.
     // `leadInterval` in GenerativeMelody — the interval everything rhythmic on
     // the ambient engine follows. Kept in step with it by hand, which is why it
     // is named here rather than being a bare number.

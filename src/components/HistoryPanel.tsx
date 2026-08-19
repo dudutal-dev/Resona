@@ -63,7 +63,7 @@ export function HistoryPanel() {
                 </p>
                 <p className="txt-3 truncate text-[11px]">
                   {journey
-                    ? `${journeyTitle(journey, lang)} · ${t('common.dayN', { n: listen.day ?? 0 })}`
+                    ? `${journeyTitle(journey, lang)} · ${t('common.stageN', { n: listen.day ?? 0 })}`
                     : beat
                       ? `${beat ? shortLabel(beat, lang) : ''} · ${listen.beatHz} Hz`
                       : ''}

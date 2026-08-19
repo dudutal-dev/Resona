@@ -1,7 +1,7 @@
 import { Tone, engine } from './ToneEngine'
 import { ClubGroove } from './ClubGroove'
 import { SCALES, carrierFor, nextDegree, playableScale, scaleForRoot } from './scale'
-import type { MelodyStyle } from '../lib/types'
+import { isClubStyle, type MelodyStyle } from '../lib/types'
 
 /**
  * The generative ambient layer (§4.3).
@@ -47,6 +47,18 @@ export class GenerativeMelody {
   private style: MelodyStyle = 'ambient'
   /** Built on first use — an ambient session never pays for it. */
   private club: ClubGroove | null = null
+  /**
+   * The organic voice, likewise built only when it is chosen.
+   *
+   * A plucked string rather than another envelope on the same oscillator. That
+   * is the whole point of the style: ambient's lead *swells*, and no attack
+   * setting on a triangle wave turns a swell into a struck note — the body is
+   * wrong, not just the shape. Karplus-Strong gives a real excitation and a
+   * real decay, which is what makes this read as an instrument being played in
+   * a room instead of a pad being faded up.
+   */
+  private pluck: Tone.PluckSynth | null = null
+  private pluckGain: Tone.Gain | null = null
   private leadEvent: number | null = null
   private padEvent: number | null = null
   private pulseEvent: number | null = null
@@ -152,10 +164,35 @@ export class GenerativeMelody {
     if (changed && this.running) this.scheduleVoices()
   }
 
-  /** Silent below the threshold, and always silent when a kick is playing. */
+  /**
+   * Silent below the threshold, always silent when a kick is playing, and
+   * silent on organic — a plucked line already has its own attack, and a sine
+   * blip under every note turns an instrument into a metronome.
+   */
   private get pulseLevel() {
     if (this.style !== 'ambient') return 0
     return this.pace < 0.45 ? 0 : (this.pace - 0.45) * 0.9
+  }
+
+  /**
+   * The plucked voice, built the first time organic is chosen.
+   *
+   * Routed to the filter like the other voices, but through its own gain so the
+   * style can sit at its own level: a struck note has a far higher peak than a
+   * swell for the same perceived loudness, and matching them by ear on the
+   * synth's own `volume` would have left organic spiking the master.
+   */
+  private ensurePluck() {
+    if (this.pluck) return
+    this.pluckGain = new Tone.Gain(0.9).connect(this.filter)
+    this.pluck = new Tone.PluckSynth({
+      // Longer than the default: a short string reads as a toy, and this has to
+      // hold its own against a drone.
+      attackNoise: 0.9,
+      dampening: 2600,
+      resonance: 0.93,
+      release: 1.4,
+    }).connect(this.pluckGain)
   }
 
   /**
@@ -176,8 +213,9 @@ export class GenerativeMelody {
     if (style === this.style) return
     this.style = style
 
-    if (style === 'ambient') {
+    if (!isClubStyle(style)) {
       this.club?.stop()
+      if (style === 'organic') this.ensurePluck()
     } else {
       if (!this.club) this.club = new ClubGroove(this.out)
       this.club.setStyle(style)
@@ -254,7 +292,7 @@ export class GenerativeMelody {
 
     this.drone.start()
     this.droneSub.start()
-    if (this.style !== 'ambient') this.club?.start()
+    if (isClubStyle(this.style)) this.club?.start()
 
     this.scheduleVoices()
   }
@@ -263,7 +301,9 @@ export class GenerativeMelody {
     this.clearVoices()
     const now = engine.transport.seconds
     this.phraseLeft = 0
-    if (this.style === 'ambient') this.scheduleLead(now + 0.5)
+    // Both free styles get the phrase scheduler; only the club engine replaces
+    // the lead with a sequence.
+    if (!isClubStyle(this.style)) this.scheduleLead(now + 0.5)
     this.schedulePad(now + 2 + Math.random() * 6)
     this.schedulePulse()
   }
@@ -288,10 +328,15 @@ export class GenerativeMelody {
       const base = this.leadInterval
       let gap: number
 
+      // A plucked note is gone in a second or two, so organic plays closer
+      // together and in longer runs. At ambient's spacing the same phrases came
+      // out as isolated pings with silence between them.
+      const organic = this.style === 'organic'
+
       if (this.phraseLeft > 0) {
         // Inside a phrase: notes stay close, with the spacing varying enough
         // that no two bars scan alike.
-        gap = base * (0.55 + Math.random() * 0.9)
+        gap = base * (0.55 + Math.random() * 0.9) * (organic ? 0.42 : 1)
         this.phraseLeft--
         this.playLeadNote(time, false)
       } else {
@@ -301,8 +346,9 @@ export class GenerativeMelody {
         // weak coupling leaves a "sparse" setting sounding busier than the old
         // grid did — which would wreck the work journeys, whose whole job is to
         // stay out of the way.
-        gap = base * (2.5 + Math.random() * 4) * (1.9 - this.density * 1.2)
-        this.phraseLeft = 1 + Math.floor(Math.random() * (2 + this.density * 7))
+        gap = base * (2.5 + Math.random() * 4) * (1.9 - this.density * 1.2) * (organic ? 0.5 : 1)
+        this.phraseLeft =
+          1 + Math.floor(Math.random() * (2 + this.density * 7)) + (organic ? 3 : 0)
         // Open the phrase from a new place in the register so successive
         // phrases do not all start on the same note.
         this.degree = Math.floor(Math.random() * this.scale.length)
@@ -319,6 +365,33 @@ export class GenerativeMelody {
     const freq = this.scale[this.degree]
     const dur = (2 + Math.random() * 6) * (1 - this.pace * 0.82)
     const vel = 0.18 + Math.random() * 0.3 + this.pace * 0.12 + (phraseStart ? 0.08 : 0)
+
+    if (this.style === 'organic' && this.pluck && this.pluckGain) {
+      /**
+       * A string is struck and then left alone: there is no sustain to ask for
+       * and no release to schedule, so `dur` says nothing here — which is why
+       * the phrase scheduler shortens the gaps for this style instead.
+       *
+       * `PluckSynth` takes no velocity, so loudness is written onto its gain
+       * just before the strike. Ramped rather than stepped, and only between
+       * notes, so it shapes the attack without ever cutting a ringing string.
+       *
+       * `dampening` is moved with it. On a real instrument a harder strike is
+       * also a brighter one, and holding the tone fixed while only the level
+       * moves is what makes a sampled pluck sound like a sample.
+       */
+      this.pluckGain.gain.setTargetAtTime(0.5 + vel * 1.1, time - 0.02, 0.01)
+      this.pluck.dampening = 1900 + vel * 3200
+      this.pluck.triggerAttack(freq, time)
+      // Struck an octave up as well when the register is low: a plucked note
+      // near the drone disappears into it, and the octave keeps the line
+      // audible without turning anything up.
+      if (freq < this.root * 1.5 && Math.random() < 0.5) {
+        this.pluck.triggerAttack(freq * 2, time + 0.09)
+      }
+      return
+    }
+
     this.lead.triggerAttackRelease(freq, dur, time, vel)
 
     // Occasionally shadow the note a fifth or octave up for a shimmer.

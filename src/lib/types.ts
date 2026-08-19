@@ -40,14 +40,34 @@ export type Frequency = {
  * read from one place; adding a style in one of them and forgetting the others
  * is the mistake this prevents.
  */
-export const MELODY_STYLES = ['ambient', 'techno', 'trance', 'psytrance', 'deephouse'] as const
+export const MELODY_STYLES = [
+  'ambient',
+  'organic',
+  'techno',
+  'trance',
+  'psytrance',
+  'deephouse',
+] as const
 
 export type MelodyStyle = (typeof MELODY_STYLES)[number]
 
 /** Everything driven by the grid — that is, everything but ambient. */
-export type ClubStyle = Exclude<MelodyStyle, 'ambient'>
+/**
+ * The styles built on a grid. Defined by exclusion rather than by listing, so a
+ * new free style cannot be added without deciding which side of this line it
+ * falls on — `organic` is the reason this now excludes two things instead of
+ * one, and getting it wrong would have handed a kick and a hi-hat to a texture
+ * that is supposed to have neither.
+ */
+export type ClubStyle = Exclude<MelodyStyle, 'ambient' | 'organic'>
 
-export const CLUB_STYLES = MELODY_STYLES.filter((s): s is ClubStyle => s !== 'ambient')
+/** Free styles: no tempo, no grid, no club voices. */
+export const FREE_STYLES = ['ambient', 'organic'] as const
+export type FreeStyle = (typeof FREE_STYLES)[number]
+export const isClubStyle = (s: MelodyStyle | undefined): s is ClubStyle =>
+  s !== undefined && s !== 'ambient' && s !== 'organic'
+
+export const CLUB_STYLES = MELODY_STYLES.filter(isClubStyle)
 
 export type JourneyPurpose =
   | 'sleep'
@@ -64,6 +84,17 @@ export type JourneyPurpose =
   | 'intimacy'
   | 'club'
 
+/**
+ * One step of a journey.
+ *
+ * The interface calls these **stages**, not days, because nothing in the app
+ * enforces one a day — three in an evening is allowed and common, and "day 3"
+ * was a promise the app never kept. The type and the stored progress keep the
+ * older name: renaming them would mean migrating every saved `completedDays`
+ * and `currentDay` in everyone's browser to change a word nobody reads. The
+ * word lives in `common.stageN` and friends, which is the only place it is
+ * displayed from.
+ */
 export type JourneyDay = {
   day: number
   frequencyId: string

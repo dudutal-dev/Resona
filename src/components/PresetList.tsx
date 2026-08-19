@@ -72,7 +72,7 @@ export function PresetList() {
                 hue={getFrequency(journey.schedule[0].frequencyId)?.hue ?? 265}
                 glyph={GLYPH_FOR_THEME[themeOf(journey)]}
                 title={journeyTitle(journey, lang)}
-                meta={t('common.daysN', { n: journey.days })}
+                meta={t('common.stagesN', { n: journey.days })}
                 onClick={() => navigate(`/journey/${journey.id}`)}
               />
             ))}

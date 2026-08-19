@@ -41,6 +41,14 @@ import * as Tone from 'tone'
  */
 const OUTPUT_TRIM: Record<string, number> = {
   ambient: 2.1,
+  // Measured, not inherited. A plucked string sounded like it would need its
+  // own figure, and at the default it already lands at -21.5dBFS RMS — the same
+  // as techno, 1.8dB from ambient, inside the spread the other five sit in. Its
+  // peak is the lowest of any engine at -12.8dBFS: a decaying note turns out to
+  // be less peaky than an ambient swell, whose pad stacks. Written out rather
+  // than left to the fallback so the next person does not have to re-measure to
+  // find out whether anyone ever checked.
+  organic: 1.2,
   techno: 1.2,
   trance: 1.2,
   psytrance: 1.2,

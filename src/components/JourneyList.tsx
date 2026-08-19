@@ -69,7 +69,7 @@ function JourneyCard({ journey }: { journey: Journey }) {
       <h3 className="pe-11 text-[18px] font-extrabold leading-tight">{journeyTitle(journey, lang)}</h3>
 
       <p className="mt-1.5 text-[11.5px] font-bold" style={{ color: 'rgba(255,255,255,0.82)' }}>
-        {t('common.daysN', { n: journey.days })}
+        {t('common.stagesN', { n: journey.days })}
         {' · '}
         <span className="readout">{first.durationMin}</span> {t('common.minutes')}
         {' · ♬ '}

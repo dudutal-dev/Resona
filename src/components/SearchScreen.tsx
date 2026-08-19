@@ -142,7 +142,7 @@ export function SearchScreen() {
                 hue={getFrequency(j.schedule[0].frequencyId)?.hue ?? 265}
                 glyph={GLYPH_FOR_THEME[themeOf(j)]}
                 title={journeyTitle(j, lang)}
-                meta={t('common.daysN', { n: j.days })}
+                meta={t('common.stagesN', { n: j.days })}
                 onClick={() => navigate(`/journey/${j.id}`)}
               />
             ))}

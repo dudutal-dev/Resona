@@ -146,7 +146,7 @@ export function PlayerScreen() {
             </div>
           ) : undefined
         }
-        eyebrow={journey ? t('common.dayN', { n: activeJourney?.day ?? 0 }) : undefined}
+        eyebrow={journey ? t('common.stageN', { n: activeJourney?.day ?? 0 }) : undefined}
         title={journey ? journeyTitle(journey, lang) : root ? freqLabel(root, lang) : 'Resona'}
         subtitle={
           journey

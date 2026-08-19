@@ -179,7 +179,7 @@ class SessionPlayer {
       : translate(lang, 'freq.rootTitle')
 
     const title = journey
-      ? `${journeyTitle(journey, lang)} · ${translate(lang, 'common.dayN', { n: day })}`
+      ? `${journeyTitle(journey, lang)} · ${translate(lang, 'common.stageN', { n: day })}`
       : root
         ? `${root.hz} Hz · ${freqLabel(root, lang)}`
         : 'Resona'
@@ -195,7 +195,7 @@ class SessionPlayer {
         unit: root?.hz ? 'Hz' : undefined,
         caption: journey ? journeyTitle(journey, lang) : (root ? freqLabel(root, lang) : 'Resona'),
         footnote: journey
-          ? translate(lang, 'common.dayOf', { n: day, total: journey.days })
+          ? translate(lang, 'common.stageOf', { n: day, total: journey.days })
           : (beatName ?? undefined),
       }),
     )

@@ -64,7 +64,7 @@
     "title": "מוכנות למשימה",
     "days": 5,
     "purpose": "focus",
-    "description": "חמישה ימים שבונים ערנות עבודה — מאלפא רגוע ועד גמא ביום המשימה עצמו.",
+    "description": "חמישה שלבים שבונים ערנות עבודה — מאלפא רגוע ועד גמא ביום המשימה עצמו.",
     "schedule": [
       {
         "day": 1,
@@ -103,7 +103,7 @@
       }
     ],
     "titleEn": "Ready for the task",
-    "descriptionEn": "Five days that build working alertness — from calm alpha to gamma on the day of the task itself."
+    "descriptionEn": "Five stages that build working alertness — from calm alpha to gamma on the day of the task itself."
   },
   {
     "id": "journey-chakra-7",
@@ -170,7 +170,7 @@
     "title": "הפחתת חרדה",
     "days": 10,
     "purpose": "anxiety",
-    "description": "עשרה ימים הדרגתיים לבניית יציבות — היכרות, שחרור, העמקה וסיכום.",
+    "description": "עשרה שלבים הדרגתיים לבניית יציבות — היכרות, שחרור, העמקה וסיכום.",
     "schedule": [
       {
         "day": 1,
@@ -244,11 +244,11 @@
       }
     ],
     "titleEn": "Easing anxiety",
-    "descriptionEn": "Ten gradual days that build steadiness — getting acquainted, releasing, deepening and closing."
+    "descriptionEn": "Ten gradual stages that build steadiness — getting acquainted, releasing, deepening and closing."
   },
   {
     "id": "journey-intro-3",
-    "title": "שלושה ימי היכרות",
+    "title": "שלושה שלבי היכרות",
     "days": 3,
     "purpose": "intro",
     "description": "המסע הקצר ביותר. שלוש האזנות שמראות את ההבדל בין גל מוחי לתדר יסוד, כדי שתדע לאן להמשיך.",
@@ -275,7 +275,7 @@
         "noteEn": "Going deeper — and choosing where next"
       }
     ],
-    "titleEn": "Three days to get acquainted",
+    "titleEn": "Three stages to get acquainted",
     "descriptionEn": "The shortest journey. Three sessions that show the difference between a brainwave band and a root frequency, so you know where to go next."
   },
   {

@@ -5,7 +5,7 @@ import { BASS_MAX_DB, BASS_MIN_DB } from '../audio/ToneEngine'
 import { player } from '../audio/SessionPlayer'
 import { getFrequency, shortLabel, styleKey, styleNoteKey } from '../lib/catalog'
 import { useT } from '../lib/i18n'
-import { MELODY_STYLES, type ClubStyle } from '../lib/types'
+import { MELODY_STYLES, isClubStyle } from '../lib/types'
 import { useSession } from '../store/sessionStore'
 import { ListeningMode } from './ListeningMode'
 import { Slider } from './ui'
@@ -75,7 +75,7 @@ export function MixerPanel() {
   const beat = config.beatId ? getFrequency(config.beatId) : null
   const range = beat?.range ?? [0.5, 50]
   const style = config.style ?? 'ambient'
-  const club = style !== 'ambient'
+  const club = isClubStyle(style)
   const root = getFrequency(config.rootId)
 
   // The styles do not fit on one line, so opening the panel on a journey day
@@ -147,7 +147,7 @@ export function MixerPanel() {
             onChange={setPace}
             display={
               club
-                ? `${Math.round(clubBpm(style as ClubStyle, config.pace))} BPM`
+                ? `${Math.round(clubBpm(style, config.pace))} BPM`
                 : t(
                     config.pace < 0.25
                       ? 'mixer.pace.still'
@@ -182,9 +182,11 @@ export function MixerPanel() {
           )}
           {club ? (
             <p className="txt-3 text-[11px] leading-relaxed">
-              {t(styleNoteKey(style as ClubStyle))}
+              {t(styleNoteKey(style))}
               {root?.hz ? rich('mixer.kickNote', { hz: root.hz }) : t('mixer.kickNoteNoHz')}
             </p>
+          ) : style === 'organic' ? (
+            <p className="txt-3 text-[11px] leading-relaxed">{t('style.organic.note')}</p>
           ) : (
             config.pace >= 0.45 && (
               <p className="txt-3 text-[11px] leading-relaxed">

@@ -66,8 +66,8 @@ export function JourneyDayScreen({ id, day }: { id: string; day: number }) {
     <div className="mx-auto w-full max-w-3xl overflow-hidden px-4 pb-40 safe-top">
       <ReleaseHeader
         cover={coverForRoot(entry.frequencyId)}
-        eyebrow={`${journeyTitle(journey, lang)} · ${t('common.dayN', { n: day })}`}
-        title={freq ? freqLabel(freq, lang) : t('common.dayN', { n: day })}
+        eyebrow={`${journeyTitle(journey, lang)} · ${t('common.stageN', { n: day })}`}
+        title={freq ? freqLabel(freq, lang) : t('common.stageN', { n: day })}
         subtitle={dayNote(entry, lang)}
         meta={
           <>

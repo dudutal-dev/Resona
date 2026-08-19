@@ -41,11 +41,18 @@ const HE: AboutSection[] = [
     ],
   },
   {
+    title: 'אורגני — מיתר במקום נשימה',
+    paragraphs: [
+      'סגנון שלישי, שאינו אמביינט ואינו קלאב. אין בו רשת, אין קיק, ואין שום דבר שעולה בעוצמה — יש מיתר שנפרט ונשאר לדעוך. אלו אותן פרזות חופשיות של האמביינט, על אותו סולם ואותו עיגון, רק צפופות יותר: צליל פריטה נגמר תוך שנייה וחצי, ובמרווחים של האמביינט הוא היה יוצא נקישות בודדות עם שקט ביניהן.',
+      'הוא לא מסונתז כמעטפת אחרת על אותו אוסילטור, כי זה לא היה עובד — <b>הגוף</b> שגוי, לא רק צורת ההתקפה. זהו מודל קרפלוס-סטרונג: עירור אמיתי ודעיכה אמיתית. הפריטה החזקה גם בהירה יותר, כמו בכלי אמיתי, במקום להישאר באותו גוון ורק להתחזק.',
+    ],
+  },
+  {
     title: 'נגינה ברקע ובמכשירים אחרים',
     paragraphs: [
       '<b>ניתוב למכשיר חיצוני:</b> בספארי יש כפתור "השמע למכשיר בסביבה" במסך הנגן — הוא מעביר את ההאזנה לרמקול, לטלוויזיה או לרכב, ומציג שם את התדר הנוכחי. אם ההעברה לא מצליחה, האפליקציה חוזרת מיד להשמעה מהטלפון במקום להישאר בלי צליל, ואפשר לחזור ידנית בכל רגע.',
       '<b>השם שמופיע במכשיר:</b> מערכת ההפעלה מוסרת את כרטיס "מתנגן כעת" רק לדף שיש בו נגן מדיה פעיל. מנוע אודיו לבדו לא תופס אותו, ולכן קודם לכן הוצג שם האפליקציה שהחזיקה בו לפני כן — לרוב Apple Music. Resona מנגן כעת גם קובץ שקט קצר ברקע כדי לתפוס את הכרטיס, וכך התדר הנוכחי הוא מה שמוצג במסך הנעילה וביעד ההשמעה.',
-      '<b>העטיפה:</b> במקום אייקון קבוע, האפליקציה מציירת לכל האזנה תמונת עטיפה משלה — התדר במרכז, טבעות הרמוניות בצבע התדר, ובמסע גם שם המסע והיום שבו אתה נמצא. היא נוצרת במכשיר בזמן ההפעלה ואינה קובץ שנטען מהרשת.',
+      '<b>העטיפה:</b> במקום אייקון קבוע, האפליקציה מציירת לכל האזנה תמונת עטיפה משלה — התדר במרכז, טבעות הרמוניות בצבע התדר, ובמסע גם שם המסע והשלב שבו אתה נמצא. היא נוצרת במכשיר בזמן ההפעלה ואינה קובץ שנטען מהרשת.',
       '<b>מעבר לאפליקציה אחרת:</b> כאן יש מגבלה אמיתית שחשוב להכיר. דפדפנים בטלפון — ובמיוחד ספארי באייפון — משהים את מנוע האודיו ברגע שעוזבים את הדף, ואין לאפליקציית ווב שום דרך לבקש חריגה מזה. זו מגבלת מערכת הפעלה, לא באג.',
       'מה שכן עובד: הפעלת "השאר את המסך דלוק" במסך הנגן מונעת מהמסך לכבות, וכך ההאזנה נמשכת ברצף כל עוד נשארים באפליקציה. זהו <b>לא</b> מתג לנגינה ברקע — הוא לא יעזור אחרי מעבר לאפליקציה אחרת, והמתג עצמו יגיד לך אם הדפדפן דחה את הבקשה במקום להיראות דלוק לשווא.',
     ],
@@ -112,11 +119,18 @@ const EN: AboutSection[] = [
     ],
   },
   {
+    title: 'Organic — a string instead of a breath',
+    paragraphs: [
+      'A third style, neither ambient nor club. No grid, no kick, and nothing that swells — a string is plucked and left to decay. These are the same free phrases as ambient, on the same scale and the same anchoring, only packed closer together: a plucked note is gone in a second and a half, and at ambient’s spacing it came out as isolated pings with silence between them.',
+      'It is not the same oscillator under a different envelope, because that does not work — the <b>body</b> is wrong, not just the shape of the attack. This is a Karplus-Strong model: a real excitation and a real decay. A harder pluck is also a brighter one, as on a real instrument, rather than the same timbre turned up.',
+    ],
+  },
+  {
     title: 'Background playback and other devices',
     paragraphs: [
       '<b>Routing to an external device:</b> in Safari there is a "Play on a nearby device" button on the player screen — it moves the session to a speaker, a TV or a car, and shows the current frequency there. If the handover fails, the app returns to playing from the phone immediately rather than leaving you in silence, and you can switch back manually at any time.',
       '<b>The name shown on the device:</b> the operating system hands the "now playing" card only to a page with an active media element. An audio engine alone does not claim it, which is why the name previously shown was whatever app held it before — usually Apple Music. Resona now also plays a short silent file in the background to claim the card, so the current frequency is what appears on the lock screen and at the playback target.',
-      '<b>The cover art:</b> instead of a fixed icon, the app draws its own cover for every session — the frequency at the centre, harmonic rings in the frequency’s colour, and during a journey the journey’s name and the day you are on. It is drawn on the device at playback time and is not a file fetched from the network.',
+      '<b>The cover art:</b> instead of a fixed icon, the app draws its own cover for every session — the frequency at the centre, harmonic rings in the frequency’s colour, and during a journey the journey’s name and the stage you are on. It is drawn on the device at playback time and is not a file fetched from the network.',
       '<b>Switching to another app:</b> here there is a real limitation worth knowing. Mobile browsers — Safari on iPhone especially — suspend the audio engine the moment you leave the page, and a web app has no way to ask for an exception. That is an operating-system limit, not a bug.',
       'What does work: turning on "Keep the screen on" in the player stops the screen switching off, so a session runs unbroken as long as you stay in the app. It is <b>not</b> a background-playback switch — it will not help after you move to another app, and the switch itself tells you if the browser refused, rather than looking enabled for nothing.',
     ],

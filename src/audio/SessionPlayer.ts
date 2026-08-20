@@ -427,6 +427,7 @@ class SessionPlayer {
     // speaker, and the last two reports were of repairs that said they had
     // worked. Only starting a session again, or the person dismissing it,
     // clears it.
+    mediaRoute.watchOutputHealth(() => this.playing)
     mediaRoute.onFault = () => {
       if (this.playing) this.setSoundLost(true)
     }

@@ -114,6 +114,7 @@ class MediaRoute {
    * the way out is the only honest reason to suspect the sound on the way back.
    */
   private faultSeen = false
+  private driftTimer: number | null = null
   /**
    * Whether a session is supposed to be running, asked by the element's own
    * `pause` event — which fires both when the system takes the audio away and
@@ -197,6 +198,7 @@ class MediaRoute {
       limiter.disconnect()
       limiter.toDestination()
       this.external = false
+      Tone.getContext().lookAhead = 0.2
       // Back to holding the session with silence rather than the live mix.
       await this.playSilence()
       return false
@@ -251,6 +253,10 @@ class MediaRoute {
 
     this.external = true
     await this.calibrateClock(el)
+    // More headroom while the sound leaves through a stream. A remote receiver
+    // has nothing of its own to smooth over a late render, so the scheduler is
+    // given a longer run-up than it needs on the phone's own output.
+    Tone.getContext().lookAhead = 0.5
     return true
   }
 
@@ -707,6 +713,62 @@ class MediaRoute {
     return was
   }
 
+  /**
+   * Watches the audio clock against the wall clock.
+   *
+   * A remote speaker fed from a MediaStream has no buffer of its own to fall
+   * back on: if the graph fails to render in time, the receiver repeats
+   * whatever it last had, which over a continuous drone is heard as the tone
+   * sticking and stuttering across the melody. That is the report, twice now.
+   *
+   * The audio clock is the one measurement that can show it. It advances with
+   * rendered audio, so a starved graph falls behind the wall clock, and by how
+   * much. This fixes nothing; it makes the next report say whether starvation
+   * is what is happening rather than leaving it a guess.
+   */
+  watchOutputHealth(isPlaying: () => boolean) {
+    if (this.driftTimer !== null) return
+    let audioAt = Tone.getContext().currentTime
+    let wallAt = performance.now()
+    let elementAt = this.el?.currentTime ?? 0
+    this.driftTimer = window.setInterval(() => {
+      const audioNow = Tone.getContext().currentTime
+      const wallNow = performance.now()
+      const audioDelta = audioNow - audioAt
+      const wallDelta = (wallNow - wallAt) / 1000
+      audioAt = audioNow
+      wallAt = wallNow
+      if (!isPlaying() || wallDelta <= 0) return
+      // A suspended context is supposed to stop its clock, and is reported
+      // elsewhere; only a context that is meant to be rendering can starve.
+      if ((Tone.getContext().state as string) !== 'running') return
+      const behind = wallDelta - audioDelta
+      // A tenth of a second lost over four is far outside jitter and well
+      // inside what a listener hears as a stutter.
+      if (behind > 0.1) {
+        diag('audio-starved', `${Math.round(behind * 1000)}ms behind over ${Math.round(wallDelta * 1000)}ms`)
+      }
+
+      // And the other end of the same pipe: the element consuming the stream.
+      //
+      // This is the half that can actually see the reported stutter. The audio
+      // clock keeps perfect time whatever the main thread is doing — measured,
+      // not assumed: holding the thread for two and a half seconds moved it not
+      // at all — so a graph that renders on time tells you nothing about
+      // whether anything is draining it. If the element's own clock stops while
+      // it believes it is playing, the sound has stopped leaving, and a
+      // receiver with nothing left to play is a receiver repeating itself.
+      if (this.external && this.timeAdvances && this.el && !this.el.paused) {
+        const elementNow = this.el.currentTime
+        if (elementNow <= elementAt) {
+          diag('element-stalled', `${Math.round(wallDelta * 1000)}ms with a still clock`)
+          this.reportFault()
+        }
+        elementAt = elementNow
+      }
+    }, 4000)
+  }
+
   private reportFault() {
     this.faultSeen = true
     this.onFault?.()
@@ -773,6 +835,7 @@ class MediaRoute {
   async toDirect(): Promise<void> {
     if (!engine.isStarted) return
     diag('route-direct')
+    Tone.getContext().lookAhead = 0.2
     this.clearStallWatch()
     for (const track of this.streamDest?.stream.getTracks() ?? []) track.stop()
     const limiter = engine.output

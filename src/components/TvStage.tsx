@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { mediaRoute } from '../audio/MediaRoute'
 import { FIGURES, figureAt } from '../data/figures'
 import { TurntableField } from './TurntableField'
@@ -10,6 +10,7 @@ import { FigureField } from './FigureField'
 import { Badge } from './Badge'
 import { canCastVideo, promptRemote, watchRemote, type RemoteState } from '../lib/remoteVideo'
 import { ClipField } from './ClipField'
+import { MedleyField, type MedleySource } from './MedleyField'
 import { turnRate, turnSeconds } from '../lib/turnClock'
 import { formatClock } from './ui'
 
@@ -72,6 +73,31 @@ export function TvStage({ onClose }: { onClose: () => void }) {
       : `hsl(${getComputedStyle(document.documentElement).getPropertyValue('--h').trim() || 265}, 90%, 60%)`
   const beat = config.beatId ? getFrequency(config.beatId) : null
   const journey = activeJourney ? getJourney(activeJourney.journeyId) : null
+
+  /**
+   * What the medley draws on: every piece of footage the app already ships.
+   *
+   * Assembled here rather than listed in the catalogue because the answer
+   * depends on the screen — a turntable has two cuts and only the one that
+   * matches the shape belongs. The scene is left out: it is a Three.js canvas
+   * rather than a video, and there is nothing to dissolve it into.
+   */
+  const medleySources = useMemo<MedleySource[]>(
+    () =>
+      FIGURES.flatMap((entry) =>
+        entry.kind === 'clip'
+          ? [{ src: entry.src, poster: entry.poster }]
+          : entry.kind === 'turntable'
+            ? [
+                {
+                  src: portrait ? entry.portrait : entry.wide,
+                  poster: portrait ? entry.poster : entry.posterWide,
+                },
+              ]
+            : [],
+      ),
+    [portrait],
+  )
 
   // Full screen and a wake lock: a picture that vanishes after 30 seconds is
   // not a presentation mode.
@@ -210,6 +236,8 @@ export function TvStage({ onClose }: { onClose: () => void }) {
           playing={isPlaying}
           className="absolute inset-0"
         />
+      ) : figure.kind === 'medley' ? (
+        <MedleyField sources={medleySources} playing={isPlaying} className="absolute inset-0" />
       ) : figure.kind === 'image' ? (
         <FigureField src={figure.src} playing={isPlaying} scale={1.6} className="absolute inset-0" />
       ) : (
@@ -401,7 +429,7 @@ export function TvStage({ onClose }: { onClose: () => void }) {
                         loading="lazy"
                         className="h-full w-full object-cover opacity-90"
                       />
-                    ) : entry.kind === 'clip' ? (
+                    ) : entry.kind === 'clip' || entry.kind === 'medley' ? (
                       <img
                         src={entry.poster}
                         alt=""

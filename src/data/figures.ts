@@ -1,5 +1,6 @@
 import jupiterClip from '../assets/clips/jupiter.mp4?url'
 import jupiterPoster from '../assets/clips/jupiter-poster.webp'
+import medleyPoster from '../assets/clips/medley-poster.webp'
 import summitClip from '../assets/clips/summit.mp4?url'
 import summitPoster from '../assets/clips/summit-poster.webp'
 import transfigureClip from '../assets/clips/transfigure.mp4?url'
@@ -60,6 +61,16 @@ export type Figure =
   | { id: string; kind: 'clip'; src: string; poster: string; name: StringKey }
   | { id: string; kind: 'scene'; name: StringKey }
   /**
+   * Every other figure in turn, dissolving from one into the next.
+   *
+   * It carries no footage of its own — it plays what the others already ship,
+   * so it costs one thumbnail and nothing else. Which scenes it draws on is
+   * decided where it is mounted rather than listed here, because the answer
+   * depends on the shape of the screen: a turntable has two cuts and only one
+   * of them belongs on a phone. See `MedleyField`.
+   */
+  | { id: string; kind: 'medley'; poster: string; name: StringKey }
+  /**
    * A figure making one revolution, played as a loop at a rate derived from the
    * session — see `TurntableField`.
    *
@@ -110,6 +121,7 @@ export const FIGURES: Figure[] = [
     name: 'figure.transfigure',
   },
   { id: 'summit', kind: 'clip', src: summitClip, poster: summitPoster, name: 'figure.summit' },
+  { id: 'medley', kind: 'medley', poster: medleyPoster, name: 'figure.medley' },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },
 ]
 

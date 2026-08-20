@@ -9,6 +9,7 @@ import { useSettings } from '../store/settingsStore'
 import { FigureField } from './FigureField'
 import { Badge } from './Badge'
 import { canCastVideo, promptRemote, watchRemote, type RemoteState } from '../lib/remoteVideo'
+import { ClipField } from './ClipField'
 import { turnRate, turnSeconds } from '../lib/turnClock'
 import { formatClock } from './ui'
 
@@ -107,7 +108,9 @@ export function TvStage({ onClose }: { onClose: () => void }) {
 
   // Only turntables have a file to hand over; the generated scene has no source
   // a receiver could fetch.
-  const castable = figure.kind === 'turntable' && canCastVideo()
+  // A clip is a plain file like a turntable is, so it can be handed to a
+  // television the same way.
+  const castable = (figure.kind === 'turntable' || figure.kind === 'clip') && canCastVideo()
 
   useEffect(() => {
     const el = castRef.current
@@ -176,11 +179,11 @@ export function TvStage({ onClose }: { onClose: () => void }) {
         canvas paints over it; when a receiver takes it, the canvas is gone and
         this is what is left for the platform to draw its own placeholder into.
       */}
-      {figure.kind === 'turntable' && (
+      {(figure.kind === 'turntable' || figure.kind === 'clip') && (
         <video
           ref={castRef}
-          src={figure.wide}
-          poster={figure.posterWide}
+          src={figure.kind === 'turntable' ? figure.wide : figure.src}
+          poster={figure.kind === 'turntable' ? figure.posterWide : figure.poster}
           loop
           muted
           playsInline
@@ -197,6 +200,13 @@ export function TvStage({ onClose }: { onClose: () => void }) {
         <TurntableField
           src={portrait ? figure.portrait : figure.wide}
           poster={portrait ? figure.poster : figure.posterWide}
+          playing={isPlaying}
+          className="absolute inset-0"
+        />
+      ) : figure.kind === 'clip' ? (
+        <ClipField
+          src={figure.src}
+          poster={figure.poster}
           playing={isPlaying}
           className="absolute inset-0"
         />
@@ -369,6 +379,13 @@ export function TvStage({ onClose }: { onClose: () => void }) {
                     {entry.kind === 'image' ? (
                       <img
                         src={entry.src}
+                        alt=""
+                        loading="lazy"
+                        className="h-full w-full object-cover opacity-90"
+                      />
+                    ) : entry.kind === 'clip' ? (
+                      <img
+                        src={entry.poster}
                         alt=""
                         loading="lazy"
                         className="h-full w-full object-cover opacity-90"

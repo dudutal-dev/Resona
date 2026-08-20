@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { warmMedia } from '../lib/mediaCache'
 import { engine } from '../audio/ToneEngine'
 import { HOLD_NOTES, POSES, TURN_NOTES, noteSeconds } from '../lib/turnClock'
 import { useSession } from '../store/sessionStore'
@@ -38,33 +39,6 @@ const MIN_RATE = 0.0625
  */
 const TURN_MAX_RATE = 1.15
 
-/**
- * URLs already pulled through a plain fetch, so a play/pause cycle does not ask
- * for the same file again.
- */
-const warmed = new Set<string>()
-
-/**
- * Pulls the clip through `fetch` once, purely so the service worker keeps a copy.
- *
- * A video element asks for its file with a `Range` header, and a ranged media
- * request does not end up in the runtime cache: measured on a production build,
- * `resona-turntables` was still empty after a full playthrough of TV mode, while
- * one plain fetch of the same URL filled it. What was holding the clip instead
- * was the browser's own HTTP cache, which is evictable and is not what an
- * offline-first app should be resting on. Cache Storage is.
- *
- * It runs alongside playback rather than before it, so the first frame still
- * appears while the file streams. That costs the bytes twice on the very first
- * viewing and nothing on every viewing after.
- */
-function warm(url: string) {
-  if (warmed.has(url)) return
-  warmed.add(url)
-  fetch(url)
-    .then((r) => r.arrayBuffer())
-    .catch(() => warmed.delete(url))
-}
 
 type Props = {
   /** The cut to play. Swapping it mid-session reloads the element. */
@@ -225,7 +199,7 @@ export function TurntableField({ src, poster, playing, className = '' }: Props) 
     ro.observe(canvas)
 
     video.src = src
-    warm(src)
+    warmMedia(src)
 
     // The still, held ready so the stage has something to draw during the
     // first fetch. `drawImage` does not care which of the two it is handed,

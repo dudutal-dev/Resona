@@ -1,4 +1,5 @@
-import jupiter from '../assets/figures/9-jupiter.webp'
+import jupiterClip from '../assets/clips/jupiter.mp4?url'
+import jupiterPoster from '../assets/clips/jupiter-poster.webp'
 import figurePortrait from '../assets/turntables/figure-portrait.mp4?url'
 import figurePoster from '../assets/turntables/figure-portrait-poster.webp'
 import figureWide from '../assets/turntables/figure-wide.mp4?url'
@@ -22,7 +23,8 @@ import type { StringKey } from '../lib/i18n'
  * whose only other figure needs the network would be worse than one that costs
  * more to install.
  *
- * One still is back: the Jupiter render, asked for by name. The rest of the
+ * The Jupiter figure is here as footage rather than as the still it first came
+ * back as — the same scene, moving. The rest of the
  * eleven that used to ship are not lost either — every original is in
  * `assets/figures`, and the round trip back in is three steps:
  *
@@ -37,6 +39,20 @@ import type { StringKey } from '../lib/i18n'
  */
 export type Figure =
   | { id: string; kind: 'image'; src: string; name: StringKey }
+  /**
+   * Footage that drifts, looped at a rate taken from the music.
+   *
+   * A separate kind from `turntable` because the two are different objects: a
+   * turntable is a revolution with a position, choreographed to hold poses on
+   * the beat, and a clip is a camera moving past a scene with nothing to point
+   * at. Driving this one the way that one is driven would be scrubbing footage
+   * to hit marks that do not exist in it. See `ClipField`.
+   *
+   * One cut, not two: the drift is a wide shot and a phone shows the middle of
+   * it, which for a scene is a crop rather than a mutilation — unlike a figure,
+   * where a wide frame cropped to a phone loses the hands.
+   */
+  | { id: string; kind: 'clip'; src: string; poster: string; name: StringKey }
   | { id: string; kind: 'scene'; name: StringKey }
   /**
    * A figure making one revolution, played as a loop at a rate derived from the
@@ -80,7 +96,7 @@ export const FIGURES: Figure[] = [
     posterWide: figureWidePoster,
     name: 'figure.chakraTurn',
   },
-  { id: 'jupiter', kind: 'image', src: jupiter, name: 'figure.jupiter' },
+  { id: 'jupiter', kind: 'clip', src: jupiterClip, poster: jupiterPoster, name: 'figure.jupiter' },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },
 ]
 

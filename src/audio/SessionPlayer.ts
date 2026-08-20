@@ -195,7 +195,7 @@ class SessionPlayer {
     this.soundLost = false
     this.restoreStep = 0
     this.startedAt = Date.now()
-    diag('play', `${config.rootId} ${config.melodyStyle ?? 'ambient'}`)
+    diag('play', `${config.rootId} ${config.style}`)
     // Only drop to silence when the voices really were torn down. Resuming
     // during a fade-out leaves them running, and slamming the fade to zero
     // first would put an audible hole in a session that never stopped.

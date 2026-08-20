@@ -1,3 +1,4 @@
+import jupiter from '../assets/figures/9-jupiter.webp'
 import figurePortrait from '../assets/turntables/figure-portrait.mp4?url'
 import figurePoster from '../assets/turntables/figure-portrait-poster.webp'
 import figureWide from '../assets/turntables/figure-wide.mp4?url'
@@ -21,17 +22,18 @@ import type { StringKey } from '../lib/i18n'
  * whose only other figure needs the network would be worse than one that costs
  * more to install.
  *
- * **There is no still artwork here at the moment.** The eleven renders that
- * used to ship were pulled out of the bundle to make room for better ones; they
- * are not lost — every original is still in `assets/figures`, and the round trip
- * back in is three steps:
+ * One still is back: the Jupiter render, asked for by name. The rest of the
+ * eleven that used to ship are not lost either — every original is in
+ * `assets/figures`, and the round trip back in is three steps:
  *
  *   1. drop the PNGs in `assets/figures`
  *   2. `npm run pack-figures` — encodes them into `src/assets/figures`
  *   3. import each one below and add a line, with its name in both languages
  *
- * The `figure.*` keys for the old set are deliberately still in the dictionary,
- * so re-adding one is a single line rather than a translation pass.
+ * Only what is imported here is encoded into the bundle, so the packer can
+ * happily write all eleven and the app will still ship the ones that are used.
+ * The `figure.*` keys for the whole old set are deliberately still in the
+ * dictionary, so re-adding one is a single line rather than a translation pass.
  */
 export type Figure =
   | { id: string; kind: 'image'; src: string; name: StringKey }
@@ -78,6 +80,7 @@ export const FIGURES: Figure[] = [
     posterWide: figureWidePoster,
     name: 'figure.chakraTurn',
   },
+  { id: 'jupiter', kind: 'image', src: jupiter, name: 'figure.jupiter' },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },
 ]
 

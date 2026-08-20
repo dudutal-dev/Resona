@@ -1,5 +1,9 @@
 import jupiterClip from '../assets/clips/jupiter.mp4?url'
 import jupiterPoster from '../assets/clips/jupiter-poster.webp'
+import summitClip from '../assets/clips/summit.mp4?url'
+import summitPoster from '../assets/clips/summit-poster.webp'
+import transfigureClip from '../assets/clips/transfigure.mp4?url'
+import transfigurePoster from '../assets/clips/transfigure-poster.webp'
 import figurePortrait from '../assets/turntables/figure-portrait.mp4?url'
 import figurePoster from '../assets/turntables/figure-portrait-poster.webp'
 import figureWide from '../assets/turntables/figure-wide.mp4?url'
@@ -23,8 +27,9 @@ import type { StringKey } from '../lib/i18n'
  * whose only other figure needs the network would be worse than one that costs
  * more to install.
  *
- * The Jupiter figure is here as footage rather than as the still it first came
- * back as — the same scene, moving. The rest of the
+ * Three of these are footage rather than stills — the Jupiter scene, which came
+ * back as a still first and then as the clip it was cut from, and two more
+ * beside it. The rest of the
  * eleven that used to ship are not lost either — every original is in
  * `assets/figures`, and the round trip back in is three steps:
  *
@@ -97,6 +102,14 @@ export const FIGURES: Figure[] = [
     name: 'figure.chakraTurn',
   },
   { id: 'jupiter', kind: 'clip', src: jupiterClip, poster: jupiterPoster, name: 'figure.jupiter' },
+  {
+    id: 'transfigure',
+    kind: 'clip',
+    src: transfigureClip,
+    poster: transfigurePoster,
+    name: 'figure.transfigure',
+  },
+  { id: 'summit', kind: 'clip', src: summitClip, poster: summitPoster, name: 'figure.summit' },
   { id: 'orbit', kind: 'scene', name: 'figure.scene' },
 ]
 

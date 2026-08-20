@@ -226,6 +226,24 @@ export function TvStage({ onClose }: { onClose: () => void }) {
         </Suspense>
       )}
 
+      {/*
+        A scrim under the readouts.
+
+        Every figure until now was a body against black, so white text sat on it
+        without any help. The clips are not: one of them is a sunrise above a
+        cloud sea, and on that the time, the frequency and the casting hint were
+        barely legible. A gradient at the top and bottom edges costs the dark
+        figures almost nothing — the corners it darkens are corners they are
+        already black in — and makes every one of them readable.
+      */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0) 24%, rgba(0,0,0,0) 68%, rgba(0,0,0,0.6))',
+        }}
+      />
+
       {/* Readouts, inside a television-safe margin. */}
       <div className="pointer-events-none absolute inset-0">
         {journey && (
